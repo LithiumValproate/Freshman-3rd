@@ -1,0 +1,11 @@
+# ninja log v6
+593	1653	1751302163054017415	CMakeFiles/QtWebStudentSys.dir/webbridge.cpp.o	6cadc92530bf2a46
+593	1543	1751302163053782456	CMakeFiles/QtWebStudentSys.dir/main.cpp.o	8d25d91f754ca5
+9	904	1751304754209845996	build.ninja	85e05a4ba964f206
+16	86	1751303328279739517	QtWebStudentSys_autogen/mocs_compilation.cpp	ce2828a82113760b
+16	86	1751303328279739517	QtWebStudentSys_autogen/timestamp	ce2828a82113760b
+86	1102	1751303328350009118	CMakeFiles/QtWebStudentSys.dir/mainwindow.cpp.o	af43e99b2714b7a2
+366	564	1751303661882909482	bin/QtWebStudentSys.app/Contents/MacOS/QtWebStudentSys	5e3b299988ddbbdd
+34	146	1751303661657809201	QtWebStudentSys_autogen/EWIEGA46WW/qrc_resources.cpp	241fbabd724de36
+592	1560	1751302163053597372	CMakeFiles/QtWebStudentSys.dir/QtWebStudentSys_autogen/mocs_compilation.cpp.o	dc4267f266028c62
+146	366	1751303661662137653	CMakeFiles/QtWebStudentSys.dir/QtWebStudentSys_autogen/EWIEGA46WW/qrc_resources.cpp.o	7f7b3f6a091f6018

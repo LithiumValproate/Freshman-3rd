@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/web">
+        <file>web/admin.html</file>
+        <file>web/admin.css</file>
+        <file>web/admin.js</file>
+        <file>web/login.html</file>
+        <file>web/login.css</file>
+        <file>web/login.js</file>
+        <file>web/student.html</file>
+        <file>web/student.css</file>
+        <file>web/student.js</file>
+        <file>web/teacher.html</file>
+        <file>web/teacher.css</file>
+        <file>web/teacher.js</file>
+    </qresource>
+</RCC>

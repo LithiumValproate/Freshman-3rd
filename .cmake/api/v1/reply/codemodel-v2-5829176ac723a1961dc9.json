@@ -1,0 +1,79 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-b15ea2cbc8bed754f9ed.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "QtWebStudentSys",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "QtWebStudentSys::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-QtWebStudentSys-45a37d4ed0cf7a9e3e4d.json",
+					"name" : "QtWebStudentSys",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "QtWebStudentSys_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-QtWebStudentSys_autogen-e996cc14117d7c94a9b0.json",
+					"name" : "QtWebStudentSys_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "QtWebStudentSys_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-QtWebStudentSys_autogen_timestamp_deps-631f87b9455c9c793029.json",
+					"name" : "QtWebStudentSys_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/kasugano/Documents/Freshman-3rd",
+		"source" : "/Users/kasugano/Documents/Freshman-3rd"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}
