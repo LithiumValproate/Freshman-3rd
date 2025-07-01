@@ -24,6 +24,11 @@ WebBridge::WebBridge(QObject *parent)
     load_students(); // 应用启动时加载学生数据
 }
 
+void WebBridge::load_page(const QString &page)
+{
+    emit pageRequested(page);
+}
+
 void WebBridge::open_file_dialog(const QString &title, const QString &filter)
 {
     QString filePath = QFileDialog::getOpenFileName(m_parentWidget, title, "", filter);

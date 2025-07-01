@@ -19,8 +19,12 @@ signals :
 
     void fileSaveRequested(const QString& filePath);
 
+    void pageRequested(const QString& pageUrl);
+
 public
 slots :
+    void load_page(const QString& page);
+
     void open_file_dialog(const QString& title, const QString& filter);
 
     void save_file_dialog(const QString& title, const QString& filter);

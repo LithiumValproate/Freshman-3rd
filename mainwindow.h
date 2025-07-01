@@ -24,6 +24,8 @@ private slots:
 
     void on_load_finished(bool success);
 
+    void on_page_requested(const QString& pageUrl);
+
     void refresh_page();
 
     void show_about();

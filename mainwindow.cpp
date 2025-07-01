@@ -85,8 +85,10 @@ void MainWindow::setup_web_view() {
     m_webChannel->registerObject("qtBridge", m_webBridge);
     m_webView->page()->setWebChannel(m_webChannel);
 
+    connect(m_webBridge, &WebBridge::pageRequested, this, &MainWindow::on_page_requested);
+
     // 加载HTML文件
-    m_webView->load(QUrl("qrc:/web/web/login.html"));
+    m_webView->load(QUrl("qrc:/web/index.html"));
 }
 
 void MainWindow::on_load_started() {
@@ -107,6 +109,11 @@ void MainWindow::on_load_finished(bool success) {
         m_statusLabel->setText("加载失败");
         QMessageBox::warning(this, "错误", "无法加载Web页面，请检查web目录下的HTML文件是否存在。");
     }
+}
+
+void MainWindow::on_page_requested(const QString &pageUrl)
+{
+    m_webView->load(QUrl(QString("qrc:/web/%1").arg(pageUrl)));
 }
 
 void MainWindow::refresh_page() {
