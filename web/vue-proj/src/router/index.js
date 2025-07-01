@@ -1,14 +1,48 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Admin from '../views/admin.vue'
+import Admin from '../views/Admin.vue'
+import Teacher from '../views/teacher.vue'  // 需要创建
+import Student from '../views/student.vue'  // 需要创建
 
 const routes = [
+    {
+        path: '/',
+        name: 'Login',
+        component: () => import('../App.vue'),  // App.vue 就是登录页面
+        meta: {
+            requiresAuth: false
+        }
+    },
     {
         path: '/admin',
         name: 'Admin',
         component: Admin,
         meta: {
-            requiresAuth: true // 如果需要权限控制
+            requiresAuth: true,
+            role: 'admin'
         }
+    },
+    {
+        path: '/teacher',
+        name: 'Teacher',
+        component: Teacher,
+        meta: {
+            requiresAuth: true,
+            role: 'teacher'
+        }
+    },
+    {
+        path: '/student',
+        name: 'Student',
+        component: Student,
+        meta: {
+            requiresAuth: true,
+            role: 'student'
+        }
+    },
+    {
+        // 404 页面重定向到登录
+        path: '/:pathMatch(.*)*',
+        redirect: '/'
     }
 ]
 
@@ -17,25 +51,46 @@ const router = createRouter({
     routes
 })
 
-// 路由守卫（可选）
+// 改进的路由守卫
 router.beforeEach((to, from, next) => {
+    const savedUser = localStorage.getItem('rememberedUser')
+
     if (to.meta.requiresAuth) {
-        // 这里可以添加权限验证逻辑
-        const isAdmin = checkAdminPermission() // 自定义权限检查函数
-        if (isAdmin) {
-            next()
+        if (savedUser) {
+            try {
+                const userData = JSON.parse(savedUser)
+                const userRole = userData.role
+                const requiredRole = to.meta.role
+
+                if (userRole === requiredRole) {
+                    next()
+                } else {
+                    // 角色不匹配，重定向到对应页面
+                    next(`/${userRole}`)
+                }
+            } catch (error) {
+                // 本地存储数据损坏，清除并重定向到登录
+                localStorage.removeItem('rememberedUser')
+                next('/')
+            }
         } else {
+            // 未登录，重定向到登录页面
             next('/')
         }
     } else {
-        next()
+        // 如果已登录用户访问登录页面，重定向到对应角色页面
+        if (to.path === '/' && savedUser) {
+            try {
+                const userData = JSON.parse(savedUser)
+                next(`/${userData.role}`)
+            } catch (error) {
+                localStorage.removeItem('rememberedUser')
+                next()
+            }
+        } else {
+            next()
+        }
     }
 })
-
-function checkAdminPermission() {
-    // 实际项目中这里应该检查用户权限
-    // 比如从 localStorage、Vuex 或 API 获取用户信息
-    return true // 临时返回 true
-}
 
 export default router

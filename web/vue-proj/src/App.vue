@@ -92,17 +92,15 @@ const loginForm = reactive({
   password: '',
   rememberMe: false,
 });
-// 将loginForm属性转换为独立refs
+
 const { role, username, password, rememberMe } = toRefs(loginForm);
 
 const formError = reactive({ role: '', username: '', password: '' });
-
-// 消息与加载状态
 const message = ref('');
 const messageType = ref('');
 const loading = ref(false);
 
-// 初始化：恢复“记住我”数据
+// 初始化：恢复"记住我"数据
 onMounted(() => {
   const saved = localStorage.getItem('rememberedUser');
   if (saved) {
@@ -132,13 +130,14 @@ function validate() {
   return true;
 }
 
-// 新增：角色选择方法
+// 角色选择方法
 function selectRole(r) {
   role.value = r;
 }
 
+// 修正的页面跳转方法
 const goPage = (role) => {
-  router.go(`/${role}`)
+  router.push(`/${role}`)  // ✅ 使用 router.push() 跳转到 admin.vue
 }
 
 // 登录处理
@@ -146,16 +145,24 @@ function handleLogin() {
   if (!validate()) return;
   loading.value = true;
   message.value = '';
+
   // 记住我
   if (loginForm.rememberMe) {
     localStorage.setItem('rememberedUser', JSON.stringify(loginForm));
   } else {
     localStorage.removeItem('rememberedUser');
   }
+
   // 模拟请求延迟并跳转
   setTimeout(() => {
     loading.value = false;
-    goPage(role);
+    message.value = '登录成功，正在跳转...';
+    messageType.value = 'success';
+
+    // 短暂延迟后跳转
+    setTimeout(() => {
+      goPage(role.value);  // 这里 role.value 为 'admin' 时会跳转到 admin.vue
+    }, 800);
   }, 800);
 }
 </script>
