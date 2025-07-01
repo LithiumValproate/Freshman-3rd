@@ -88,7 +88,7 @@ void MainWindow::setup_web_view() {
     connect(m_webBridge, &WebBridge::pageRequested, this, &MainWindow::on_page_requested);
 
     // 加载HTML文件
-    m_webView->load(QUrl("qrc:/web/index.html"));
+    m_webView->load(QUrl("qrc:/web/vue-proj/dist/index.html"));
 }
 
 void MainWindow::on_load_started() {
@@ -113,7 +113,7 @@ void MainWindow::on_load_finished(bool success) {
 
 void MainWindow::on_page_requested(const QString &pageUrl)
 {
-    m_webView->load(QUrl(QString("qrc:/web/%1").arg(pageUrl)));
+    m_webView->load(QUrl(QString("qrc:/web/vue-proj/dist/%1").arg(pageUrl)));
 }
 
 void MainWindow::refresh_page() {
