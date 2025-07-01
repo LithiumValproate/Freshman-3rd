@@ -113,7 +113,7 @@ void MainWindow::on_load_finished(bool success) {
 
 void MainWindow::on_page_requested(const QString &pageUrl)
 {
-    m_webView->load(QUrl(QString("qrc:/web/vue-proj/dist/%1").arg(pageUrl)));
+    m_webView->load(QUrl(QString("qrc:/web/vue-proj/dist/index.html#%1").arg(pageUrl)));
 }
 
 void MainWindow::refresh_page() {
