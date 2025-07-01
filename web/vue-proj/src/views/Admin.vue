@@ -7,6 +7,8 @@
         <button @click="showStudentModal()" class="btn btn-primary">添加学生</button>
         <button @click="importData" class="btn btn-secondary">导入数据</button>
         <button @click="exportData" class="btn btn-secondary">导出数据</button>
+        <!-- 新增退出登录按钮 -->
+        <button @click="logout" class="btn btn-secondary" style="margin-left: 10px;">退出登录</button>
       </div>
     </header>
 
@@ -81,6 +83,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 // 学生数据和状态
 const students = ref([]);
@@ -239,6 +242,14 @@ const importData = () => {
 
 const exportData = () => {
   qtBridge.value?.save_file_dialog('导出学生数据', 'JSON Files (*.json)');
+};
+
+const router = useRouter();
+
+// 退出登录���法
+const logout = () => {
+  localStorage.removeItem('rememberedUser');
+  router.replace('/login');
 };
 
 onMounted(async () => {
