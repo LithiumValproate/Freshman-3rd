@@ -1,0 +1,210 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{xeCJK}
+
+\usepackage[left=2.5cm, right=2.5cm, top=2.5cm, bottom=2.5cm]{geometry}
+
+\usepackage{amsmath}          % 数学公式
+\usepackage{graphicx}         % 插入图片
+\usepackage{hyperref}         % 超链接
+\usepackage{xcolor}           % 颜色支持
+\usepackage{tabularx}         % 更好的表格
+\usepackage{listings}         % 代码高亮
+
+% --- 超链接设置 ---
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Qt Web学生管理系统实验报告},
+	pdfauthor={你的名字},
+}
+
+% --- 代码高亮样式定义 ---
+\lstdefinestyle{cpp_style}{
+	language=C++,
+	backgroundcolor=\color{gray!10},   % 背景色
+	commentstyle=\color{green!60!black},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{gray},
+	stringstyle=\color{purple},
+	basicstyle=\ttfamily\footnotesize, % 字体
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                   
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+% JavaScript 样式
+\lstdefinestyle{js_style}{
+	language=JavaScript,
+	backgroundcolor=\color{gray!10},
+	commentstyle=\color{green!60!black},
+	keywordstyle=\color{blue},
+	numberstyle=\tiny\color{gray},
+	stringstyle=\color{purple},
+	basicstyle=\ttfamily\footnotesize,
+	breaklines=true,
+	captionpos=b,
+	keepspaces=true,
+	numbers=left,
+	numbersep=5pt,
+	showstringspaces=false,
+}
+
+
+\begin{document}
+	
+	\begin{titlepage}
+		\centering
+		\vspace*{2cm}
+		
+		{\Huge\bfseries 实验报告}
+		\vspace{1.5cm}
+		
+		{\Large\bfseries 课程名称：(例如：C++ 程序设计实践)}
+		\vspace{1cm}
+		
+		{\huge\bfseries Qt Web学校集成系统}
+		\vspace{3cm}
+		
+		\begin{tabular}{ll}
+			\bfseries 学\quad\quad 院： & 软件学院 \\
+			\bfseries 专\quad\quad 业： & 软件工程 \\
+			\bfseries 班\quad\quad 级： & 24级18班 \\
+			\bfseries 组\quad\quad 员： &  杨鎏 \\ & 贺敏 \\ & 王鑫磊 \\
+			\bfseries 指导教师： & 。。 \\
+		\end{tabular}
+		
+		\vfill
+		
+		{\large \today}
+	\end{titlepage}
+	
+	\begin{abstract}
+		\noindent
+		本文档详细介绍了一个基于 Qt 和 Web 技术实现的混合桌面学生管理系统。项目通过 Qt 的 QWebEngineView 模块将一个使用 Vue.js 构建的 Web 学生管理界面无缝嵌入到原生桌面应用中。利用 QWebChannel 技术，我们成功实现了 C++ 后端与 JavaScript 前端的双向通信，从而将 Web 技术的开发灵活性与桌面应用强大的原生功能（如原生文件对话框、系统托盘通知等）相结合，显著提升了用户体验和系统的健壮性。
+	\end{abstract}
+	\newpage
+	
+	\tableofcontents
+	\newpage
+	
+	\section{引言 (Introduction)}
+	\subsection{项目背景与意义}
+		在信息技术高速发展的时代，软件开发作为一项核心技术始终保持着旺盛的生命力。随着网络技术的普及与应用，Web技术与传统桌面软件的融合逐渐成为软件开发的新趋势。为了顺应这一发展潮流，作为软件工程专业的学生，我们积极探索前沿技术，尝试将现代Web前端架构与高性能后端技术相结合，开发出具有创新性的桌面应用程序。\par
+		本项目以 Vue.js 为代表的新型前端架构，结合了 C++、Python 等主流后端开发语言，利用 	QtWebChannel 作为前后端通信的桥梁，实现了前后端的高效协同。通过这一项目的实践，不仅提升了我们对多种开发框架的理解与应用能力，也积累了跨平台开发和系统集成的宝贵经验。该项目旨在为用户提供更优质、更高效的软件使用体验，并为今后 Web 与桌面软件深度融合的探索奠定基础。
+	\subsection{项目目标}
+	(TODO: 阐述本项目的具体目标，如设计 Qt 桌面外壳、实现双向通信等...)
+	\subsection{开发环境与技术栈}
+	(TODO: 列出开发所用的操作系统、工具、框架和语言...)
+	
+	\section{系统总体设计 (System Design)}
+	\subsection{系统架构}
+	(TODO: 描述系统分层架构，并在此处插入架构图)
+	\begin{figure}[h]
+		\centering
+		% 将你的架构图文件 (如 arch.png) 放在与 .tex 文件相同的目录下
+		% \includegraphics[width=0.8\textwidth]{arch.png}
+		\caption{系统总体架构图}
+		\label{fig:arch}
+	\end{figure}
+	\subsection{Qt 桌面端设计}
+	(TODO: 描述主窗口、Web视图、WebBridge通信桥梁和设置管理的设计...)
+	\subsection{Web 前端设计}
+	(TODO: 描述基于 Vue.js 的前端 UI 框架、核心功能和交互逻辑...)
+	
+	\section{核心功能实现 (Core Function Implementation)}
+	\subsection{Web 界面的加载与嵌入}
+	(TODO: 描述如何初始化 QWebEngineView 并加载 HTML 文件，并附上 C++ 核心代码)
+	\begin{lstlisting}[style=cpp_style, caption={QWebEngineView 初始化与加载}, label={code:webview}]
+	\end{lstlisting}
+	
+	\subsection{基于 QWebChannel 的双向通信}
+	(TODO: 详细描述 C++ 端和 JavaScript 端的通信实现，并提供代码示例)
+	\begin{lstlisting}[style=cpp_style, caption={C++ WebBridge 暴露接口}, label={code:bridge-cpp}]
+	
+	\end{lstlisting}
+	\begin{lstlisting}
+		document.getElementById('importBtn').addEventListener('click', () => {
+			new QWebChannel(qt.webChannelTransport, (channel) => {
+				const qtBridge = channel.objects.bridge;
+				qtBridge.openFileDialog();
+			
+				qtBridge.fileSelected.connect((filePath) => {
+					console.log('File selected:', filePath);
+				});
+			});
+		});
+	\end{lstlisting}
+	
+	\subsection{原生功能增强}
+	(TODO: 分别描述文件导入/导出、系统托盘和快捷键的实现细节...)
+	
+	\section{系统测试 (System Testing)}
+	\subsection{测试环境}
+	(TODO: 列出测试的操作系统版本、Qt 版本等)
+	\subsection{功能测试}
+	(TODO: 描述功能测试的过程，并使用表格展示测试用例)
+	\begin{table}[h]
+		\centering
+		\caption{主要功能测试用例}
+		\label{tab:testcases}
+		\begin{tabularx}{\textwidth}{|l|X|X|c|}
+			\hline
+			\bfseries 功能模块 & \bfseries 测试用例 & \bfseries 预期结果 & \bfseries 实际结果 \\
+			\hline
+			数据导入 & 点击导入按钮，选择一个合法的 JSON 文件 & Web 界面成功加载并显示文件中的学生数据 & 通过 \\
+			\hline
+			系统通知 & 在 Web 端执行某个操作后触发通知 & 桌面右下角弹出原生系统通知 & 通过 \\
+			\hline
+			窗口状态 & 调整窗口大小后关闭，然后重新打开应用 & 应用以关闭前的大小和位置恢复 & 通过 \\
+			\hline
+			系统托盘 & 点击最小化按钮 & 应用窗口隐藏，图标出现在系统托盘 & 通过 \\
+			\hline
+		\end{tabularx}
+	\end{table}
+	
+	\subsection{运行结果截图}
+	(TODO: 插入关键界面的截图)
+	\begin{figure}[h]
+		\centering
+		% \includegraphics[width=0.7\textwidth]{screenshot1.png}
+		\caption{应用主界面截图}
+		\label{fig:screenshot1}
+	\end{figure}
+	
+	\begin{figure}[h]
+		\centering
+		% \includegraphics[width=0.7\textwidth]{screenshot2.png}
+		\caption{原生文件对话框截图}
+		\label{fig:screenshot2}
+	\end{figure}
+	
+	\section{总结与展望 (Conclusion and Future Work)}
+	\subsection{工作总结}
+	(TODO: 总结项目完成的主要工作和达成的目标...)
+	\subsection{问题与反思}
+	(TODO: 描述开发中遇到的挑战、解决方案以及心得体会...)
+	\subsection{未来展望}
+	(TODO: 提出可以进一步改进的方向，如性能优化、功能扩展等...)
+	
+	% --- 参考文献 ---
+	\begin{thebibliography}{9}
+		\bibitem{qt_doc} Qt 6.5 Documentation. \emph{QWebEngineView Class}. The Qt Company Ltd. \url{https://doc.qt.io/qt-6/qwebengineview.html}
+		\bibitem{vue_doc} Vue.js 3 Documentation. \emph{Introduction}. Evan You. \url{https://vuejs.org/guide/introduction.html}
+		% TODO: 添加更多参考文献
+	\end{thebibliography}
+	
+	% --- 致谢 ---
+	\section*{致谢 (Acknowledgements)}
+	感谢 (你的老师姓名) 老师在项目期间给予的悉心指导。感谢 (同学姓名) 在开发过程中提供的帮助与支持。
+	
+\end{document}
