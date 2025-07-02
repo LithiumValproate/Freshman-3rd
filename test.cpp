@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include "student.h"
-#include "stu_with_score.h"
+#include "struct/stu_with_score.h"
 
 // 测试基础Student类
 void test_student() {

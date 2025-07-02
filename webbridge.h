@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stu_with_score.h"
+#include "struct/stu_with_score.h"
 
 
 #include <QJsonArray>

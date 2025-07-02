@@ -30,8 +30,8 @@ set(SOURCES
 set(HEADERS
     mainwindow.h
     webbridge.h
-    student.h
-    stu_with_score.h
+        struct/student.h
+        struct/stu_with_score.h
 )
 
 # 设置资源文件

@@ -1,7 +1,7 @@
 #define USE_QTJSON
 
 #include "webbridge.h"
-#include "stu_with_score.h"
+#include "struct/stu_with_score.h"
 
 #include <QApplication>
 #include <QDebug>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "student.h"
+#include "../student.h"
 
 #include <map>
 
