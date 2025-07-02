@@ -69,9 +69,9 @@ private:
     std::string name;
     Sex sex;
     Date birthdate;
-    int admissionYear{};
+    int age;
+    int enrollYear{};
     std::string major;
-    std::vector<std::string> courses;
     Contact contactInfo;
     Address address;
     std::vector<FamilyMember> familyMembers;
@@ -90,8 +90,18 @@ public:
             const Address& addr,
             Status st = Status::Active)
         : id{id}, name{n}, sex{s}, birthdate{d},
-          admissionYear{y}, major{maj},
-          contactInfo{contact}, address{addr}, status{st} {}
+          enrollYear{y}, major{maj},
+          contactInfo{contact}, address{addr}, status{st} {
+        std::time_t t = std::time(nullptr);
+        std::tm* now  = std::localtime(&t);
+        int age_      = now->tm_year + 1900 - birthdate.year;
+        if ((now->tm_mon + 1) < birthdate.month ||
+            ((now->tm_mon + 1) == birthdate.month &&
+             now->tm_mday < birthdate.day)) {
+            --age_;
+        }
+        age = age_;
+    }
 
     // copy/move
     Student(const Student&) = default;
@@ -115,22 +125,13 @@ public:
     auto get_birthdate() const -> const Date& { return birthdate; }
     void set_birthdate(const Date& v) { birthdate = v; }
 
-    auto get_admission_year() const -> int { return admissionYear; }
-    void set_admission_year(int v) { admissionYear = v; }
+    auto get_age() const -> int { return age; }
+
+    auto get_enroll_year() const -> int { return enrollYear; }
+    void set_enroll_year(int v) { enrollYear = v; }
 
     auto get_major() const -> const std::string& { return major; }
     void set_major(const std::string& v) { major = v; }
-
-    auto get_courses() const -> const std::vector<std::string>& { return courses; }
-    void add_course(const std::string& c) { courses.push_back(c); }
-
-    void del_course(const std::string& c) {
-        courses.erase(
-                      std::remove(courses.begin(), courses.end(), c),
-                      courses.end());
-    }
-
-    void clear_courses() { courses.clear(); }
 
     auto get_contact() const & -> const Contact& { return contactInfo; }
     void set_contact(const Contact& v) { contactInfo = v; }
@@ -165,21 +166,6 @@ public:
     auto get_status() const -> Status { return status; }
     void set_status(Status s) { status = s; }
 
-    // age calculation
-    int calculate_age() const {
-        std::time_t t = std::time(nullptr);
-        std::tm* now  = std::localtime(&t);
-        int age       = now->tm_year + 1900 - birthdate.year;
-        if ((now->tm_mon + 1) < birthdate.month ||
-            ((now->tm_mon + 1) == birthdate.month &&
-             now->tm_mday < birthdate.day)) {
-            --age;
-        }
-        return age;
-    }
-
-    int get_age() const { return calculate_age(); }
-
     // streaming
     friend std::ostream& operator<<(std::ostream& os,
                                     const Student& s) {
@@ -190,7 +176,7 @@ public:
                 << "生日: " << s.birthdate.year << "-"
                 << s.birthdate.month << "-"
                 << s.birthdate.day << "\n"
-                << "入学年份: " << s.admissionYear << "\n"
+                << "入学年份: " << s.enrollYear << "\n"
                 << "专业: " << s.major << "\n"
                 << "电话: " << s.contactInfo.phone
                 << ", 邮箱: " << s.contactInfo.email << "\n"
@@ -306,13 +292,8 @@ inline auto student_to_qjson(const Student& stu) -> QJsonObject {
     obj["name"]          = QString::fromStdString(stu.get_name());
     obj["sex"]           = sex_to_qjson_string(stu.get_sex());
     obj["birthdate"]     = date_to_qjson(stu.get_birthdate());
-    obj["admissionYear"] = stu.get_admission_year();
+    obj["enrollYear"] = stu.get_enroll_year();
     obj["major"]         = QString::fromStdString(stu.get_major());
-    QJsonArray coursesArray;
-    for (const auto& course : stu.get_courses()) {
-        coursesArray.append(QString::fromStdString(course));
-    }
-    obj["courses"] = coursesArray;
     obj["contact"] = contact_to_qjson(stu.get_contact());
     obj["address"] = address_to_qjson(stu.get_address());
     obj["status"]  = status_to_qjson_string(stu.get_status());
@@ -330,13 +311,8 @@ inline auto student_from_qjson(const QJsonObject& obj) -> Student {
     stu.set_name(obj["name"].toString().toStdString());
     stu.set_sex(sex_from_qjson_string(obj["sex"].toString()));
     stu.set_birthdate(date_from_qjson(obj["birthdate"].toObject()));
-    stu.set_admission_year(obj["admissionYear"].toInt());
+    stu.set_enroll_year(obj["enrollYear"].toInt());
     stu.set_major(obj["major"].toString().toStdString());
-    stu.clear_courses();
-    QJsonArray coursesArray = obj["courses"].toArray();
-    for (const auto& courseValue : coursesArray) {
-        stu.add_course(courseValue.toString().toStdString());
-    }
     stu.set_contact(contact_from_qjson(obj["contact"].toObject()));
     stu.set_address(address_from_qjson(obj["address"].toObject()));
     stu.set_status(status_from_qjson_string(obj["status"].toString()));

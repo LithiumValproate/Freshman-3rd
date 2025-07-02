@@ -44,6 +44,10 @@ public:
         courseScore[course] = score;
     }
 
+    void del_score(const std::string& course) {
+        courseScore.erase(course);
+    }
+
     double calculate_average() const {
         if (courseScore.empty()) return 0.0;
         double sum = 0.0;
@@ -71,12 +75,25 @@ inline auto score_from_qjson(const QJsonObject& obj) -> Score {
     return s;
 }
 
+inline auto course_score_to_qjson(const std::map<std::string, Score>& cs) -> QJsonObject {
+    QJsonObject obj;
+    for (const auto& pair : cs) {
+        obj[QString::fromStdString(pair.first)] = score_to_qjson(pair.second);
+    }
+    return obj;
+}
+
+inline auto course_score_from_qjson(const QJsonObject& obj) -> std::map<std::string, Score> {
+    std::map<std::string, Score> cs;
+    for (auto it = obj.begin(); it != obj.end(); ++it) {
+        cs[it.key().toStdString()] = score_from_qjson(it.value().toObject());
+    }
+    return cs;
+}
+
 inline auto stu_with_score_to_qjson(const Stu_withScore& stu) -> QJsonObject {
     QJsonObject obj = student_to_qjson(stu);
-    QJsonObject scoresObj;
-    for (const auto& pair : stu.get_all_scores())
-        scoresObj[QString::fromStdString(pair.first)] = score_to_qjson(pair.second);
-    obj["scores"] = scoresObj;
+    obj["scores"]   = course_score_to_qjson(stu.get_all_scores());
     return obj;
 }
 
@@ -84,8 +101,6 @@ inline auto stu_with_score_from_qjson(const QJsonObject& obj) -> Stu_withScore {
     Student baseStudent = student_from_qjson(obj);
     Stu_withScore stu;
     static_cast<Student&>(stu) = baseStudent;
-    for (const auto& course : baseStudent.get_courses())
-        stu.add_course(course);
     if (obj.contains("scores")) {
         QJsonObject scoresObj = obj["scores"].toObject();
         std::map<std::string, Score> scores;

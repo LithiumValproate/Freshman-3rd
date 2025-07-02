@@ -15,12 +15,15 @@
     <main class="main-content">
       <div class="students-container" v-if="filteredStudents.length > 0">
         <!-- 学生卡片 -->
-        <div v-for="student in filteredStudents" :key="student.id" class="student-card" :class="{ 'expanded': expandedCardId === student.id }">
+        <div v-for="student in filteredStudents" :key="student.id" class="student-card"
+             :class="{ 'expanded': expandedCardId === student.id }">
           <div class="student-card-header">
             <div class="student-basic-info">
               <h2 class="student-name">{{ student.name || '未知姓名' }}</h2>
               <div class="student-id">学号: {{ student.id || 0 }}</div>
-              <div class="status-badge" :class="getStatusClass(student.status || 'Active')">{{ getStatusText(student.status || 'Active') }}</div>
+              <div class="status-badge" :class="getStatusClass(student.status || 'Active')">
+                {{ getStatusText(student.status || 'Active') }}
+              </div>
             </div>
             <div class="student-actions">
               <button class="btn-icon edit" @click="editStudent(student)" title="编辑">✏️</button>
@@ -35,12 +38,47 @@
             <!-- 详细信息渲染 -->
             <div class="info-section">
               <h3>基本信息</h3>
-              <div class="info-grid">
+              <!--  Sex sex;
+                    int age;
+                    Date birthdate;
+                    int enrollYear{};
+                    std::string major;
+                    Contact contactInfo;
+                    Address address;
+                    std::vector<FamilyMember> familyMembers; -->
+              <div class="basic-info-grid">
                 <div class="info-item"><label>性别</label><span>{{ student.sex === 'Male' ? '男' : '女' }}</span></div>
-                <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
-                <div class="info-item"><label>生日</label><span>{{ student.birthdate?.year }}-{{ student.birthdate?.month.toString().padStart(2, '0') }}-{{ student.birthdate?.day.toString().padStart(2, '0') }}</span></div>
-                <div class="info-item"><label>入学年份</label><span>{{ student.admissionYear }}</span></div>
+                <div class="info-item"><label>年龄</label><span>{{ student.age }}岁</span></div>
+                <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
+              </div>
+              <div class="contact-info-grid">
+                <div class="info-item contact-item">
+                  <label>电话</label>
+                  <span style="display: flex; align-items: center;">
+                    {{ student.contact?.phone || '无' }}
+                    <button
+                        v-if="student.contact?.phone"
+                        class="btn-icon"
+                        style="margin-left: auto; margin-right: 1em;"
+                        @click="copyToClipboard(student.contact.phone, '电话')"
+                        title="复制电话"
+                    >📋</button>
+                  </span>
+                </div>
+                <div class="info-item">
+                  <label>邮箱</label>
+                  <span style="display: flex; align-items: center;">
+                    {{ student.contact?.email || '无' }}
+                    <button
+                        v-if="student.contact?.email"
+                        class="btn-icon"
+                        style="margin-left: auto; margin-right: 1em;"
+                        @click="copyToClipboard(student.contact.email, '邮箱')"
+                        title="复制邮箱"
+                    >📋</button>
+                  </span>
+                </div>
               </div>
             </div>
             <!-- ... 其他信息区域 ... -->
@@ -66,8 +104,11 @@
         <div class="form-section">
           <h3>基本信息</h3>
           <div class="form-grid">
-            <div class="form-group"><label for="studentId">学号</label><input type="number" v-model="editableStudent.id" required></div>
-            <div class="form-group"><label for="studentName">姓名</label><input type="text" v-model="editableStudent.name" required></div>
+            <div class="form-group"><label for="studentId">学号</label><input type="number" v-model="editableStudent.id"
+                                                                              required></div>
+            <div class="form-group"><label for="studentName">姓名</label><input type="text"
+                                                                                v-model="editableStudent.name" required>
+            </div>
             <!-- ... 其他表单字段绑定到 editableStudent -->
           </div>
         </div>
@@ -82,8 +123,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, onMounted, computed} from 'vue';
+import {useRouter} from 'vue-router';
 
 // 学生数据和状态
 const students = ref([]);
@@ -103,8 +144,26 @@ const createMockBridge = () => ({
     console.log('MOCK: get_students called');
     // 返回一些示例数据
     return [
-      { id: 1, name: '张三', status: 'Active', sex: 'Male', birthdate: { year: 2002, month: 5, day: 10 }, admissionYear: 2020, major: '计算机科学' },
-      { id: 2, name: '李四', status: 'Leave', sex: 'Female', birthdate: { year: 2001, month: 8, day: 22 }, admissionYear: 2019, major: '物理学' },
+      {
+        id: 1,
+        name: '张三',
+        status: 'Active',
+        sex: 'Male',
+        birthdate: {year: 2002, month: 5, day: 10},
+        enrollYear: 2020,
+        major: '计算机科学',
+        contact: {phone: '1234567890', email: '123@qq.com'}
+      },
+      {
+        id: 2,
+        name: '李四',
+        status: 'Leave',
+        sex: 'Female',
+        birthdate: {year: 2001, month: 8, day: 22},
+        enrollYear: 2019,
+        major: '物理学',
+        contact: {phone: '1234567890', email: '123@qq.com'}
+      },
     ];
   },
   add_student: (student) => console.log('MOCK: add_student', student),
@@ -174,7 +233,17 @@ const showStudentModal = (student = null) => {
     modalTitle.value = '添加学生信息';
     currentEditingId.value = null;
     // 提供一个空对象模板
-    editableStudent.value = { id: Date.now(), name: '', status: 'Active', birthdate: {}, contact: {}, address: {}, courses: [], familyMembers: [], scores: {} };
+    editableStudent.value = {
+      id: Date.now(),
+      name: '',
+      status: 'Active',
+      birthdate: {},
+      contact: {},
+      address: {},
+      courses: [],
+      familyMembers: [],
+      scores: {}
+    };
   }
   isModalVisible.value = true;
 };
@@ -222,8 +291,12 @@ const toggleCard = (id) => {
 };
 
 // 辅助函数
-const getStatusClass = (status) => ({ 'status-active': status === 'Active', 'status-leave': status === 'Leave', 'status-graduated': status === 'Graduated' });
-const getStatusText = (status) => ({ 'Active': '在读', 'Leave': '休学', 'Graduated': '毕业' }[status] || '在读');
+const getStatusClass = (status) => ({
+  'status-active': status === 'Active',
+  'status-leave': status === 'Leave',
+  'status-graduated': status === 'Graduated'
+});
+const getStatusText = (status) => ({'Active': '在读', 'Leave': '休学', 'Graduated': '毕业'}[status] || '在读');
 const calculateAge = (birthdate) => {
   if (!birthdate || !birthdate.year) return 0;
   const today = new Date();
@@ -250,6 +323,14 @@ const router = useRouter();
 const logout = () => {
   localStorage.removeItem('rememberedUser');
   router.replace('/login');
+};
+
+// 复制到剪贴板并提示
+const copyToClipboard = (text, label = '') => {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    qtBridge.value?.show_notification('已复制', `${label}已复制到剪贴板`);
+  });
 };
 
 onMounted(async () => {
@@ -515,7 +596,7 @@ body {
   border-bottom: 2px solid #e5e7eb;
 }
 
-.info-grid {
+.basic-info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 15px;
@@ -539,6 +620,13 @@ body {
   font-size: 14px;
   color: #1f2937;
   font-weight: 500;
+}
+
+.contact-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 20px;
 }
 
 /* Courses */
@@ -699,7 +787,7 @@ body {
     padding: 20px;
   }
 
-  .info-grid {
+  .basic-info-grid {
     grid-template-columns: 1fr;
   }
 

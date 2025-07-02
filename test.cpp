@@ -19,7 +19,7 @@ void test_student() {
     student.set_name("张三");
     student.set_sex(Sex::Male);
     student.set_birthdate(birthdate);
-    student.set_admission_year(2024);
+    student.set_enroll_year(2024);
     student.set_major("计算机科学与技术");
     student.set_contact(contact);
     student.set_address(address);
@@ -28,26 +28,13 @@ void test_student() {
     assert(student.get_id() == 202401001);
     assert(student.get_name() == "张三");
     assert(student.get_sex() == Sex::Male);
-    assert(student.get_admission_year() == 2024);
+    assert(student.get_enroll_year() == 2024);
     assert(student.get_major() == "计算机科学与技术");
     
     // 测试年龄计算
     int age = student.get_age();
     std::cout << "学生年龄: " << age << std::endl;
-    
-    // 测试课程管理
-    student.add_course("数据结构");
-    student.add_course("算法设计");
-    student.add_course("操作系统");
-    
-    auto courses = student.get_courses();
-    assert(courses.size() == 3);
-    assert(courses[0] == "数据结构");
-    
-    student.del_course("算法设计");
-    courses = student.get_courses();
-    assert(courses.size() == 2);
-    
+
     // 测试家庭成员
     Contact parent_contact("13900139000", "parent@example.com");
     FamilyMember father("张大明", "父亲", parent_contact);
@@ -79,7 +66,7 @@ void test_stu_with_score() {
     student.set_name("李四");
     student.set_sex(Sex::Female);
     student.set_birthdate(birthdate);
-    student.set_admission_year(2024);
+    student.set_enroll_year(2024);
     student.set_major("软件工程");
     student.set_contact(contact);
     student.set_address(address);
