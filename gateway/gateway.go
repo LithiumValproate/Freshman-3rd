@@ -10,7 +10,7 @@ var BackendServices = map[string]string{
 	"/bbs":   "http://localhost:9002", // BBS 服务
 	"/drive": "http://localhost:9003", // 网盘服务
 	//	"/classsys": "http://localhost:9004", // 教务系统
-	//	"/datamanage": "http://localhost:9005", // 数据管理系统（C++）
+	"/struct": "http://localhost:9005", // 数据管理系统（C++）
 }
 
 // 获取后端服务基地址
