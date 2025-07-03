@@ -21,7 +21,7 @@ const routes = [
     {
         path: '/teacher',
         name: 'Teacher',
-        component: () => import('../views/teacher.vue'), // 改为懒加载
+        component: () => import('../views/Teacher.vue'), // 改为懒加载
         meta: {
             requiresAuth: true,
             role: 'teacher'
@@ -30,7 +30,7 @@ const routes = [
     {
         path: '/student',
         name: 'Student',
-        component: () => import('../views/student.vue'), // 改为懒加载
+        component: () => import('../views/Student.vue'), // 改为懒加载
         meta: {
             requiresAuth: true,
             role: 'student'
