@@ -360,11 +360,15 @@ const loadStudents = async () => {
     } else {
       students.value = [];
     }
-    qtBridge.value.log_message(`Students loaded: ${students.value.length} items`);
+    if (qtBridge.value) {
+      qtBridge.value.log_message(`Students loaded: ${students.value.length} items`);
+    }
   } catch (error) {
     console.error('Error loading students:', error);
     students.value = [];
-    qtBridge.value.log_message('Error loading students: ' + error.message);
+    if (qtBridge.value) {
+      qtBridge.value.log_message('Error loading students: ' + error.message);
+    }
   }
 };
 
@@ -448,17 +452,21 @@ const closeStudentModal = () => {
 
 const saveStudent = async () => {
   try {
-    if (currentEditingId.value) {
-      await qtBridge.value.update_student(editableStudent.value);
-    } else {
-      await qtBridge.value.add_student(editableStudent.value);
+    if (qtBridge.value) {
+      if (currentEditingId.value) {
+        await qtBridge.value.update_student(editableStudent.value);
+      } else {
+        await qtBridge.value.add_student(editableStudent.value);
+      }
+      qtBridge.value.show_notification('成功', '学生信息已保存');
     }
-    qtBridge.value.show_notification('成功', '学生信息已保存');
     closeStudentModal();
     await loadStudents();
   } catch (error) {
     console.error('Error saving student:', error);
-    qtBridge.value.log_message('Error saving student: ' + error.message);
+    if (qtBridge.value) {
+      qtBridge.value.log_message('Error saving student: ' + error.message);
+    }
   }
 };
 
@@ -469,12 +477,16 @@ const editStudent = (student) => {
 const deleteStudent = async (studentId) => {
   if (confirm('确定要删除这个学生吗？')) {
     try {
-      await qtBridge.value.delete_student(studentId);
-      qtBridge.value.show_notification('成功', '学生已删除');
+      if (qtBridge.value) {
+        await qtBridge.value.delete_student(studentId);
+        qtBridge.value.show_notification('成功', '学生已删除');
+      }
       await loadStudents();
     } catch (error) {
       console.error('Error deleting student:', error);
-      qtBridge.value.log_message('Error deleting student: ' + error.message);
+      if (qtBridge.value) {
+        qtBridge.value.log_message('Error deleting student: ' + error.message);
+      }
     }
   }
 };
