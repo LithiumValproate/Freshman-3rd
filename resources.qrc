@@ -1,13 +1,13 @@
 <RCC>
 	<qresource prefix="/">
-		<file>web/vue-proj/dist/assets/Admin-AY924yxf.css</file>
-		<file>web/vue-proj/dist/assets/Admin-CWURbRa4.js</file>
-		<file>web/vue-proj/dist/assets/index-CURqJ5ed.js</file>
+		<file>web/vue-proj/dist/assets/Admin-C62bSLxd.js</file>
+		<file>web/vue-proj/dist/assets/Admin-Dr_SCau4.css</file>
+		<file>web/vue-proj/dist/assets/index-Dmx27v3i.js</file>
 		<file>web/vue-proj/dist/assets/index-tn0RQdqM.css</file>
-		<file>web/vue-proj/dist/assets/Login-C6fwmTkk.js</file>
 		<file>web/vue-proj/dist/assets/Login-C32SFoNH.css</file>
-		<file>web/vue-proj/dist/assets/Student-DzqLMSPE.js</file>
-		<file>web/vue-proj/dist/assets/Teacher-BK7KD0FG.js</file>
+		<file>web/vue-proj/dist/assets/Login-wUgVZEKo.js</file>
+		<file>web/vue-proj/dist/assets/Student-CDvNtX2V.js</file>
+		<file>web/vue-proj/dist/assets/Teacher-2oPVL5UR.js</file>
 		<file>web/vue-proj/dist/index.html</file>
 	</qresource>
 </RCC>

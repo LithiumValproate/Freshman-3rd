@@ -48,7 +48,7 @@
                     std::vector<FamilyMember> familyMembers; -->
               <div class="basic-info-grid">
                 <div class="info-item"><label>性别</label><span>{{ student.sex === 'Male' ? '男' : '女' }}</span></div>
-                <div class="info-item"><label>年龄</label><span>{{ student.age }}岁</span></div>
+                <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
                 <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
               </div>
@@ -87,7 +87,7 @@
       </div>
       <div v-else class="no-students">
         <h3>暂无学生数据</h3>
-        <p>点击"添加学生"按钮开始添加学生信息</p>
+        <p>点击"添加学��"按钮开始添加学生信息</p>
       </div>
     </main>
   </div>
@@ -104,13 +104,126 @@
         <div class="form-section">
           <h3>基本信息</h3>
           <div class="form-grid">
-            <div class="form-group"><label for="studentId">学号</label><input type="number" v-model="editableStudent.id"
-                                                                              required></div>
-            <div class="form-group"><label for="studentName">姓名</label><input type="text"
-                                                                                v-model="editableStudent.name" required>
+            <div class="form-group">
+              <label for="studentId">学号</label>
+              <input type="number" v-model="editableStudent.id" required>
             </div>
-            <!-- ... 其他表单字段绑定到 editableStudent -->
+            <div class="form-group">
+              <label for="studentName">姓名</label>
+              <input type="text" v-model="editableStudent.name" required>
+            </div>
+            <div class="form-group">
+              <label for="studentSex">性别</label>
+              <select v-model="editableStudent.sex" required>
+                <option value="">请选择</option>
+                <option value="Male">男</option>
+                <option value="Female">女</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="enrollYear">入学年份</label>
+              <input type="number" v-model="editableStudent.enrollYear" min="1900" max="2030" required>
+            </div>
+            <div class="form-group">
+              <label for="major">专业</label>
+              <input type="text" v-model="editableStudent.major" required>
+            </div>
+            <div class="form-group">
+              <label for="status">学生状态</label>
+              <select v-model="editableStudent.status" required>
+                <option value="Active">在读</option>
+                <option value="Leave">休学</option>
+                <option value="Graduated">毕业</option>
+              </select>
+            </div>
           </div>
+        </div>
+
+        <div class="form-section">
+          <h3>出生日期</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="birthYear">出生年份</label>
+              <input type="number" v-model="editableStudent.birthdate.year" min="1900" max="2010" required>
+            </div>
+            <div class="form-group">
+              <label for="birthMonth">出生月份</label>
+              <select v-model="editableStudent.birthdate.month" required>
+                <option value="">请选择</option>
+                <option v-for="month in 12" :key="month" :value="month">{{ month }}月</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="birthDay">出生日期</label>
+              <select v-model="editableStudent.birthdate.day" required>
+                <option value="">请选择</option>
+                <option v-for="day in 31" :key="day" :value="day">{{ day }}日</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>联系方式</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="phone">电话号码</label>
+              <input type="tel" v-model="editableStudent.contact.phone" pattern="[0-9]{11}" placeholder="请输入11位手机号">
+            </div>
+            <div class="form-group">
+              <label for="email">邮箱地址</label>
+              <input type="email" v-model="editableStudent.contact.email" placeholder="example@email.com">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>地址信息</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="province">省份</label>
+              <input type="text" v-model="editableStudent.address.province" placeholder="如：北京市">
+            </div>
+            <div class="form-group">
+              <label for="city">城市</label>
+              <input type="text" v-model="editableStudent.address.city" placeholder="如：海淀区">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3>家庭成员</h3>
+          <div v-for="(member, index) in editableStudent.familyMembers" :key="index" class="family-member-item">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>姓名</label>
+                <input type="text" v-model="member.name" placeholder="家庭成员姓名">
+              </div>
+              <div class="form-group">
+                <label>关系</label>
+                <select v-model="member.relationship">
+                  <option value="">请选择</option>
+                  <option value="父亲">父亲</option>
+                  <option value="母亲">母亲</option>
+                  <option value="兄弟">兄弟</option>
+                  <option value="姐妹">姐妹</option>
+                  <option value="其他">其他</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>联系电话</label>
+                <input type="tel" v-model="member.contactInfo.phone" placeholder="联系电话">
+              </div>
+              <div class="form-group">
+                <label>邮箱</label>
+                <input type="email" v-model="member.contactInfo.email" placeholder="邮箱地址">
+              </div>
+              <div class="form-group">
+                <button type="button" @click="removeFamilyMember(index)" class="btn btn-danger">删除</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" @click="addFamilyMember" class="btn btn-secondary">添加家庭成员</button>
         </div>
 
         <div class="form-actions">
@@ -133,62 +246,12 @@ const qtBridge = ref(null);
 const searchTerm = ref('');
 const expandedCardId = ref(null);
 
-// 模态框状态
+// 编辑框状态
 const isModalVisible = ref(false);
 const modalTitle = ref('添加学生信息');
 const editableStudent = ref({});
 
-// 模拟的 Qt Bridge，用于在浏览器中测试
-const createMockBridge = () => ({
-  get_students: () => {
-    console.log('MOCK: get_students called');
-    // 返回一些示例数据
-    return [
-      {
-        id: 1,
-        name: '张三',
-        status: 'Active',
-        sex: 'Male',
-        birthdate: {year: 2002, month: 5, day: 10},
-        enrollYear: 2020,
-        major: '计算机科学',
-        contact: {phone: '1234567890', email: '123@qq.com'}
-      },
-      {
-        id: 2,
-        name: '李四',
-        status: 'Leave',
-        sex: 'Female',
-        birthdate: {year: 2001, month: 8, day: 22},
-        enrollYear: 2019,
-        major: '物理学',
-        contact: {phone: '1234567890', email: '123@qq.com'}
-      },
-    ];
-  },
-  add_student: (student) => console.log('MOCK: add_student', student),
-  update_student: (student) => console.log('MOCK: update_student', student),
-  delete_student: (id) => console.log('MOCK: delete_student', id),
-  log_message: (msg) => console.log(`MOCK LOG: ${msg}`),
-  show_notification: (title, msg) => alert(`${title}: ${msg}`),
-  open_file_dialog: () => console.log('MOCK: open_file_dialog'),
-  save_file_dialog: () => console.log('MOCK: save_file_dialog'),
-});
-
-// 计算属性，用于过滤学生
-const filteredStudents = computed(() => {
-  if (!searchTerm.value) {
-    return students.value;
-  }
-  const lowerCaseSearch = searchTerm.value.toLowerCase();
-  return students.value.filter(student =>
-      (student.name && student.name.toLowerCase().includes(lowerCaseSearch)) ||
-      (student.id && student.id.toString().includes(lowerCaseSearch)) ||
-      (student.major && student.major.toLowerCase().includes(lowerCaseSearch))
-  );
-});
-
-
+// 等待 Qt Bridge 初始化
 const waitForQtBridge = () => {
   return new Promise((resolve) => {
     // 检查是否在 Qt 环境中
@@ -198,6 +261,19 @@ const waitForQtBridge = () => {
         console.log('Qt Bridge connected');
         resolve();
       });
+    } else if (typeof QWebChannel !== 'undefined') {
+      // 备用方案：直接尝试创建WebChannel
+      try {
+        new QWebChannel(qt.webChannelTransport, (channel) => {
+          qtBridge.value = channel.objects.qtBridge;
+          console.log('Qt Bridge connected (fallback)');
+          resolve();
+        });
+      } catch (error) {
+        console.warn('Qt Bridge not available, using mock data:', error);
+        qtBridge.value = createMockBridge();
+        resolve();
+      }
     } else {
       console.warn('Qt Bridge not available, using mock data');
       qtBridge.value = createMockBridge();
@@ -206,6 +282,75 @@ const waitForQtBridge = () => {
   });
 };
 
+// 模拟的 Qt Bridge，用于在浏览器中测试
+const createMockBridge = () => {
+  // 模拟数据存储
+  let mockStudents = [
+    {
+      id: 1,
+      name: '张三',
+      status: 'Active',
+      sex: 'Male',
+      birthdate: {year: 2002, month: 5, day: 10},
+      enrollYear: 2020,
+      major: '计算机科学',
+      contact: {phone: '1234567890', email: '123@qq.com'},
+      address: {province: '北京市', city: '海淀区'},
+      familyMembers: []
+    },
+    {
+      id: 2,
+      name: '李四',
+      status: 'Leave',
+      sex: 'Female',
+      birthdate: {year: 2001, month: 8, day: 22},
+      enrollYear: 2019,
+      major: '物理学',
+      contact: {phone: '1234567890', email: '123@qq.com'},
+      address: {province: '上海市', city: '浦东新区'},
+      familyMembers: []
+    },
+  ];
+
+  return {
+    get_students: () => {
+      console.log('MOCK: get_students called');
+      return mockStudents;
+    },
+    add_student: (student) => {
+      console.log('MOCK: add_student', student);
+      // 深拷贝学生数据以避免响应式代理对象问题
+      const cleanStudent = JSON.parse(JSON.stringify(student));
+      mockStudents.push(cleanStudent);
+      return true;
+    },
+    update_student: (student) => {
+      console.log('MOCK: update_student', student);
+      const cleanStudent = JSON.parse(JSON.stringify(student));
+      const index = mockStudents.findIndex(s => s.id === cleanStudent.id);
+      if (index !== -1) {
+        mockStudents[index] = cleanStudent;
+        return true;
+      }
+      return false;
+    },
+    delete_student: (id) => {
+      console.log('MOCK: delete_student', id);
+      const index = mockStudents.findIndex(s => s.id === id);
+      if (index !== -1) {
+        mockStudents.splice(index, 1);
+        return true;
+      }
+      return false;
+    },
+    log_message: (msg) => console.log(`MOCK LOG: ${msg}`),
+    show_notification: (title, msg) => alert(`${title}: ${msg}`),
+    open_file_dialog: () => console.log('MOCK: open_file_dialog'),
+    save_file_dialog: () => console.log('MOCK: save_file_dialog'),
+  };
+};
+
+// 加载学生数据
 const loadStudents = async () => {
   try {
     if (!qtBridge.value) return;
@@ -223,29 +368,78 @@ const loadStudents = async () => {
   }
 };
 
+// 过滤学生
+const filteredStudents = computed(() => {
+  if (!searchTerm.value) {
+    return students.value;
+  }
+  const lowerCaseSearch = searchTerm.value.toLowerCase();
+  return students.value.filter(student =>
+      (student.name && student.name.toLowerCase().includes(lowerCaseSearch)) ||
+      (student.id && student.id.toString().includes(lowerCaseSearch)) ||
+      (student.major && student.major.toLowerCase().includes(lowerCaseSearch))
+  );
+});
+
 const showStudentModal = (student = null) => {
   if (student) {
     modalTitle.value = '编辑学生信息';
     currentEditingId.value = student.id;
-    // 深拷贝一个副本以避免直接修改原始数据
     editableStudent.value = JSON.parse(JSON.stringify(student));
+    // 确保所有嵌套对象都存在
+    if (!editableStudent.value.birthdate) editableStudent.value.birthdate = {};
+    if (!editableStudent.value.contact) editableStudent.value.contact = {};
+    if (!editableStudent.value.address) editableStudent.value.address = {};
+    if (!editableStudent.value.familyMembers) editableStudent.value.familyMembers = [];
   } else {
     modalTitle.value = '添加学生信息';
     currentEditingId.value = null;
-    // 提供一个空对象模板
     editableStudent.value = {
       id: Date.now(),
       name: '',
+      sex: '',
       status: 'Active',
-      birthdate: {},
-      contact: {},
-      address: {},
-      courses: [],
+      enrollYear: new Date().getFullYear(),
+      major: '',
+      birthdate: {
+        year: '',
+        month: '',
+        day: ''
+      },
+      contact: {
+        phone: '',
+        email: ''
+      },
+      address: {
+        province: '',
+        city: ''
+      },
       familyMembers: [],
+      courses: [],
       scores: {}
     };
   }
   isModalVisible.value = true;
+};
+
+// 添加家庭成员
+const addFamilyMember = () => {
+  if (!editableStudent.value.familyMembers) {
+    editableStudent.value.familyMembers = [];
+  }
+  editableStudent.value.familyMembers.push({
+    name: '',
+    relationship: '',
+    contactInfo: {
+      phone: '',
+      email: ''
+    }
+  });
+};
+
+// 删除家庭成员
+const removeFamilyMember = (index) => {
+  editableStudent.value.familyMembers.splice(index, 1);
 };
 
 const closeStudentModal = () => {
@@ -253,7 +447,6 @@ const closeStudentModal = () => {
 };
 
 const saveStudent = async () => {
-  // 省略了表单验证逻辑
   try {
     if (currentEditingId.value) {
       await qtBridge.value.update_student(editableStudent.value);
@@ -262,7 +455,7 @@ const saveStudent = async () => {
     }
     qtBridge.value.show_notification('成功', '学生信息已保存');
     closeStudentModal();
-    await loadStudents(); // 重新加载数据以刷新列表
+    await loadStudents();
   } catch (error) {
     console.error('Error saving student:', error);
     qtBridge.value.log_message('Error saving student: ' + error.message);
@@ -290,7 +483,6 @@ const toggleCard = (id) => {
   expandedCardId.value = expandedCardId.value === id ? null : id;
 };
 
-// 辅助函数
 const getStatusClass = (status) => ({
   'status-active': status === 'Active',
   'status-leave': status === 'Leave',
@@ -319,13 +511,11 @@ const exportData = () => {
 
 const router = useRouter();
 
-// 退出登录���法
 const logout = () => {
   localStorage.removeItem('rememberedUser');
   router.replace('/login');
 };
 
-// 复制到剪贴板并提示
 const copyToClipboard = (text, label = '') => {
   if (!text) return;
   navigator.clipboard.writeText(text).then(() => {
@@ -340,7 +530,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* 样式保持不变 */
 * {
   margin: 0;
   padding: 0;
@@ -756,7 +945,73 @@ body {
   font-size: 13px;
 }
 
-/* 响应式设计 */
+/* 家庭成员表单项 */
+.family-member-item {
+  background: #f8fafc;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.family-member-item:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+.family-member-item .form-grid {
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  align-items: end;
+  gap: 6px;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 60px;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* 添加家庭成员按钮样式 */
+.form-section .btn-secondary {
+  margin-top: 10px;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-section .btn-secondary:before {
+  content: "➕";
+  font-size: 12px;
+}
+
+/* 响应式调整家庭成员表单 */
+@media (max-width: 768px) {
+  .family-member-item .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .family-member-item .btn-danger {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
 @media (max-width: 1024px) {
   .students-container {
     grid-template-columns: repeat(2, 1fr);

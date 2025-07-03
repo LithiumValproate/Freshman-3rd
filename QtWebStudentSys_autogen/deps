@@ -833,8 +833,8 @@ QtWebStudentSys_autogen/timestamp: \
 	/Users/kasugano/Documents/Freshman-3rd/mainwindow.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/mainwindow.h \
 	/Users/kasugano/Documents/Freshman-3rd/resources.qrc \
-	/Users/kasugano/Documents/Freshman-3rd/stu_with_score.h \
-	/Users/kasugano/Documents/Freshman-3rd/student.h \
+	/Users/kasugano/Documents/Freshman-3rd/struct/stu_with_score.h \
+	/Users/kasugano/Documents/Freshman-3rd/struct/student.h \
 	/Users/kasugano/Documents/Freshman-3rd/webbridge.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/webbridge.h \
 	/opt/homebrew/Cellar/qt/6.9.1/include/QtQmlIntegration/qqmlintegration.h \
