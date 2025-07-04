@@ -16,7 +16,7 @@
 #include <QSystemTrayIcon>
 #include <QWidget>
 
-// 构造函数
+// 构造函数，初始化WebBridge对象，加载学生数据
 WebBridge::WebBridge(QObject *parent)
     : QObject(parent)
 {
@@ -28,34 +28,41 @@ WebBridge::WebBridge(QObject *parent)
     log_message("WebBridge 初始化完成");
 }
 
+// 加载指定页面，发射信号通知前端
 void WebBridge::load_page(const QString &page)
 {
-    emit pageRequested(page);
+    emit page_requested(page);
 }
 
+// 打开文件选择对话框，选择学生数据文件并加载
 void WebBridge::open_file_dialog(const QString &title, const QString &filter)
 {
     QString filePath = QFileDialog::getOpenFileName(m_parentWidget, title, "", filter);
     if (!filePath.isEmpty()) {
-        emit fileSelected(filePath);
+        emit file_selected(filePath);
         load_students_from_file(filePath);
+        emit students_updated(); // 通知前端数据已更新
     }
 }
 
+// 打开保存文件对话框，保存学生数据到指定文件
 void WebBridge::save_file_dialog(const QString &title, const QString &filter)
 {
     QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "", filter);
     if (!filePath.isEmpty()) {
-        emit fileSaveRequested(filePath);
+        emit file_save_requested(filePath);
         save_students_to_file(filePath);
+        emit students_updated(); // 通知前端数据已更新（可选）
     }
 }
 
+// 日志输出函数，便于调试
 void WebBridge::log_message(const QString &message)
 {
     qDebug() << "[WEB LOG] " << message;
 }
 
+// 显示系统托盘通知
 void WebBridge::show_notification(const QString &title, const QString &message)
 {
     QSystemTrayIcon *trayIcon = new QSystemTrayIcon(this);
@@ -64,6 +71,7 @@ void WebBridge::show_notification(const QString &title, const QString &message)
     trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 3000);
 }
 
+// 最小化窗口到托盘
 void WebBridge::minimize_to_tray()
 {
     if (m_parentWidget) {
@@ -71,6 +79,7 @@ void WebBridge::minimize_to_tray()
     }
 }
 
+// 获取应用信息（名称、版本、Qt版本）
 QJsonObject WebBridge::get_app_info()
 {
     QJsonObject info;
@@ -80,6 +89,7 @@ QJsonObject WebBridge::get_app_info()
     return info;
 }
 
+// 添加学生，参数为JSON对象
 void WebBridge::add_student(const QJsonObject &studentData)
 {
     log_message("开始添加学生，接收到的JSON数据:");
@@ -102,7 +112,7 @@ void WebBridge::add_student(const QJsonObject &studentData)
 
         log_message(QString("添加学生: ID=%1, Name=%2").arg(student.get_id()).arg(QString::fromStdString(student.get_name())));
 
-        // 检查是否已存在相同ID的学生
+        // 检查是否已存在相同ID的学生，存在则覆盖，否则添加
         auto it = std::find_if(m_students.begin(), m_students.end(),
                               [&student](const Stu_withScore& s) {
                                   return s.get_id() == student.get_id();
@@ -120,6 +130,7 @@ void WebBridge::add_student(const QJsonObject &studentData)
         log_message("学生添加完成");
 
         show_notification("成功", "学生 " + QString::fromStdString(student.get_name()) + " 已添加。");
+        emit students_updated(); // 通知前端数据已更新
     } catch (const std::exception& e) {
         log_message(QString("添加学生失败: %1").arg(e.what()));
         show_notification("错误", QString("添加学生失败: %1").arg(e.what()));
@@ -129,6 +140,7 @@ void WebBridge::add_student(const QJsonObject &studentData)
     }
 }
 
+// 获取所有学生信息，返回JSON数组
 QJsonArray WebBridge::get_students()
 {
     log_message(QString("get_students 被调用，当前内存中有 %1 个学生").arg(m_students.size()));
@@ -150,6 +162,7 @@ QJsonArray WebBridge::get_students()
     return studentsArray;
 }
 
+// 更新学生信息，参数为JSON对象
 void WebBridge::update_student(const QJsonObject &studentData)
 {
     if (!studentData.contains("id")) {
@@ -158,6 +171,7 @@ void WebBridge::update_student(const QJsonObject &studentData)
     }
     long id = studentData["id"].toVariant().toLongLong();
 
+    // 查找对应ID的学生并更新
     auto it = std::find_if(m_students.begin(), m_students.end(),
                            [id](const Stu_withScore& s) {
                                return s.get_id() == id;
@@ -169,6 +183,7 @@ void WebBridge::update_student(const QJsonObject &studentData)
             log_message("Student " + QString::fromStdString(it->get_name()) + " updated.");
             show_notification("成功", "学生 " + QString::fromStdString(it->get_name()) + " 已更新。");
             save_students(); // 自动保存
+            emit students_updated(); // 通知前端数据已更新
         } catch (const std::exception& e) {
             log_message(QString("更新学生失败: %1").arg(e.what()));
         } catch (...) {
@@ -179,8 +194,10 @@ void WebBridge::update_student(const QJsonObject &studentData)
     }
 }
 
+// 删除指定ID的学生
 void WebBridge::delete_student(long studentId)
 {
+    // 使用remove_if删除匹配ID的学生
     auto it = std::remove_if(m_students.begin(), m_students.end(),
                              [studentId](const Stu_withScore& s) {
                                  return s.get_id() == studentId;
@@ -189,23 +206,27 @@ void WebBridge::delete_student(long studentId)
     if (it != m_students.end()) {
         m_students.erase(it, m_students.end());
         log_message(QString("Student with ID %1 deleted.").arg(studentId));
-        show_notification("成功", QString("ID为 %1 的学生���删除。").arg(studentId));
+        show_notification("成功", QString("ID为 %1 的学生已删除。").arg(studentId));
         save_students(); // 自动保存
+        emit students_updated(); // 通知前端数据已更新
     } else {
         log_message(QString("删除失败: 未找到ID为 %1 的学生。").arg(studentId));
     }
 }
 
+// 保存学生数据到默认备份路径
 void WebBridge::save_students()
 {
     save_students_to_file(get_backup_path());
 }
 
+// 从默认备份路径加载学生数据
 void WebBridge::load_students()
 {
     load_students_from_file(get_backup_path());
 }
 
+// 保存学生数据到指定文件
 void WebBridge::save_students_to_file(const QString &filePath)
 {
     try {
@@ -252,6 +273,7 @@ void WebBridge::save_students_to_file(const QString &filePath)
     }
 }
 
+// 从指定文件加载学生数据
 void WebBridge::load_students_from_file(const QString &filePath)
 {
     QFile file(filePath);
@@ -288,9 +310,10 @@ void WebBridge::load_students_from_file(const QString &filePath)
         log_message("文件格式错误: 不是有效的JSON数组。");
     }
     file.close();
+    emit students_updated(); // 通知前端数据已更新
 }
 
-
+// 获取学生数据备份文件的路径
 QString WebBridge::get_backup_path() const
 {
     QString backupDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);

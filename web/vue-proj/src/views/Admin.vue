@@ -254,15 +254,27 @@ const editableStudent = ref({});
 // 等待 Qt Bridge 初始化
 const waitForQtBridge = () => {
   return new Promise((resolve) => {
-    // 检查 QWebChannel 是否可用
-    if (typeof QWebChannel !== 'undefined' && typeof qt !== 'undefined' && qt.webChannelTransport) {
+    // 检查是否在 Qt 环境中
+    if (typeof qt !== 'undefined' && qt.webChannelTransport) {
       new QWebChannel(qt.webChannelTransport, (channel) => {
         qtBridge.value = channel.objects.qtBridge;
         console.log('Qt Bridge connected');
         resolve();
       });
+    } else if (typeof QWebChannel !== 'undefined') {
+      // 备用方案：直接尝试创建WebChannel
+      try {
+        new QWebChannel(qt.webChannelTransport, (channel) => {
+          qtBridge.value = channel.objects.qtBridge;
+          console.log('Qt Bridge connected (fallback)');
+          resolve();
+        });
+      } catch (error) {
+        console.warn('Qt Bridge not available, using mock data:', error);
+        qtBridge.value = createMockBridge();
+        resolve();
+      }
     } else {
-      // 浏览器或未注入 QWebChannel 时，使用 mock
       console.warn('Qt Bridge not available, using mock data');
       qtBridge.value = createMockBridge();
       resolve();
@@ -283,7 +295,7 @@ const createMockBridge = () => {
       enrollYear: 2020,
       major: '计算机科学',
       contact: {phone: '1234567890', email: '123@qq.com'},
-      address: {province: '北京市', city: '海淀区'},
+      address: {province: '北���市', city: '海淀区'},
       familyMembers: []
     },
     {
@@ -342,23 +354,19 @@ const createMockBridge = () => {
 const loadStudents = async () => {
   try {
     if (!qtBridge.value) return;
-    // 兼容 Qt/C++ 端异步调用（QWebChannel 方法可能返回 Promise，也可能直接返回数据）
-    let result = qtBridge.value.get_students();
-    if (result instanceof Promise) {
-      result = await result;
-    }
+    const result = await qtBridge.value.get_students();
     if (Array.isArray(result)) {
       students.value = result;
     } else {
       students.value = [];
     }
-    if (qtBridge.value.log_message) {
+    if (qtBridge.value) {
       qtBridge.value.log_message(`Students loaded: ${students.value.length} items`);
     }
   } catch (error) {
     console.error('Error loading students:', error);
     students.value = [];
-    if (qtBridge.value && qtBridge.value.log_message) {
+    if (qtBridge.value) {
       qtBridge.value.log_message('Error loading students: ' + error.message);
     }
   }
@@ -379,7 +387,7 @@ const filteredStudents = computed(() => {
 
 const showStudentModal = (student = null) => {
   if (student) {
-    modalTitle.value = '编辑学生信息';
+    modalTitle.value = '编辑学��信息';
     currentEditingId.value = student.id;
     editableStudent.value = JSON.parse(JSON.stringify(student));
     // 确保所有嵌套对象都存在
@@ -445,22 +453,22 @@ const closeStudentModal = () => {
 const saveStudent = async () => {
   try {
     if (currentEditingId.value) {
-      if (qtBridge.value.update_student) {
+      if (qtBridge.value) {
         await qtBridge.value.update_student(editableStudent.value);
       }
     } else {
-      if (qtBridge.value.add_student) {
+      if (qtBridge.value) {
         await qtBridge.value.add_student(editableStudent.value);
       }
     }
-    if (qtBridge.value.show_notification) {
+    if (qtBridge.value) {
       qtBridge.value.show_notification('成功', '学生信息已保存');
     }
     closeStudentModal();
     await loadStudents();
   } catch (error) {
     console.error('Error saving student:', error);
-    if (qtBridge.value && qtBridge.value.log_message) {
+    if (qtBridge.value) {
       qtBridge.value.log_message('Error saving student: ' + error.message);
     }
   }
@@ -473,16 +481,14 @@ const editStudent = (student) => {
 const deleteStudent = async (studentId) => {
   if (confirm('确定要删除这个学生吗？')) {
     try {
-      if (qtBridge.value.delete_student) {
+      if (qtBridge.value) {
         await qtBridge.value.delete_student(studentId);
-      }
-      if (qtBridge.value.show_notification) {
         qtBridge.value.show_notification('成功', '学生已删除');
       }
       await loadStudents();
     } catch (error) {
       console.error('Error deleting student:', error);
-      if (qtBridge.value && qtBridge.value.log_message) {
+      if (qtBridge.value) {
         qtBridge.value.log_message('Error deleting student: ' + error.message);
       }
     }
@@ -512,13 +518,13 @@ const calculateAge = (birthdate) => {
 };
 
 const importData = () => {
-  if (qtBridge.value && qtBridge.value.open_file_dialog) {
-    qtBridge.value.open_file_dialog('导入学生数据', 'JSON Files (*.json)');
+  if (qtBridge.value) {
+    qtBridge.value.open_file_dialog('导���学生数据', 'JSON Files (*.json)');
   }
 };
 
 const exportData = () => {
-  if (qtBridge.value && qtBridge.value.save_file_dialog) {
+  if (qtBridge.value) {
     qtBridge.value.save_file_dialog('导出学生数据', 'JSON Files (*.json)');
   }
 };
@@ -533,7 +539,7 @@ const logout = () => {
 const copyToClipboard = (text, label = '') => {
   if (!text) return;
   navigator.clipboard.writeText(text).then(() => {
-    if (qtBridge.value && qtBridge.value.show_notification) {
+    if (qtBridge.value) {
       qtBridge.value.show_notification('已复制', `${label}已复制到剪贴板`);
     }
   });
@@ -542,6 +548,13 @@ const copyToClipboard = (text, label = '') => {
 onMounted(async () => {
   await waitForQtBridge();
   await loadStudents();
+
+  // 监听 Qt 后端的 studentsUpdated 信号，收到后刷新数据
+  if (qtBridge.value && qtBridge.value.students_updated) {
+    qtBridge.value.students_updated.connect(async () => {
+      await loadStudents();
+    });
+  }
 });
 </script>
 

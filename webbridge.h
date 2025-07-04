@@ -15,11 +15,13 @@ public:
     explicit WebBridge(QObject* parent = nullptr);
 
 signals :
-    void fileSelected(const QString& filePath);
+    void file_selected(const QString& filePath);
 
-    void fileSaveRequested(const QString& filePath);
+    void file_save_requested(const QString& filePath);
 
-    void pageRequested(const QString& pageUrl);
+    void page_requested(const QString& pageUrl);
+
+    void students_updated();
 
 public
 slots :

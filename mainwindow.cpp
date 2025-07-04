@@ -85,7 +85,7 @@ void MainWindow::setup_web_view() {
     m_webChannel->registerObject("qtBridge", m_webBridge);
     m_webView->page()->setWebChannel(m_webChannel);
 
-    connect(m_webBridge, &WebBridge::pageRequested, this, &MainWindow::on_page_requested);
+    connect(m_webBridge, &WebBridge::page_requested, this, &MainWindow::on_page_requested);
 
     // 加载HTML文件
     m_webView->load(QUrl("qrc:/web/vue-proj/dist/index.html"));
