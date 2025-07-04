@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget* parent)
     setup_status_bar();
     setup_web_view();
 
-    setWindowTitle("Qt Web学生管理系统");
+    setWindowTitle("Qt Web学校综合系统");
     resize(1400, 900);
 }
 
@@ -122,6 +122,6 @@ void MainWindow::refresh_page() {
 
 void MainWindow::show_about() {
     QMessageBox::about(this, "关于",
-                       QString("Qt Web学生管理系统\n版本: %1\n\n基于Qt WebEngine的学生管理系统")
+                       QString("Qt Web学校综合系统\n版本: %1\n\n基于Qt WebEngine的学校综合系统")
                        .arg(QApplication::applicationVersion()));
 }
