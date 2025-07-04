@@ -31,15 +31,15 @@ slots :
 
     void save_file_dialog(const QString& title, const QString& filter);
 
-    void log_message(const QString& message);
+    static void log_message(const QString& message);
 
     void show_notification(const QString& title, const QString& message);
 
-    void minimize_to_tray();
+    void minimize_to_tray() const;
 
     QJsonObject get_app_info();
 
-    QJsonArray get_students();
+    QJsonArray get_students() const;
 
     void add_student(const QJsonObject& studentData);
 

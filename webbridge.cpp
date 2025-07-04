@@ -72,8 +72,7 @@ void WebBridge::show_notification(const QString &title, const QString &message)
 }
 
 // 最小化窗口到托盘
-void WebBridge::minimize_to_tray()
-{
+void WebBridge::minimize_to_tray() const {
     if (m_parentWidget) {
         m_parentWidget->hide();
     }
@@ -141,8 +140,7 @@ void WebBridge::add_student(const QJsonObject &studentData)
 }
 
 // 获取所有学生信息，返回JSON数组
-QJsonArray WebBridge::get_students()
-{
+QJsonArray WebBridge::get_students() const {
     log_message(QString("get_students 被调用，当前内存中有 %1 个学生").arg(m_students.size()));
 
     QJsonArray studentsArray;

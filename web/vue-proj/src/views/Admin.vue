@@ -43,6 +43,7 @@
                     Date birthdate;
                     int enrollYear{};
                     std::string major;
+                    int class_;
                     Contact contactInfo;
                     Address address;
                     std::vector<FamilyMember> familyMembers; -->
@@ -51,6 +52,7 @@
                 <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
                 <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
+                <div class="info-item"><label>班级</label><span>{{ student.class_ }}</span></div>
               </div>
               <div class="contact-info-grid">
                 <div class="info-item contact-item">
@@ -294,6 +296,7 @@ const createMockBridge = () => {
       birthdate: {year: 2002, month: 5, day: 10},
       enrollYear: 2020,
       major: '计算机科学',
+      class_: '10',
       contact: {phone: '1234567890', email: '123@qq.com'},
       address: {province: '北���市', city: '海淀区'},
       familyMembers: []
@@ -306,6 +309,7 @@ const createMockBridge = () => {
       birthdate: {year: 2001, month: 8, day: 22},
       enrollYear: 2019,
       major: '物理学',
+      class_: '12',
       contact: {phone: '1234567890', email: '123@qq.com'},
       address: {province: '上海市', city: '浦东新区'},
       familyMembers: []
@@ -387,7 +391,7 @@ const filteredStudents = computed(() => {
 
 const showStudentModal = (student = null) => {
   if (student) {
-    modalTitle.value = '编辑学��信息';
+    modalTitle.value = '编辑学生信息';
     currentEditingId.value = student.id;
     editableStudent.value = JSON.parse(JSON.stringify(student));
     // 确保所有嵌套对象都存在
@@ -405,6 +409,7 @@ const showStudentModal = (student = null) => {
       status: 'Active',
       enrollYear: new Date().getFullYear(),
       major: '',
+      class_: '',
       birthdate: {
         year: '',
         month: '',
@@ -816,7 +821,7 @@ body {
 
 .basic-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 15px;
 }
 

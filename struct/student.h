@@ -72,6 +72,7 @@ private:
     int age;
     int enrollYear{};
     std::string major;
+    int class_;
     Contact contactInfo;
     Address address;
     std::vector<FamilyMember> familyMembers;
@@ -86,11 +87,12 @@ public:
             const Date& d,
             int y,
             const std::string& maj,
+            const int c,
             const Contact& contact,
             const Address& addr,
             Status st = Status::Active)
         : id{id}, name{n}, sex{s}, birthdate{d},
-          enrollYear{y}, major{maj},
+          enrollYear{y}, major{maj}, class_(c),
           contactInfo{contact}, address{addr}, status{st} {
         std::time_t t = std::time(nullptr);
         std::tm* now  = std::localtime(&t);
@@ -132,6 +134,9 @@ public:
 
     auto get_major() const -> const std::string& { return major; }
     void set_major(const std::string& v) { major = v; }
+
+    auto get_class() const -> int { return class_; }
+    void set_class(int v) { class_ = v; }
 
     auto get_contact() const & -> const Contact& { return contactInfo; }
     void set_contact(const Contact& v) { contactInfo = v; }
@@ -288,15 +293,16 @@ inline auto status_from_qjson_string(const QString& str) -> Status {
 // Student Qt JSON conversions
 inline auto student_to_qjson(const Student& stu) -> QJsonObject {
     QJsonObject obj;
-    obj["id"]            = static_cast<qint64>(stu.get_id());
-    obj["name"]          = QString::fromStdString(stu.get_name());
-    obj["sex"]           = sex_to_qjson_string(stu.get_sex());
-    obj["birthdate"]     = date_to_qjson(stu.get_birthdate());
+    obj["id"]         = static_cast<qint64>(stu.get_id());
+    obj["name"]       = QString::fromStdString(stu.get_name());
+    obj["sex"]        = sex_to_qjson_string(stu.get_sex());
+    obj["birthdate"]  = date_to_qjson(stu.get_birthdate());
     obj["enrollYear"] = stu.get_enroll_year();
-    obj["major"]         = QString::fromStdString(stu.get_major());
-    obj["contact"] = contact_to_qjson(stu.get_contact());
-    obj["address"] = address_to_qjson(stu.get_address());
-    obj["status"]  = status_to_qjson_string(stu.get_status());
+    obj["major"]      = QString::fromStdString(stu.get_major());
+    obj["class"]      = stu.get_class();
+    obj["contact"]    = contact_to_qjson(stu.get_contact());
+    obj["address"]    = address_to_qjson(stu.get_address());
+    obj["status"]     = status_to_qjson_string(stu.get_status());
     QJsonArray familyArray;
     for (const auto& fm : stu.get_family_members()) {
         familyArray.append(family_member_to_qjson(fm));
@@ -313,6 +319,7 @@ inline auto student_from_qjson(const QJsonObject& obj) -> Student {
     stu.set_birthdate(date_from_qjson(obj["birthdate"].toObject()));
     stu.set_enroll_year(obj["enrollYear"].toInt());
     stu.set_major(obj["major"].toString().toStdString());
+    stu.set_class(obj["class"].toInt());
     stu.set_contact(contact_from_qjson(obj["contact"].toObject()));
     stu.set_address(address_from_qjson(obj["address"].toObject()));
     stu.set_status(status_from_qjson_string(obj["status"].toString()));
