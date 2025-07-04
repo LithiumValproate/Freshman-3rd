@@ -1,15 +1,27 @@
 import os
 
 
+def collect_files(root_dir):
+    files = []
+    for dirpath, _, filenames in os.walk(root_dir):
+        for filename in filenames:
+            full_path = os.path.join(dirpath, filename)
+            # 路径相对于项目根目录
+            rel_path = os.path.relpath(full_path, os.path.dirname(__file__))
+            files.append(rel_path.replace("\\", "/"))
+    return files
+
+
 def main():
-    print("请粘贴以回车分割的多个文件路径，输入空行结束：")
-    lines = []
-    while True:
-        line = input()
-        if not line.strip():
-            break
-        lines.append(line.strip())
-    files = [f for f in dict.fromkeys(lines) if f]
+    dist_dir = os.path.join(os.path.dirname(__file__), "web/vue-proj/dist")
+    if not os.path.exists(dist_dir):
+        print(f"目录不存在: {dist_dir}")
+        return
+
+    files = collect_files(dist_dir)
+    if not files:
+        print("未检测到任何文件。")
+        return
 
     qrc_path = os.path.join(os.path.dirname(__file__), "resources.qrc")
     with open(qrc_path, "w", encoding="utf-8") as f:

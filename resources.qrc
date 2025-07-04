@@ -1,13 +1,15 @@
 <RCC>
 	<qresource prefix="/">
-		<file>web/vue-proj/dist/assets/Admin-D-ELmIDq.js</file>
-		<file>web/vue-proj/dist/assets/Admin-Dpz1SVvz.css</file>
-		<file>web/vue-proj/dist/assets/index-DVGCNvk5.js</file>
-		<file>web/vue-proj/dist/assets/index-tn0RQdqM.css</file>
-		<file>web/vue-proj/dist/assets/Login-C32SFoNH.css</file>
-		<file>web/vue-proj/dist/assets/Login-CUjDQ662.js</file>
-		<file>web/vue-proj/dist/assets/Student-td6ISpI-.js</file>
-		<file>web/vue-proj/dist/assets/Teacher-8cnbRTCy.js</file>
 		<file>web/vue-proj/dist/index.html</file>
+		<file>web/vue-proj/dist/vite.svg</file>
+		<file>web/vue-proj/dist/assets/Teacher-BK2NXFG4.css</file>
+		<file>web/vue-proj/dist/assets/Login-Bqs74v4u.js</file>
+		<file>web/vue-proj/dist/assets/Teacher-VU4gPvPT.js</file>
+		<file>web/vue-proj/dist/assets/Admin-Du5YVAUT.css</file>
+		<file>web/vue-proj/dist/assets/Admin-FdEH8NuY.js</file>
+		<file>web/vue-proj/dist/assets/Login-DIJMbwCk.css</file>
+		<file>web/vue-proj/dist/assets/index-tn0RQdqM.css</file>
+		<file>web/vue-proj/dist/assets/index-y1IrUi58.js</file>
+		<file>web/vue-proj/dist/assets/Student-DLvcUZ2I.js</file>
 	</qresource>
 </RCC>

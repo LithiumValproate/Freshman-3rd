@@ -81,7 +81,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, toRefs } from 'vue';
+import { ref, reactive, onMounted, toRefs, inject } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -100,8 +100,32 @@ const message = ref('');
 const messageType = ref('');
 const loading = ref(false);
 
-// 初始化：恢复"记住我"数据
-onMounted(() => {
+// 注入 App.vue 提供的学生列表
+const students = inject('students');
+
+// 新增：Qt Bridge 引用及初始化，用于拉取学生列表
+const qtBridge = ref(null);
+const waitForQtBridge = () => new Promise(resolve => {
+  if (typeof qt !== 'undefined' && qt.webChannelTransport) {
+    new QWebChannel(qt.webChannelTransport, ch => { qtBridge.value = ch.objects.qtBridge; resolve(); });
+  } else if (typeof QWebChannel !== 'undefined') {
+    try {
+      new QWebChannel(qt.webChannelTransport, ch => { qtBridge.value = ch.objects.qtBridge; resolve(); });
+    } catch {
+      qtBridge.value = { get_students: ()=>[] }; resolve();
+    }
+  } else {
+    qtBridge.value = { get_students: ()=>[] }; resolve();
+  }
+});
+const loadStudents = async () => {
+  if (!qtBridge.value) return;
+  const res = await qtBridge.value.get_students();
+  students.value = Array.isArray(res) ? res : [];
+};
+
+onMounted(async () => {
+  // 初始化：恢复"记住我"数据
   const saved = localStorage.getItem('rememberedUser');
   if (saved) {
     try {
@@ -110,10 +134,13 @@ onMounted(() => {
       loginForm.username = data.username || '';
       loginForm.password = data.password || '';
       loginForm.rememberMe = true;
-    } catch (e) {
-      console.warn('读取本地存储失败', e);
+    } catch {
+      console.warn('读取本地存储失败');
     }
   }
+  // 新增：进入登录页时刷新学生列表
+  await waitForQtBridge();
+  await loadStudents();
 });
 
 // 表单校验
@@ -126,6 +153,16 @@ function validate() {
     message.value = formError.role || formError.username || formError.password;
     messageType.value = 'error';
     return false;
+  }
+  // 学生身份时，用户名必须等于某个学生的 ID
+  if (loginForm.role === 'student') {
+    const id = Number(loginForm.username);
+    if (!students?.value?.some(s => s.id === id)) {
+      formError.username = '用户名与学生ID不匹配';
+      message.value = formError.username;
+      messageType.value = 'error';
+      return false;
+    }
   }
   return true;
 }
@@ -149,7 +186,7 @@ function handleLogin() {
 
   // 模拟身份验证
   setTimeout(() => {
-    // 创建完整的用户对象
+    // 创建完整的��户对象
     const userData = {
       username: loginForm.username,
       password: loginForm.password,  // 实际项目中不应存储明文密码

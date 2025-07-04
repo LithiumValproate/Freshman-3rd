@@ -238,35 +238,33 @@
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
-import {useRouter} from 'vue-router';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 // 学生数据和状态
 const students = ref([]);
 const currentEditingId = ref(null);
-const qtBridge = ref(null);
 const searchTerm = ref('');
 const expandedCardId = ref(null);
 
-// 编辑框状态
+// 编辑���状态
 const isModalVisible = ref(false);
 const modalTitle = ref('添加学生信息');
 const editableStudent = ref({});
 
-// 等待 Qt Bridge 初始化
+// 新增：Qt Bridge 引用及初始化
+const qtBridge = ref(null);
 const waitForQtBridge = () => {
   return new Promise((resolve) => {
-    // 检查是否在 Qt 环境中
     if (typeof qt !== 'undefined' && qt.webChannelTransport) {
-      new QWebChannel(qt.webChannelTransport, (channel) => {
+      new QWebChannel(qt.webChannelTransport, channel => {
         qtBridge.value = channel.objects.qtBridge;
         console.log('Qt Bridge connected');
         resolve();
       });
     } else if (typeof QWebChannel !== 'undefined') {
-      // 备用方案：直接尝试创建WebChannel
       try {
-        new QWebChannel(qt.webChannelTransport, (channel) => {
+        new QWebChannel(qt.webChannelTransport, channel => {
           qtBridge.value = channel.objects.qtBridge;
           console.log('Qt Bridge connected (fallback)');
           resolve();
