@@ -24,8 +24,6 @@ set(SOURCES
     main.cpp
     mainwindow.cpp
     webbridge.cpp
-        im/main.cpp
-        im/server.cpp
 )
 
 # 设置头文件
@@ -34,7 +32,6 @@ set(HEADERS
     webbridge.h
         struct/student.h
         struct/stu_with_score.h
-        im/server.h
 )
 
 # 设置资源文件
