@@ -103,7 +103,7 @@ const loading = ref(false);
 // 注入 App.vue 提供的学生列表
 const students = inject('students');
 
-// 新增：Qt Bridge 引用及初始化，用于拉取学生列表
+// Qt Bridge 引用及初始化，用于拉取学生列表
 const qtBridge = ref(null);
 const waitForQtBridge = () => new Promise(resolve => {
   if (typeof qt !== 'undefined' && qt.webChannelTransport) {
@@ -138,7 +138,7 @@ onMounted(async () => {
       console.warn('读取本地存储失败');
     }
   }
-  // 新增：进入登录页时刷新学生列表
+  // 进入登录页时刷新学生列表
   await waitForQtBridge();
   await loadStudents();
 });
