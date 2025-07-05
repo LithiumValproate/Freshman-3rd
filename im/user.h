@@ -6,6 +6,7 @@
 
 #include <string>
 #include <string_view>
+#include <utility>
 
 template<typename T>
 class Participant {
@@ -14,8 +15,8 @@ protected:
     std::string nickname;
 
 public:
-    Participant(const T& usr, std::string_view nick)
-        : user(usr), nickname(nick) {}
+    Participant(T usr, std::string_view nick)
+        : user(std::move(usr)), nickname(nick) {}
 
     virtual ~Participant() = default;
 
