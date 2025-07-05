@@ -32,6 +32,7 @@ set(HEADERS
     webbridge.h
         struct/student.h
         struct/stu_with_score.h
+        im/basic.h
 )
 
 # 设置资源文件
