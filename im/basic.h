@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../struct/student.h"
+
 #include <string>
 #include <string_view>
 #include <variant>
 
-#include "../struct/student.h"
+
 
 class Message {
 public:
