@@ -64,7 +64,7 @@ enum class Sex { Male = 0, Female = 1 };
 enum class Status { Active = 0, Leave = 1, Graduated = 2 };
 
 class Student {
-private:
+protected:
     long id{};
     std::string name;
     Sex sex;

@@ -1,9 +1,6 @@
 #pragma once
 
-#include "../struct/student.h"
-
 #include <string>
-#include <string_view>
 #include <variant>
 
 
@@ -38,23 +35,4 @@ public:
 private:
     Type type;
     Content content;
-};
-
-
-class Participant {
-protected:
-    Student user;
-    std::string nickname;
-
-public:
-    Participant(const Student& usr, std::string_view nick)
-        : user(usr), nickname(nick) {}
-
-    virtual ~Participant() = default;
-
-    virtual void send_message(const Message& msg) = 0;
-    virtual void receive_message(const Message& msg) = 0;
-
-    const Student& get_user() const { return user; }
-    const std::string& get_nickname() const { return nickname; }
 };

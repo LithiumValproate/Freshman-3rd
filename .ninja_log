@@ -1,6 +1,6 @@
 # ninja log v6
 56	169	1751700044057960339	/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/mocs_compilation.cpp	3f2ec6d3963c556e
-10	861	1751706137404368457	build.ninja	58c0e7e5f926435b
+10	861	1751709527182756119	build.ninja	58c0e7e5f926435b
 334	593	1751700044336232610	CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp.o	245acaa9a17fc7fe
 112	1193	1751530283407313060	CMakeFiles/QtWebStudentSys.dir/webbridge.cpp.o	91a1d4ed23d4ab5d
 170	334	1751700044330662279	QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp	8021a544e0d6e9ce

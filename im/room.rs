@@ -57,7 +57,7 @@ impl Room {
 #[cxx::bridge]
 mod ffi {
     extern "C++" {
-        include!("basic.h");
+        include!("message.h");
         include!("../struct/student.h");
 
         type Message;

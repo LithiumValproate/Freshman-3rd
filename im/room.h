@@ -1,6 +1,6 @@
 #pragma once
 
-#include "basic.h"
+#include "message.h"
 
 #include <algorithm>
 #include <map>

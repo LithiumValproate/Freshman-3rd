@@ -5,6 +5,6 @@ fn main() {
         .compile("im_cxx");
 
     println!("cargo:rerun-if-changed=room.rs");
-    println!("cargo:rerun-if-changed=basic.h");
+    println!("cargo:rerun-if-changed=message.h");
     println!("cargo:rerun-if-changed=../struct/student.h");
 }
