@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../struct/student.h"
-
 #include <string>
+#include <string_view>
 #include <variant>
+
+#include "../struct/student.h"
 
 class Message {
 public:
@@ -15,11 +16,16 @@ public:
         Emoji
     };
 
+    // 明确每种类型的内容
+    struct ImageCtn { std::string path; };
+    struct GifCtn { std::string path; };
+    struct VideoCtn { std::string path; };
+
     using Content = std::variant<
-        std::string, // 文字或emoji
-        std::string, // 图片路径
-        std::string, // gif路径
-        std::string  // 视频路径
+        std::string,      // Text or Emoji
+        ImageCtn,     // Image
+        GifCtn,       // Gif
+        VideoCtn      // Video
     >;
 
     Message(Type typ, const Content& ctn) : type(typ), content(ctn) {}
@@ -34,16 +40,19 @@ private:
 
 
 class Participant {
+protected:
     Student user;
     std::string nickname;
 
 public:
-    Participant(const Student& usr, const std::string& nick)
+    Participant(const Student& usr, std::string_view nick)
         : user(usr), nickname(nick) {}
 
     virtual ~Participant() = default;
 
     virtual void send_message(const Message& msg) = 0;
-
     virtual void receive_message(const Message& msg) = 0;
+
+    const Student& get_user() const { return user; }
+    const std::string& get_nickname() const { return nickname; }
 };
