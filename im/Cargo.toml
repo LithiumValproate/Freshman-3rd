@@ -1,0 +1,15 @@
+[package]
+name = "im"
+version = "0.1.0"
+edition = "2021"
+
+description = "IM模块的Rust实现"
+
+[dependencies]
+# 需要用到多线程同步
+
+[lib]
+name = "im"
+path = "room.rs"
+crate-type = ["rlib"]
+
