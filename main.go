@@ -4,7 +4,7 @@ import (
 	"log"
 	"net"
 
-	"./im"
+	"freshman-chat/im"
 )
 
 func main() {
