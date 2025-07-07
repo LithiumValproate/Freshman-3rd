@@ -1,14 +1,14 @@
 package main
 
 import (
+	pkg "github.com/lithiumvalproate/freshman-3rd/Go/package"
 	"log"
 	"net"
-	"github.com/lithiumvalproate/freshman-3rd/im"
 )
 
 func main() {
 	// 创建服务器
-	server := im.NewServer()
+	server := pkg.NewServer()
 
 	// 监听端口
 	listener, err := net.Listen("tcp", ":8081")

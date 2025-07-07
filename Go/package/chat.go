@@ -1,4 +1,4 @@
-package im
+package _package
 
 import (
 	"bufio"
@@ -20,16 +20,16 @@ type Client struct {
 
 // Room 结构体代表一个聊天室
 type Room struct {
-	id      uint64                   // 聊天室的唯一ID
+	id      uint64 // 聊天室的唯一ID
 	name    string
 	members map[net.Addr]*Client // 聊天室内的成员
 }
 
 // Server 结构体是整个应用的核心，管理所有状态
 type Server struct {
-	rooms    map[string]*Room // 服务器上所有的聊天室
-	mu       sync.Mutex       // 用于保护 rooms 的互斥锁
-	nextRoomID uint64          // 下一个聊天室ID计数器
+	rooms      map[string]*Room // 服务器上所有的聊天室
+	mu         sync.Mutex       // 用于保护 rooms 的互斥锁
+	nextRoomID uint64           // 下一个聊天室ID计数器
 }
 
 // NewServer 创建并返回一个新的 Server 实例
