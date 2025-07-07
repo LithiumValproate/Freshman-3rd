@@ -3,8 +3,7 @@ package main
 import (
 	"log"
 	"net"
-
-	"freshman-chat/im"
+	"github.com/lithiumvalproate/freshman-3rd/im"
 )
 
 func main() {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "message.h"
-#include "../struct/student.h"
-#include "../struct/other_users.h"
+#include "../../struct/student.h"
+#include "../../struct/other_users.h"
 
 #include <string>
 #include <string_view>
