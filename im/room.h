@@ -1,6 +1,7 @@
 #pragma once
 
 #include "message.h"
+#include "user.h"
 
 #include <algorithm>
 #include <map>

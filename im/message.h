@@ -20,16 +20,23 @@ public:
         Emoji
     };
 
-    // 明确每种类型的内容
-    struct ImageCtn { std::string path; };
-    struct GifCtn { std::string path; };
-    struct VideoCtn { std::string path; };
+    struct ImageCtn {
+        std::string path;
+    };
+
+    struct GifCtn {
+        std::string path;
+    };
+
+    struct VideoCtn {
+        std::string path;
+    };
 
     using Content = std::variant<
-        std::string,      // Text or Emoji
-        ImageCtn,     // Image
-        GifCtn,       // Gif
-        VideoCtn      // Video
+        std::string, // Text or Emoji
+        ImageCtn,    // Image
+        GifCtn,      // Gif
+        VideoCtn     // Video
     >;
 
     Message(Type typ, const Content& ctn) : type(typ), content(ctn) {}
@@ -70,37 +77,43 @@ inline auto message_content_to_qjson(const Message::Content& content) -> QJsonVa
         return QString::fromStdString(std::get<std::string>(content));
     } else if (std::holds_alternative<Message::ImageCtn>(content)) {
         const auto& img = std::get<Message::ImageCtn>(content);
-        return QJsonObject{{"path", QString::fromStdString(img.path)}};
+        return QJsonObject{
+            {"type", message_type_to_qjson_string(Message::Type::Image)},
+            {"path", QString::fromStdString(img.path)}
+        };
     } else if (std::holds_alternative<Message::GifCtn>(content)) {
         const auto& gif = std::get<Message::GifCtn>(content);
-        return QJsonObject{{"path", QString::fromStdString(gif.path)}};
+        return QJsonObject{
+            {"type", message_type_to_qjson_string(Message::Type::Gif)},
+            {"path", QString::fromStdString(gif.path)}
+        };
     } else if (std::holds_alternative<Message::VideoCtn>(content)) {
         const auto& video = std::get<Message::VideoCtn>(content);
-        return QJsonObject{{"path", QString::fromStdString(video.path)}};
+        return QJsonObject{
+            {"type", message_type_to_qjson_string(Message::Type::Video)},
+            {"path", QString::fromStdString(video.path)}
+        };
     }
     return QJsonValue();
 }
 
-inline auto message_conntent_from_qjson(const QJsonValue& value) -> Message::Content {
+inline auto message_content_from_qjson(const QJsonValue& value) -> Message::Content {
     if (value.isString()) {
         return value.toString().toStdString();
     } else if (value.isObject()) {
         const auto obj = value.toObject();
-        if (obj.contains("path")) {
+        if (obj.contains("type") && obj.contains("path")) {
+            const Message::Type typ = message_type_from_qjson_string(obj["type"].toString());
             const std::string path = obj["path"].toString().toStdString();
-            if (obj.contains("type")) {
-                const QString type = obj["type"].toString();
-                if (type == "Image") {
-                    return Message::ImageCtn{path};
-                } else if (type == "Gif") {
-                    return Message::GifCtn{path};
-                } else if (type == "Video") {
-                    return Message::VideoCtn{path};
-                }
+            switch (typ) {
+                case Message::Type::Image: return Message::ImageCtn{path};
+                case Message::Type::Gif:   return Message::GifCtn{path};
+                case Message::Type::Video: return Message::VideoCtn{path};
+                default: break;
             }
         }
     }
-    return std::string(); // Default to empty string
+    return std::string();
 }
 
 inline auto message_to_qjson(const Message& msg) -> QJsonObject {
@@ -112,7 +125,7 @@ inline auto message_to_qjson(const Message& msg) -> QJsonObject {
 
 inline auto message_from_qjson(const QJsonObject& obj) -> Message {
     Message::Type type = message_type_from_qjson_string(obj["type"].toString());
-    Message::Content content = message_conntent_from_qjson(obj["content"]);
+    Message::Content content = message_content_from_qjson(obj["content"]);
     return Message(type, content);
 }
 

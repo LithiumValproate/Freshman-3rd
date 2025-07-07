@@ -15,7 +15,7 @@ protected:
     std::string nickname;
 
 public:
-    Participant(T usr, std::string_view nick)
+    Participant(const T& usr, const std::string_view nick)
         : user(std::move(usr)), nickname(nick) {}
 
     virtual ~Participant() = default;
