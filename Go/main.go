@@ -1,7 +1,7 @@
 package main
 
 import (
-	pkg "github.com/lithiumvalproate/freshman-3rd/Go/package"
+	pkg "github.com/lithiumvalproate/freshman-3rd/Go/src"
 	"log"
 	"net"
 )
