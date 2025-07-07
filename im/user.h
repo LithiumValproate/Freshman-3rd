@@ -8,8 +8,17 @@
 #include <string_view>
 #include <utility>
 
+// 基础参与者接口
+class IParticipant {
+public:
+    virtual ~IParticipant() = default;
+    virtual void send_message(const Message& msg) = 0;
+    virtual void receive_message(const Message& msg) = 0;
+    virtual const std::string& get_nickname() const = 0;
+};
+
 template<typename T>
-class Participant {
+class Participant : public IParticipant {
 protected:
     T user;
     std::string nickname;
@@ -25,7 +34,7 @@ public:
     virtual void receive_message(const Message& msg) = 0;
 
     const T& get_user() const { return user; }
-    const std::string& get_nickname() const { return nickname; }
+    const std::string& get_nickname() const override { return nickname; }
 };
 
 class CommonParticipant : public Participant<Student> {

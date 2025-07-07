@@ -24,6 +24,8 @@ set(SOURCES
     main.cpp
     mainwindow.cpp
     webbridge.cpp
+    im/user.cpp
+    im/room.cpp
 )
 
 # 设置头文件
@@ -35,6 +37,7 @@ set(HEADERS
         struct/other_users.h
         im/message.h
         im/user.h
+        im/room.h
 )
 
 # 设置资源文件

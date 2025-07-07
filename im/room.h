@@ -14,7 +14,7 @@
 namespace im {
     class Room {
     public:
-        using ParticipantPtr = std::shared_ptr<Participant>;
+        using ParticipantPtr = std::shared_ptr<IParticipant>;
 
         explicit Room(const std::string& name);
         Room(uint64_t room_id, const std::string& name);
@@ -78,7 +78,4 @@ namespace im {
     inline const std::string& Room::get_name() const { return name; }
 
     inline uint64_t Room::get_id() const { return id; }
-
-    // 静态成员定义
-    std::atomic<uint64_t> Room::next_id{0};
 } // namespace im
