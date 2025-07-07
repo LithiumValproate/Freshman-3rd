@@ -8,6 +8,7 @@ import (
 	"net"
 	"strings"
 	"sync"
+	"sync/atomic"
 )
 
 // Client 结构体代表一个连接到服务器的客户端
@@ -19,20 +20,23 @@ type Client struct {
 
 // Room 结构体代表一个聊天室
 type Room struct {
+	id      uint64                   // 聊天室的唯一ID
 	name    string
 	members map[net.Addr]*Client // 聊天室内的成员
 }
 
 // Server 结构体是整个应用的核心，管理所有状态
 type Server struct {
-	rooms map[string]*Room // 服务器上所有的聊天室
-	mu    sync.Mutex       // 用于保护 rooms 的互斥锁
+	rooms    map[string]*Room // 服务器上所有的聊天室
+	mu       sync.Mutex       // 用于保护 rooms 的互斥锁
+	nextRoomID uint64          // 下一个聊天室ID计数器
 }
 
 // NewServer 创建并返回一个新的 Server 实例
 func NewServer() *Server {
 	return &Server{
-		rooms: make(map[string]*Room),
+		rooms:      make(map[string]*Room),
+		nextRoomID: 1, // 从1开始分配房间ID
 	}
 }
 
@@ -54,6 +58,7 @@ func (s *Server) HandleConnection(conn net.Conn) {
 	client.msg("  /nick <your_nickname>  - 设置你的昵称\n")
 	client.msg("  /join <room_name>      - 加入或创建一个聊天室\n")
 	client.msg("  /rooms                 - 查看所有可用聊天室\n")
+	client.msg("  /roominfo              - 查看当前房间信息（包括ID）\n")
 	client.msg("  /quit                  - 离开聊天室\n")
 
 	// 创建一个读取器来处理来自客户端的输入
@@ -96,6 +101,8 @@ func (s *Server) HandleConnection(conn net.Conn) {
 				}
 			case "/rooms":
 				s.listRooms(client)
+			case "/roominfo":
+				s.showRoomInfo(client)
 			case "/quit":
 				s.quitRoom(client)
 			default:
@@ -110,6 +117,11 @@ func (s *Server) HandleConnection(conn net.Conn) {
 			}
 		}
 	}
+}
+
+// generateRoomID 生成下一个唯一的房间ID
+func (s *Server) generateRoomID() uint64 {
+	return atomic.AddUint64(&s.nextRoomID, 1)
 }
 
 // setNick 设置客户端的昵称
@@ -128,12 +140,14 @@ func (s *Server) joinRoom(c *Client, roomName string) {
 	room, ok := s.rooms[roomName]
 	if !ok {
 		// 如果不存在，则创建一个新的
+		roomID := s.generateRoomID()
 		room = &Room{
+			id:      roomID,
 			name:    roomName,
 			members: make(map[net.Addr]*Client),
 		}
 		s.rooms[roomName] = room
-		log.Printf("创建新聊天室: %s", roomName)
+		log.Printf("创建新聊天室: %s (ID: %d)", roomName, roomID)
 	}
 
 	// 如果客户端已经在某个房间，先将他从中移除
@@ -144,8 +158,8 @@ func (s *Server) joinRoom(c *Client, roomName string) {
 	// 将客户端加入新房间
 	c.room = room
 	room.members[c.conn.RemoteAddr()] = c
-	c.msg(fmt.Sprintf("已加入聊天室: %s\n", roomName))
-	log.Printf("客户端 %s (%s) 加入了聊天室 %s", c.conn.RemoteAddr(), c.nick, roomName)
+	c.msg(fmt.Sprintf("已加入聊天室: %s (ID: %d)\n", roomName, room.id))
+	log.Printf("客户端 %s (%s) 加入了聊天室 %s (ID: %d)", c.conn.RemoteAddr(), c.nick, roomName, room.id)
 
 	// 向房间里的其他人广播此人加入的消息
 	s.broadcast(c, fmt.Sprintf("--- %s 加入了聊天室 ---\n", c.nick))
@@ -162,10 +176,27 @@ func (s *Server) listRooms(c *Client) {
 	}
 
 	var roomList []string
-	for name := range s.rooms {
-		roomList = append(roomList, name)
+	for name, room := range s.rooms {
+		roomList = append(roomList, fmt.Sprintf("%s (ID: %d)", name, room.id))
 	}
 	c.msg(fmt.Sprintf("可用聊天室: %s\n", strings.Join(roomList, ", ")))
+}
+
+// showRoomInfo 显示当前房间的详细信息
+func (s *Server) showRoomInfo(c *Client) {
+	if c.room == nil {
+		c.msg("你不在任何聊天室中。\n")
+		return
+	}
+
+	s.mu.Lock()
+	memberCount := len(c.room.members)
+	s.mu.Unlock()
+
+	c.msg(fmt.Sprintf("当前房间信息:\n"))
+	c.msg(fmt.Sprintf("  名称: %s\n", c.room.name))
+	c.msg(fmt.Sprintf("  ID: %d\n", c.room.id))
+	c.msg(fmt.Sprintf("  成员数量: %d\n", memberCount))
 }
 
 // quitRoom 将客户端从当前聊天室移除
@@ -179,11 +210,12 @@ func (s *Server) quitRoom(c *Client) {
 	defer s.mu.Unlock()
 
 	roomName := c.room.name
+	roomID := c.room.id
 	// 从聊天室成员列表中删除
 	delete(c.room.members, c.conn.RemoteAddr())
 	c.room = nil
-	c.msg(fmt.Sprintf("你已离开聊天室 %s\n", roomName))
-	log.Printf("客户端 %s (%s) 离开了聊天室 %s", c.conn.RemoteAddr(), c.nick, roomName)
+	c.msg(fmt.Sprintf("你已离开聊天室 %s (ID: %d)\n", roomName, roomID))
+	log.Printf("客户端 %s (%s) 离开了聊天室 %s (ID: %d)", c.conn.RemoteAddr(), c.nick, roomName, roomID)
 
 	// 向房间里的其他人广播此人离开的消息
 	s.broadcast(c, fmt.Sprintf("--- %s 离开了聊天室 ---\n", c.nick))
