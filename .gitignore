@@ -36,6 +36,7 @@ Release/
 bin/
 obj/
 dist/
+sentry-native/gi
 
 # CMake
 CMakeCache.txt
@@ -146,3 +147,6 @@ chat-server
 
 # environment files
 .env
+
+# bash
+cmake_.sh
