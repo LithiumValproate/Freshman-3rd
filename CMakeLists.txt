@@ -24,8 +24,8 @@ set(SOURCES
     main.cpp
     mainwindow.cpp
     webbridge.cpp
-        im/cpp/user.cpp
-        im/cpp/room.cpp
+        im/user.cpp
+        im/room.cpp
 )
 
 # 设置头文件
@@ -35,9 +35,9 @@ set(HEADERS
         struct/student.h
         struct/stu_with_score.h
         struct/other_users.h
-        im/cpp/message.h
-        im/cpp/user.h
-        im/cpp/room.h
+        im/message.h
+        im/user.h
+        im/room.h
 )
 
 # 设置资源文件
@@ -53,12 +53,20 @@ add_executable(QtWebSchoolSys
 )
 
 # 链接Qt库
-target_link_libraries(QtWebSchoolSys
+target_link_libraries(QtWebSchoolSys PRIVATE
     Qt6::Core
     Qt6::Widgets
     Qt6::WebEngineWidgets
     Qt6::WebChannel
 )
+
+# === Sentry 集成 ===
+# 添加 sentry-native 子目录
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sentry-native)
+# 引入 Sentry 头文件目录
+target_include_directories(QtWebSchoolSys PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sentry-native/include)
+# 链接 sentry 库
+target_link_libraries(QtWebSchoolSys PRIVATE sentry::sentry)
 
 # 设置包含目录
 target_include_directories(QtWebSchoolSys PRIVATE
@@ -106,4 +114,3 @@ endif()
 target_compile_definitions(QtWebSchoolSys PRIVATE
     APP_VERSION="${PROJECT_VERSION}"
 )
-

@@ -2,9 +2,16 @@
 
 #include <QApplication>
 #include <QStyleFactory>
+#include <sentry.h> // Sentry SDK
 
 int main(int argc, char *argv[])
 {
+    // Initialize Sentry SDK
+    sentry_options_t *options = sentry_options_new();
+    sentry_options_set_dsn(options, std::getenv("DSN"));
+    sentry_options_set_release(options, APP_VERSION);
+    sentry_init(options);
+
     QApplication app(argc, argv);
     
     app.setApplicationName("Qt Web学生管理系统");
@@ -59,5 +66,8 @@ int main(int argc, char *argv[])
     MainWindow window;
     window.show();
     
-    return app.exec();
+    int result = app.exec();
+    // Shutdown Sentry SDK
+    sentry_shutdown();
+    return result;
 }
