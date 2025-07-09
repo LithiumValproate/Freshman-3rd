@@ -3,13 +3,6 @@
 #include <string>
 #include <variant>
 
-#ifdef USE_QTJSON
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
-#endif
-
 class Message {
 public:
     enum class Type {
@@ -51,6 +44,11 @@ private:
 
 
 #ifdef USE_QTJSON
+
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QString>
 
 inline auto message_type_to_qjson_string(Message::Type type) -> QString {
     switch (type) {

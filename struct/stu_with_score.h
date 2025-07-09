@@ -4,13 +4,6 @@
 
 #include <map>
 
-#ifdef USE_QTJSON
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
-#endif
-
 struct Score {
     double score;
     double gpa;
@@ -60,6 +53,10 @@ public:
 
 // -- JSON conversions for Stu_withScore --
 #ifdef USE_QTJSON
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QString>
 
 inline auto score_to_qjson(const Score& s) -> QJsonObject {
     QJsonObject obj;

@@ -35,6 +35,7 @@ set(HEADERS
         struct/student.h
         struct/stu_with_score.h
         struct/other_users.h
+        struct/course.h
         im/message.h
         im/user.h
         im/room.h

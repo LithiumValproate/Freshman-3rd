@@ -3,16 +3,9 @@
 #include <string>
 #include <unordered_map>
 
-#ifdef USE_QTJSON
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
-#endif
-
 enum class UserType {
-    Admin = 1,
-    Bot = 0,
+    Admin   = 1,
+    Bot     = 0,
     Teacher = 2,
 };
 
@@ -51,6 +44,10 @@ public:
 };
 
 #ifdef USE_QTJSON
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QString>
 
 inline auto user_type_to_qjson_string(UserType type) -> QString {
     switch (type) {

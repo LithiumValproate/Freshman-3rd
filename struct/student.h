@@ -6,14 +6,6 @@
 #include <string>
 #include <vector>
 
-#ifdef USE_QTJSON
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonValue>
-#include <QString>
-#endif
-
-
 // -- data types --
 
 struct Date {
@@ -200,6 +192,10 @@ public:
 
 // -- JSON conversions --
 #ifdef USE_QTJSON
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QString>
 
 // Sex Qt JSON conversions
 inline auto sex_to_qjson_string(Sex s) -> QString {
