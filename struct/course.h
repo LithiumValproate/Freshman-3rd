@@ -13,10 +13,26 @@ enum class DayOfWeek {
     Sunday
 };
 
+enum class Repetition {
+    Weekly,
+    BiWeeklyOdd,
+    BiWeeklyEven
+};
+
+struct Time {
+    int hour;
+    int minute;
+    Time(const int h, const int m) : hour(h), minute(m) {}
+};
+
 struct TimeSlot {
     DayOfWeek day;
-    std::string startTime; // Format: HH:MM
-    std::string endTime;   // Format: HH:MM
+    Time startTime;
+    Time endTime;
+    Repetition repetition;
+
+    TimeSlot(DayOfWeek d, const Time& start, const Time& end, Repetition rep = Repetition::Weekly)
+        : day(d), startTime(start), endTime(end), repetition(rep) {}
 };
 
 class Course {
