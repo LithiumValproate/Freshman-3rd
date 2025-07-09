@@ -1008,6 +1008,7 @@ QtWebSchoolSys_autogen/timestamp: \
 	/Users/kasugano/Documents/Freshman-3rd/mainwindow.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/mainwindow.h \
 	/Users/kasugano/Documents/Freshman-3rd/resources.qrc \
+	/Users/kasugano/Documents/Freshman-3rd/struct/course.h \
 	/Users/kasugano/Documents/Freshman-3rd/struct/other_users.h \
 	/Users/kasugano/Documents/Freshman-3rd/struct/stu_with_score.h \
 	/Users/kasugano/Documents/Freshman-3rd/struct/student.h \
