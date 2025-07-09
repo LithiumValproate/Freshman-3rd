@@ -2,120 +2,201 @@
 
 <div align="center">
 
-![Language](https://img.shields.io/badge/Languages-C++%20|%20Vue%20|%20Go%20|%20Python-blue)
-![Framework](https://img.shields.io/badge/Framework-Qt%20|%20Vue.js-green)
+![Language](https://img.shields.io/badge/Languages-Vue%20|%20C++%20|%20Go%20|%20JavaScript%20|%20Python-blue)
+![Framework](https://img.shields.io/badge/Framework-Qt%20|%20Vue.js%20|%20Vite-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+![Stars](https://img.shields.io/github/stars/LithiumValproate/Freshman-3rd?style=social)
+
+*一个现代化的桌面-Web融合学生管理系统*
 
 </div>
 
 ## 📝 项目概述
 
-Qt-Web 学生管理系统是一个创新性融合项目，将现代 Web 前端与 Qt 桌面应用无缝集成，为学生信息管理提供跨平台解决方案。本系统兼具 Web 应用的灵活性与原生桌面应用的高效性，实现了技术栈的优势互补。
+Qt-Web 学生管理系统是一个创新性融合项目，将现代 Web 前端技术与 Qt 桌面应用完美结合。系统采用 Vue 3 + Vite 构建前端界面，通过 QWebEngineView 嵌入到 Qt 桌面应用中，为学生信息管理提供了既具备 Web 应用灵活性又拥有桌面应用性能的跨平台解决方案。
 
 ## ✨ 核心特性
 
-- **桌面 Web 融合**：使用 QWebEngineView 嵌入 Vue 前端，提供原生桌面窗口体验
-- **双向通信机制**：基于 QWebChannel 实现 Web 前端与 Qt 后端的高效实时交互
-- **数据安全保障**：自动备份、恢复与设置持久化功能
-- **现代化 UI/UX**：响应式布局设计，状态栏集成，进度条反馈，全屏支持
-- **系统深度集成**：系统托盘、全局快捷键、原生文件对话框、系统通知服务
+- **🎨 现代化前端**: Vue 3 + Vite 构建，支持热重载和快速开发
+- **🔗 桌面 Web 融合**: QWebEngineView 嵌入 Vue 前端，原生桌面体验
+- **⚡ 双向通信**: 基于 QWebChannel 实现前后端高效实时数据交互
+- **🛡️ 数据安全**: 自动备份恢复机制，设置持久化存储
+- **📱 响应式设计**: 适配不同屏幕尺寸，现代化 UI/UX 体验
+- **🔧 系统集成**: 系统托盘、全局快捷键、原生对话框、系统通知
 
-## 🔧 技术栈详解
+## 🔧 技术栈
 
-### 前端技术
-- **Vue.js** (55.5%): 构建响应式用户界面
-- **JavaScript**: 客户端逻辑处理
+### 前端技术栈
+- **Vue 3** (56.8%): 现代响应式前端框架
+- **Vite**: 快速构建工具和开发服务器
+- **JavaScript** (2.0%): 客户端逻辑处理
+- **CSS** (0.6%): 样式设计
+- **HTML** (0.2%): 页面结构
 
-### 后端技术
-- **C++** (29.7%): Qt 框架核心逻辑
-- **Go** (5.2%): 辅助服务和微服务支持
-- **Rust** (1.6%): 性能关键模块
-- **CMake** (3.3%): 跨平台构建系统
+### 后端技术栈
+- **C++** (31.4%): Qt 框架核心应用逻辑
+- **Go** (4.1%): 辅助服务和数据处理模块
+- **Python** (0.5%): 脚本工具和数据分析
+- **CMake** (3.9%): 跨平台构建系统
+- **QMake** (0.3%): Qt 项目构建工具
 
-### 核心组件
-- **Qt 5/6**: 应用程序框架和 UI 渲染
-- **QWebEngine**: Web 内容渲染引擎
-- **QWebChannel**: 前后端双向通信桥接
+### 核心框架
+- **Qt 5/6**: 跨平台桌面应用程序框架
+- **QWebEngine**: 现代 Web 内容渲染引擎
+- **QWebChannel**: JavaScript 与 Qt 双向通信桥接
 
 ## 🚀 快速开始
 
-### 环境准备
-- Qt 5/6 开发环境
-- C++ 编译器
-- Node.js 和 npm (用于 Web 前端)
-- Go 编译器 (可选)
-- Rust 编译器 (可选)
+### 📋 环境要求
 
-### 获取代码
+**必需环境:**
+- Qt 5.15+ 或 Qt 6.x 开发环境
+- C++17 或更高版本编译器
+- Node.js 16+ 和 npm/yarn
+- CMake 3.16+
+
+**可选环境:**
+- Go 1.19+ (用于辅助模块)
+- Python 3.8+ (用于数据处理脚本)
+
+### 📥 获取代码
+
 ```bash
 git clone https://github.com/LithiumValproate/Freshman-3rd.git
 cd Freshman-3rd
 ```
 
-### 构建与运行
+### 🔨 构建与运行
 
-#### Qt 桌面端
-使用 Qt Creator 打开项目，或通过命令行：
-
+#### 1. 构建前端项目
 ```bash
-# 使用 qmake
-qmake && make
-./bin/QtWebStudentSys
+cd web/vue-proj
+npm install
+npm run build
+```
 
-# 或使用 CMake
-cmake .
+#### 2. 构建 Qt 桌面应用
+
+**使用 CMake (推荐):**
+```bash
+mkdir build && cd build
+cmake ..
+cmake --build .
+./bin/QtWebStudentSys
+```
+
+**使用 qmake:**
+```bash
+qmake
 make
 ./bin/QtWebStudentSys
 ```
 
-#### Web 前端 (独立开发模式)
+#### 3. 开发模式运行
+
+**前端热重载开发:**
 ```bash
 cd web/vue-proj
-npm install
 npm run dev
 ```
+
+**Qt 应用开发:**
+使用 Qt Creator 打开 `.pro` 文件进行开发
 
 ## 📂 项目结构
 
 ```
 Freshman-3rd/
-├── main.cpp                # 程序入口
-├── mainwindow.*            # 主窗口实现
-├── webbridge.*             # Web-Qt 通信桥
-├── struct/                 # 数据结构定义
-├── web/                    # Web 前端资源
-│   └── vue-proj/           # Vue 项目
-├── bin/                    # 编译输出目录
-├── resources.qrc           # Qt 资源文件
-└── doc/                    # 项目文档
+├── 📁 src/                    # Qt 应用源码
+│   ├── main.cpp              # 程序入口点
+│   ├── mainwindow.*          # 主窗口实现
+│   ├── webbridge.*           # Web-Qt 通信桥接
+│   ├── struct/               # 数据结构定义
+|   ├── im/                   # C++即时通讯后端
+|   └── Go/                   # Go 辅助模块  
+├── 📁 web/                   # Web 前端项目
+│   └── vue-proj/            # Vue 3 + Vite 项目
+│       ├── src/             # Vue 源码
+│       ├── public/          # 静态资源
+│       ├── package.json     # 依赖管理
+│       └── vite.config.js   # Vite 配置
+├── 📁 bin/                   # 编译输出目录
+├── 📁 doc/                   # 项目文档
+├── 📄 CMakeLists.txt         # CMake 构建配置
+├── 📄 *.pro                  # QMake 项目文件
+└── 📄 resources.qrc          # Qt 资源文件
 ```
 
 ## 💡 主要功能
 
-- **学生信息管理**：全面的 CRUD 操作界面
-- **数据管理工具**：数据导入导出、备份恢复
-- **多视图展示**：表格视图、卡片视图、统计视图
-- **设置中心**：用户偏好和系统配置持久化
-- **通知系统**：重要事件的系统级通知
+### 🎯 核心功能模块
+- **👥 学生信息管理**: 完整的增删改查操作界面
+- **📊 数据可视化**: 多维度统计图表和数据分析
+- **📁 数据管理**: 导入导出、备份恢复、批量操作
+- **🔍 搜索过滤**: 多条件组合搜索和高级筛选
+- **⚙️ 设置中心**: 用户偏好和系统配置管理
 
-## 📊 技术分布
+### 🎨 界面特性
+- **📱 响应式布局**: 适配不同窗口尺寸
+- **🌙 主题切换**: 支持明暗主题模式
+- **🔔 通知系统**: 系统级操作提醒
+- **⌨️ 快捷键**: 提升操作效率
+- **💾 状态保存**: 自动保存用户操作状态
 
-- Vue: 55.5%
-- C++: 29.7%
-- Go: 5.2%
-- CMake: 3.3%
-- JavaScript: 2.6%
-- Rust: 1.6%
-- 其他: 2.1%
+## 📊 技术组成分析
+
+```
+Vue:        114,156 bytes (56.8%) ████████████████████████████████████████
+C++:         63,213 bytes (31.4%) ████████████████████████
+Go:           8,149 bytes (4.1%)  ███
+CMake:        7,778 bytes (3.9%)  ███
+JavaScript:   4,077 bytes (2.0%)  █
+CSS:          1,269 bytes (0.6%)  
+Python:       1,097 bytes (0.5%)  
+QMake:          516 bytes (0.3%)  
+HTML:           465 bytes (0.2%)  
+```
 
 ## 🤝 参与贡献
 
-欢迎提交 Pull Request 或创建 Issue！在参与项目前，请先熟悉代码库并遵循项目编码风格。
+我们欢迎各种形式的贡献！请遵循以下步骤：
+
+1. **Fork** 本仓库
+2. 创建您的特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开一个 **Pull Request**
+
+### 🔧 开发指南
+- 遵循项目现有的代码风格
+- 添加适当的注释和文档
+- 确保新功能包含相应的测试
+- 更新相关文档
+
+## 📋 待办事项
+
+- [ ] 添加单元测试覆盖
+- [ ] 完善用户手册文档
+- [ ] 支持多语言国际化
+- [ ] 添加数据库连接功能
+- [ ] 实现插件系统架构
 
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 详情请查看 [LICENSE](LICENSE) 文件
 
+## 📞 联系方式
+
+- **作者**: [Liu Yang (LithiumValproate)](https://github.com/LithiumValproate)
+- **邮箱**: [通过 GitHub 联系]
+- **学校**: 新疆大学
+
 ---
 
-© 2025 [Liu Yang (LithiumValproate)](https://github.com/LithiumValproate) - Xinjiang University
+<div align="center">
+
+**⭐ 如果这个项目对您有帮助，请考虑给它一个 Star！**
+
+© 2025 [LithiumValproate](https://github.com/LithiumValproate) - Xinjiang University
+
+</div>
