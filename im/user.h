@@ -30,9 +30,9 @@ public:
 
     virtual ~Participant() = default;
 
-    virtual void send_message(const Message& msg) = 0;
+    void send_message(const Message& msg) override = 0;
 
-    virtual void receive_message(const Message& msg) = 0;
+    void receive_message(const Message& msg) override = 0;
 
     const T& get_user() const { return user; }
     const std::string& get_nickname() const override { return nickname; }
