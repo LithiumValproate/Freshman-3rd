@@ -3,14 +3,15 @@
     <header class="header">
       <h2>个人信息中心</h2>
       <div class="header-controls">
-        <button @click="showEditModal" class="btn btn-primary">编辑信息</button>
+        <button @click="exportToJson" class="btn btn-primary">导出到JSON</button>
         <button @click="logout" class="btn btn-secondary" style="margin-left: 10px;">退出登录</button>
       </div>
     </header>
 
     <main class="main-content">
       <div class="students-container">
-        <div class="student-card expanded">
+        <div class="student-card">
+          <!-- 学生基本信息 -->
           <div class="student-card-header">
             <div class="student-basic-info">
               <h2 class="student-name">{{ student.name || '未知姓名' }}</h2>
@@ -18,44 +19,86 @@
               <div class="status-badge status-active">在读</div>
             </div>
           </div>
-          <div class="student-details" style="display:block;">
+
+          <div class="student-details">
+            <!-- 课表 - 日历形式 -->
             <div class="info-section">
-              <h3>基本信息</h3>
+              <div class="section-header">
+                <h3>课表</h3>
+              </div>
+              <div class="calendar-schedule" v-if="student.courses && student.courses.length">
+                <div class="calendar-grid">
+                  <div class="time-header">时间</div>
+                  <div class="day-header" v-for="day in weekDays" :key="day.key">{{ day.label }}</div>
+                  <template v-for="hour in timeSlots" :key="hour">
+                    <div class="time-slot">{{ hour }}:00</div>
+                    <div
+                      v-for="day in weekDays"
+                      :key="`${day.key}-${hour}`"
+                      class="schedule-cell"
+                      :class="{ 'has-course': getCourseAtTime(day.key, hour) }"
+                    >
+                      <div v-if="getCourseAtTime(day.key, hour)" class="course-block">
+                        <div class="course-name">{{ getCourseAtTime(day.key, hour).courseName }}</div>
+                        <div class="course-location">{{ getCourseAtTime(day.key, hour).location }}</div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+              <div class="no-data" v-else>暂无课表数据</div>
+            </div>
+
+            <!-- 成绩 - 柱状图 -->
+            <div class="info-section">
+              <div class="section-header">
+                <h3>课程成绩</h3>
+              </div>
+              <div class="chart-container" v-if="student.courseScore && student.courseScore.length">
+                <canvas ref="scoreChart"></canvas>
+              </div>
+              <div class="no-data" v-else>暂无成绩数据</div>
+            </div>
+
+            <!-- 个人基本信息 -->
+            <div class="info-section">
+              <div class="section-header">
+                <h3>基本信息</h3>
+              </div>
               <div class="basic-info-grid">
                 <div class="info-item"><label>性别</label><span>{{ student.sex === 'Male' ? '男' : '女' }}</span></div>
+                <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
                 <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
                 <div class="info-item"><label>班级</label><span>{{ student.class_ }}</span></div>
               </div>
+            </div>
+
+            <!-- 联系方式 -->
+            <div class="info-section">
+              <div class="section-header">
+                <h3>联系方式</h3>
+                <button @click="editSection('contact')" class="btn btn-icon">✏️</button>
+              </div>
               <div class="contact-info-grid">
-                <div class="info-item contact-item">
+                <div class="info-item">
                   <label>电话</label>
-                  <span style="display: flex; align-items: center;">
-                    {{ student.contactInfo.phone || '无' }}
-                    <button
-                        v-if="student.contactInfo.phone"
-                        class="btn-icon"
-                        style="margin-left: auto; margin-right: 1em;"
-                        @click="copyToClipboard(student.contactInfo.phone, '电话')"
-                        title="复制电话"
-                    >📋</button>
-                  </span>
+                  <span>{{ student.contactInfo.phone || '无' }}</span>
                 </div>
                 <div class="info-item">
                   <label>邮箱</label>
-                  <span style="display: flex; align-items: center;">
-                    {{ student.contactInfo.email || '无' }}
-                    <button
-                        v-if="student.contactInfo.email"
-                        class="btn-icon"
-                        style="margin-left: auto; margin-right: 1em;"
-                        @click="copyToClipboard(student.contactInfo.email, '邮箱')"
-                        title="复制邮箱"
-                    >📋</button>
-                  </span>
+                  <span>{{ student.contactInfo.email || '无' }}</span>
                 </div>
               </div>
-              <div class="contact-info-grid" style="margin-top:20px;">
+            </div>
+
+            <!-- 地址信息 -->
+            <div class="info-section">
+              <div class="section-header">
+                <h3>地址信息</h3>
+                <button @click="editSection('address')" class="btn btn-icon">✏️</button>
+              </div>
+              <div class="contact-info-grid">
                 <div class="info-item">
                   <label>省份</label>
                   <span>{{ student.address.province }}</span>
@@ -66,95 +109,101 @@
                 </div>
               </div>
             </div>
+
+            <!-- 家庭成员 -->
             <div class="info-section">
-              <h3>课程成绩</h3>
-              <div class="scores-container" v-if="student.courseScore && student.courseScore.length">
-                <div class="score-item" v-for="c in student.courseScore" :key="c.course">
-                  <span class="course-name">{{ c.course }}</span>
-                  <div class="score-details">
-                    <span class="score">{{ c.score }}</span>
-                    <span class="gpa">GPA: {{ c.gpa }}</span>
+              <div class="section-header">
+                <h3>家庭成员</h3>
+                <button @click="editSection('family')" class="btn btn-icon">✏️</button>
+              </div>
+              <div v-if="student.familyMembers && student.familyMembers.length" class="family-members">
+                <div class="family-member" v-for="(member, idx) in student.familyMembers" :key="idx">
+                  <div class="member-info">
+                    <span class="member-name">{{ member.name }}</span>
+                    <span class="member-relationship">{{ member.relationship }}</span>
+                    <span class="member-contact">电话: {{ member.contactInfo.phone || '无' }}</span>
+                    <span class="member-contact">邮箱: {{ member.contactInfo.email || '无' }}</span>
                   </div>
                 </div>
               </div>
-              <div class="no-data" v-else>暂无成绩数据</div>
-            </div>
-            <div class="info-section">
-              <h3>本周课表</h3>
-              <div class="no-data">课表功能待实现</div>
+              <div class="no-data" v-else>暂无家庭成员信息</div>
             </div>
           </div>
         </div>
       </div>
     </main>
 
-    <!-- 编辑信息模态框 -->
+    <!-- 分栏编辑模态框 -->
     <div class="modal" v-if="isModalVisible">
       <div class="modal-content">
         <div class="modal-header">
-          <h2>编辑个人信息</h2>
+          <h2>编辑{{ getSectionTitle(editingSection) }}</h2>
           <span @click="closeEditModal" class="close">&times;</span>
         </div>
-        <form class="student-form" @submit.prevent="saveStudent">
-          <div class="form-section">
-            <h3>基本信息</h3>
-            <div class="form-grid">
-              <div class="form-group">
-                <label>学号</label>
-                <input type="number" v-model="editableStudent.id" required>
-              </div>
-              <div class="form-group">
-                <label>姓名</label>
-                <input type="text" v-model="editableStudent.name" required>
-              </div>
-              <div class="form-group">
-                <label>性别</label>
-                <select v-model="editableStudent.sex" required>
-                  <option value="">请选择</option>
-                  <option value="Male">男</option>
-                  <option value="Female">女</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>入学年份</label>
-                <input type="number" v-model="editableStudent.enrollYear" min="1900" max="2030" required>
-              </div>
-              <div class="form-group">
-                <label>专业</label>
-                <input type="text" v-model="editableStudent.major" required>
-              </div>
-              <div class="form-group">
-                <label>班级</label>
-                <input type="number" v-model="editableStudent.class_" required>
-              </div>
-            </div>
-          </div>
-          <div class="form-section">
-            <h3>联系方式</h3>
+        <form class="section-form" @submit.prevent="saveSectionData">
+          <!-- 联系方式编辑 -->
+          <div v-if="editingSection === 'contact'" class="form-section">
             <div class="form-grid">
               <div class="form-group">
                 <label>电话号码</label>
-                <input type="tel" v-model="editableStudent.contactInfo.phone" placeholder="请输入手机号">
+                <input type="tel" v-model="editData.phone" placeholder="请输入手机号">
               </div>
               <div class="form-group">
                 <label>邮箱地址</label>
-                <input type="email" v-model="editableStudent.contactInfo.email" placeholder="example@email.com">
+                <input type="email" v-model="editData.email" placeholder="example@email.com">
               </div>
             </div>
           </div>
-          <div class="form-section">
-            <h3>地址信息</h3>
+
+          <!-- 地址编辑 -->
+          <div v-if="editingSection === 'address'" class="form-section">
             <div class="form-grid">
               <div class="form-group">
                 <label>省份</label>
-                <input type="text" v-model="editableStudent.address.province" placeholder="如：北京市">
+                <input type="text" v-model="editData.province" placeholder="如：北京市">
               </div>
               <div class="form-group">
                 <label>城市</label>
-                <input type="text" v-model="editableStudent.address.city" placeholder="如：海淀区">
+                <input type="text" v-model="editData.city" placeholder="如：海淀区">
               </div>
             </div>
           </div>
+
+          <!-- 家庭成员编辑 -->
+          <div v-if="editingSection === 'family'" class="form-section">
+            <div v-for="(member, index) in editData" :key="index" class="family-member-item">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>姓名</label>
+                  <input type="text" v-model="member.name" placeholder="家庭成员姓名">
+                </div>
+                <div class="form-group">
+                  <label>关系</label>
+                  <select v-model="member.relationship">
+                    <option value="">请选择</option>
+                    <option value="父亲">父亲</option>
+                    <option value="母亲">母亲</option>
+                    <option value="兄弟">兄弟</option>
+                    <option value="姐妹">姐妹</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>联系电话</label>
+                  <input type="tel" v-model="member.contactInfo.phone" placeholder="联系电话">
+                </div>
+                <div class="form-group">
+                  <label>邮箱</label>
+                  <input type="email" v-model="member.contactInfo.email" placeholder="邮箱地址">
+                </div>
+                <div class="form-group">
+                  <button type="button" @click="removeFamilyMember(index)" class="btn btn-danger">删除</button>
+                </div>
+              </div>
+            </div>
+            <button type="button" @click="addFamilyMember" class="btn btn-secondary">添加家庭成员</button>
+          </div>
+
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">保存</button>
             <button type="button" @click="closeEditModal" class="btn btn-secondary">取消</button>
@@ -166,10 +215,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
-// Mock data based on the C++ structs
+const router = useRouter();
+
+const showBasicInfo = ref(true);
+const toggleBasicInfo = () => {
+  showBasicInfo.value = !showBasicInfo.value;
+};
+
 const student = reactive({
   id: 20230101,
   name: 'Alice',
@@ -177,6 +232,7 @@ const student = reactive({
   major: 'Computer Science',
   class_: 1,
   enrollYear: 2023,
+  birthdate: { year: 2004, month: 9, day: 1 },
   contactInfo: {
     phone: '123-456-7890',
     email: 'alice@university.edu',
@@ -185,39 +241,255 @@ const student = reactive({
     province: 'California',
     city: 'Los Angeles',
   },
-  courseScore: [
-    { course: 'Data Structures', score: 92, gpa: 4.0 },
-    { course: 'Operating Systems', score: 88, gpa: 3.7 },
-    { course: 'Computer Networks', score: 95, gpa: 4.0 },
-    { course: 'Database Systems', score: 85, gpa: 3.3 },
+  familyMembers: [
+    {
+      name: '张三',
+      relationship: '父亲',
+      contactInfo: { phone: '13800000000', email: 'zhangsan@example.com' }
+    },
+    {
+      name: '李四',
+      relationship: '母亲',
+      contactInfo: { phone: '13900000000', email: 'lisi@example.com' }
+    }
   ],
+  courses: [
+    {
+      courseID: 1,
+      courseName: '数据结构',
+      instructor: '王老师',
+      location: 'A101',
+      credits: 3,
+      schedule: [
+        { day: 'Monday', startTime: { hour: 8, minute: 0 }, endTime: { hour: 9, minute: 40 }, repetition: 'Weekly' }
+      ]
+    },
+    {
+      courseID: 2,
+      courseName: '操作系统',
+      instructor: '李老师',
+      location: 'B202',
+      credits: 4,
+      schedule: [
+        { day: 'Wednesday', startTime: { hour: 10, minute: 0 }, endTime: { hour: 11, minute: 40 }, repetition: 'Weekly' }
+      ]
+    }
+  ],
+  courseScore: [
+    { course: '数据结构', score: 92, gpa: 4.0 },
+    { course: '操作系统', score: 88, gpa: 3.7 }
+  ]
 });
 
 const isModalVisible = ref(false);
-const editableStudent = ref({});
+const editingSection = ref('');
+const editData = ref({});
+const scoreChart = ref(null);
 
-const showEditModal = () => {
-  editableStudent.value = JSON.parse(JSON.stringify(student));
+const weekDays = [
+  { key: 'Monday', label: '周一' },
+  { key: 'Tuesday', label: '周二' },
+  { key: 'Wednesday', label: '周三' },
+  { key: 'Thursday', label: '周四' },
+  { key: 'Friday', label: '周五' },
+  { key: 'Saturday', label: '周六' },
+  { key: 'Sunday', label: '周日' }
+];
+
+const timeSlots = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+const getCourseAtTime = (day, hour) => {
+  if (!student.courses) return null;
+  return student.courses.find(course => {
+    return course.schedule.some(slot =>
+      slot.day === day &&
+      slot.startTime.hour <= hour &&
+      slot.endTime.hour > hour
+    );
+  });
+};
+
+const editSection = (section) => {
+  editingSection.value = section;
+  switch(section) {
+    case 'contact':
+      editData.value = { ...student.contactInfo };
+      break;
+    case 'address':
+      editData.value = { ...student.address };
+      break;
+    case 'family':
+      editData.value = JSON.parse(JSON.stringify(student.familyMembers || []));
+      break;
+  }
   isModalVisible.value = true;
 };
-const closeEditModal = () => {
-  isModalVisible.value = false;
+
+const getSectionTitle = (section) => {
+  const titles = {
+    contact: '联系方式',
+    address: '地址信息',
+    family: '家庭成员'
+  };
+  return titles[section] || '';
 };
-const saveStudent = () => {
-  Object.assign(student, JSON.parse(JSON.stringify(editableStudent.value)));
+
+const saveSectionData = () => {
+  switch(editingSection.value) {
+    case 'contact':
+      Object.assign(student.contactInfo, editData.value);
+      break;
+    case 'address':
+      Object.assign(student.address, editData.value);
+      break;
+    case 'family':
+      student.familyMembers = JSON.parse(JSON.stringify(editData.value));
+      break;
+  }
+  saveToJson();
   closeEditModal();
 };
 
-const router = useRouter();
-const logout = () => {
-  localStorage.removeItem('rememberedUser');
-  router.replace('/login');
+const closeEditModal = () => {
+  isModalVisible.value = false;
+  editingSection.value = '';
+  editData.value = {};
 };
 
-const copyToClipboard = (text, label = '') => {
-  if (!text) return;
-  navigator.clipboard.writeText(text);
+const addFamilyMember = () => {
+  editData.value.push({
+    name: '',
+    relationship: '',
+    contactInfo: { phone: '', email: '' }
+  });
 };
+
+const removeFamilyMember = (idx) => {
+  editData.value.splice(idx, 1);
+};
+
+const createScoreChart = () => {
+  if (!scoreChart.value || !student.courseScore?.length) return;
+
+  const ctx = scoreChart.value.getContext('2d');
+  const labels = student.courseScore.map(item => item.course);
+  const scores = student.courseScore.map(item => item.score);
+
+  // 清除之前的图表
+  if (window.studentChart) {
+    window.studentChart.destroy();
+  }
+
+  window.studentChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '成绩',
+        data: scores,
+        backgroundColor: [
+          '#4f46e5',
+          '#7c3aed',
+          '#06b6d4',
+          '#10b981',
+          '#f59e0b',
+          '#ef4444'
+        ],
+        borderColor: [
+          '#4338ca',
+          '#6d28d9',
+          '#0891b2',
+          '#059669',
+          '#d97706',
+          '#dc2626'
+        ],
+        borderWidth: 2,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          grid: {
+            color: '#e5e7eb'
+          }
+        },
+        x: {
+          grid: {
+            display: false
+          }
+        }
+      }
+    }
+  });
+};
+
+const saveToJson = () => {
+  const jsonData = JSON.stringify(student, null, 2);
+  localStorage.setItem('studentData', jsonData);
+};
+
+const exportToJson = () => {
+  const jsonData = JSON.stringify(student, null, 2);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `student_${student.id}_data.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+const calculateAge = (birthdate) => {
+  if (!birthdate) return 0;
+  const today = new Date();
+  const birth = new Date(birthdate.year, birthdate.month - 1, birthdate.day);
+  let age = today.getFullYear() - birth.getFullYear();
+  const monthDiff = today.getMonth() - birth.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
+  return age;
+};
+
+const logout = () => {
+  // 清除本地存储的用户数据
+  localStorage.removeItem('rememberedUser');
+  localStorage.removeItem('studentData');
+
+  // 跳转到登录页面
+  router.push('/').then(() => {
+    // 确保页面刷新，清除所有状态
+    window.location.reload();
+  }).catch(err => {
+    console.error('退出登录跳转失败:', err);
+    // 如果路由跳转失败，直接刷新页面到根路径
+    window.location.href = '/';
+  });
+};
+
+onMounted(() => {
+  nextTick(() => {
+    // 动态加载 Chart.js
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+    script.onload = () => {
+      createScoreChart();
+    };
+    document.head.appendChild(script);
+  });
+});
 </script>
 
 <style scoped>
@@ -441,135 +713,300 @@ const copyToClipboard = (text, label = '') => {
   border-radius: 8px;
   border: 2px dashed #d1d5db;
 }
-.modal {
-  display: block;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
+.family-members {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-.modal-content {
-  background-color: white;
-  margin: 2% auto;
-  padding: 0;
-  border-radius: 15px;
-  width: 90%;
-  max-width: 600px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  animation: modalSlideIn 0.3s ease-out;
+.family-member {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 12px 16px;
+  background: #fef3c7;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
 }
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
-.modal-header {
+.member-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+}
+.member-relationship {
+  font-size: 12px;
+  color: #92400e;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 8px;
+  display: inline-block;
+  width: fit-content;
+}
+.member-contact {
+  color: #92400e;
+  font-weight: 500;
+  font-size: 13px;
+}
+.family-member-item {
+  background: #f8fafc;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+.family-member-item:hover {
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+.family-member-item .form-grid {
+  grid-template-columns: 1fr 1fr 1fr 1fr auto;
+  align-items: end;
+  gap: 6px;
+}
+.btn-danger {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 60px;
+}
+.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 25px 30px;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  color: white;
-  border-radius: 15px 15px 0 0;
+  margin-bottom: 15px;
 }
-.modal-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-}
-.close {
-  color: white;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-  line-height: 1;
-}
-.close:hover {
-  opacity: 0.7;
-}
-.student-form {
-  padding: 30px;
-}
-.form-section {
-  margin-bottom: 35px;
-}
-.form-section:last-of-type {
-  margin-bottom: 20px;
-}
-.form-section h3 {
-  font-size: 18px;
+
+.section-header h3 {
+  font-size: 16px;
   font-weight: 700;
   color: #1f2937;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  margin: 0;
+  padding-bottom: 8px;
   border-bottom: 2px solid #e5e7eb;
 }
+
+.calendar-schedule {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: 80px repeat(7, 1fr);
+  gap: 1px;
+  background: #e5e7eb;
+}
+
+.time-header, .day-header {
+  background: #4f46e5;
+  color: white;
+  padding: 12px 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.time-slot {
+  background: #f8fafc;
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  border-right: 2px solid #e5e7eb;
+}
+
+.schedule-cell {
+  background: white;
+  min-height: 60px;
+  position: relative;
+  border: 1px solid transparent;
+}
+
+.schedule-cell.has-course {
+  background: #eff6ff;
+  border-color: #3b82f6;
+}
+
+.course-block {
+  padding: 4px 6px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  border-radius: 4px;
+  margin: 2px;
+  text-align: center;
+  font-size: 11px;
+}
+
+.course-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.course-location {
+  font-size: 10px;
+  opacity: 0.9;
+}
+
+.chart-container {
+  height: 300px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.section-form {
+  max-width: 100%;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
 }
+
 .form-group label {
   font-size: 14px;
   font-weight: 600;
   color: #374151;
   margin-bottom: 5px;
 }
-.form-group input,
-.form-group select {
+
+.form-group input, .form-group select {
   padding: 10px 12px;
-  border: 2px solid #e5e7eb;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
   font-size: 14px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.3s ease;
 }
-.form-group input:focus,
-.form-group select:focus {
+
+.form-group input:focus, .form-group select:focus {
   outline: none;
   border-color: #4f46e5;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
+
 .form-actions {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   justify-content: flex-end;
+  margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #e5e7eb;
 }
+
+/* 模态框样式 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 25px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f8fafc;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.close {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6b7280;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.close:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.section-form {
+  padding: 25px;
+}
+
+.form-section {
+  margin-bottom: 20px;
+}
+
 @media (max-width: 768px) {
-  .container {
-    padding: 10px;
+  .calendar-grid {
+    grid-template-columns: 60px repeat(7, 1fr);
+    font-size: 12px;
   }
-  .header {
-    flex-direction: column;
-    gap: 20px;
-    text-align: center;
+
+  .time-header, .day-header {
+    padding: 8px 4px;
+    font-size: 12px;
   }
-  .students-container {
-    grid-template-columns: 1fr;
-    gap: 15px;
+
+  .course-block {
+    font-size: 10px;
+    padding: 2px 4px;
   }
-  .student-details {
+
+  .chart-container {
+    height: 250px;
     padding: 15px;
-  }
-  .basic-info-grid {
-    grid-template-columns: 1fr;
   }
 }
 </style>

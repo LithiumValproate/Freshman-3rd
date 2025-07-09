@@ -83,7 +83,41 @@
                 </div>
               </div>
             </div>
-            <!-- ... 其他信息区域 ... -->
+            <!-- 课表信息 -->
+            <div class="info-section">
+              <h3>课表</h3>
+              <div v-if="student.courses && student.courses.length" class="courses-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>课程名称</th>
+                      <th>教师</th>
+                      <th>学分</th>
+                      <th>上课时间</th>
+                      <th>地点</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="course in student.courses" :key="course.courseID">
+                      <td>{{ course.courseName }}</td>
+                      <td>{{ course.instructor }}</td>
+                      <td>{{ course.credits }}</td>
+                      <td>
+                        <div v-for="slot in course.schedule" :key="slot.day + slot.startTime.hour + slot.startTime.minute">
+                          {{ dayOfWeekText(slot.day) }}
+                          {{ slot.startTime.hour }}:{{ slot.startTime.minute.toString().padStart(2, '0') }}
+                          - {{ slot.endTime.hour }}:{{ slot.endTime.minute.toString().padStart(2, '0') }}
+                          <span v-if="slot.repetition !== 'Weekly'">({{ repetitionText(slot.repetition) }})</span>
+                        </div>
+                      </td>
+                      <td>{{ course.location }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="no-data" v-else>暂无课表数据</div>
+            </div>
+            <!-- ...existing code... -->
           </div>
         </div>
       </div>
@@ -226,6 +260,50 @@
             </div>
           </div>
           <button type="button" @click="addFamilyMember" class="btn btn-secondary">添加家庭成员</button>
+        </div>
+
+        <div class="form-section">
+          <h3>课程信息</h3>
+          <div v-for="(course, cidx) in editableStudent.courses" :key="course.courseID" class="course-field">
+            <div>
+              <label>课程名称</label>
+              <input type="text" v-model="course.courseName" placeholder="课程名称">
+            </div>
+            <div>
+              <label>教师</label>
+              <input type="text" v-model="course.instructor" placeholder="教师姓名">
+            </div>
+            <div>
+              <label>学分</label>
+              <input type="number" v-model="course.credits" min="0" style="width: 60px;">
+            </div>
+            <div>
+              <label>地点</label>
+              <input type="text" v-model="course.location" placeholder="上课地点">
+            </div>
+            <button type="button" class="remove-btn" @click="removeCourse(cidx)">删除课程</button>
+            <div style="grid-column: 1 / -1; margin-top: 8px;">
+              <label>时间安排</label>
+              <div v-for="(slot, sidx) in course.schedule" :key="sidx" class="schedule-field">
+                <select v-model="slot.day">
+                  <option v-for="(label, key) in dayOfWeekOptions" :key="key" :value="key">{{ label }}</option>
+                </select>
+                <input type="number" v-model="slot.startTime.hour" min="0" max="23" style="width:40px;">:
+                <input type="number" v-model="slot.startTime.minute" min="0" max="59" style="width:40px;">
+                -
+                <input type="number" v-model="slot.endTime.hour" min="0" max="23" style="width:40px;">:
+                <input type="number" v-model="slot.endTime.minute" min="0" max="59" style="width:40px;">
+                <select v-model="slot.repetition">
+                  <option value="Weekly">每周</option>
+                  <option value="BiWeeklyOdd">单周</option>
+                  <option value="BiWeeklyEven">双周</option>
+                </select>
+                <button type="button" class="remove-btn" @click="removeSchedule(cidx, sidx)">删除时间</button>
+              </div>
+              <button type="button" class="btn btn-outline" @click="addSchedule(cidx)">添加时间</button>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" @click="addCourse">添加课程</button>
         </div>
 
         <div class="form-actions">
@@ -397,6 +475,7 @@ const showStudentModal = (student = null) => {
     if (!editableStudent.value.contact) editableStudent.value.contact = {};
     if (!editableStudent.value.address) editableStudent.value.address = {};
     if (!editableStudent.value.familyMembers) editableStudent.value.familyMembers = [];
+    if (!editableStudent.value.courses) editableStudent.value.courses = [];
   } else {
     modalTitle.value = '添加学生信息';
     currentEditingId.value = null;
@@ -447,6 +526,53 @@ const addFamilyMember = () => {
 // 删除家庭成员
 const removeFamilyMember = (index) => {
   editableStudent.value.familyMembers.splice(index, 1);
+};
+
+// 星期选择项
+const dayOfWeekOptions = {
+  Monday: '周一',
+  Tuesday: '周二',
+  Wednesday: '周三',
+  Thursday: '周四',
+  Friday: '周五',
+  Saturday: '周六',
+  Sunday: '周日'
+};
+const dayOfWeekText = (key) => dayOfWeekOptions[key] || key;
+const repetitionText = (rep) => ({
+  Weekly: '每周',
+  BiWeeklyOdd: '单周',
+  BiWeeklyEven: '双周'
+}[rep] || rep);
+
+// 添加课程
+const addCourse = () => {
+  if (!editableStudent.value.courses) editableStudent.value.courses = [];
+  editableStudent.value.courses.push({
+    courseID: Date.now() + Math.floor(Math.random() * 10000),
+    courseName: '',
+    instructor: '',
+    location: '',
+    credits: 0,
+    schedule: []
+  });
+};
+// 删除课程
+const removeCourse = (idx) => {
+  editableStudent.value.courses.splice(idx, 1);
+};
+// 添加时间安排
+const addSchedule = (cidx) => {
+  editableStudent.value.courses[cidx].schedule.push({
+    day: 'Monday',
+    startTime: { hour: 8, minute: 0 },
+    endTime: { hour: 9, minute: 40 },
+    repetition: 'Weekly'
+  });
+};
+// 删除时间安排
+const removeSchedule = (cidx, sidx) => {
+  editableStudent.value.courses[cidx].schedule.splice(sidx, 1);
 };
 
 const closeStudentModal = () => {
@@ -1028,6 +1154,51 @@ body {
 
 .form-section .btn-secondary:before {
   content: "➕";
+  font-size: 12px;
+}
+
+/* 课程表样式 */
+.courses-table {
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.courses-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.courses-table th, .courses-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.courses-table th {
+  background: #f3f4f6;
+  color: #4f46e5;
+  font-weight: 700;
+}
+
+.schedule-field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.schedule-field select, .schedule-field input {
+  font-size: 13px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  border: 1px solid #e5e7eb;
+}
+
+.schedule-field .remove-btn {
+  margin-left: 8px;
+  padding: 4px 8px;
   font-size: 12px;
 }
 

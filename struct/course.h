@@ -182,4 +182,4 @@ inline auto course_from_qjson(const QJsonObject& obj) -> Course {
     return c;
 }
 
-#endif // USE_QTJSON
+#endif
