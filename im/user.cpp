@@ -120,3 +120,33 @@ void BotParticipant::receive_message(const Message& msg) {
     }
     std::cout << std::endl;
 }
+
+void NetworkParticipant::send_message(const Message& msg) {
+    // This participant type doesn't "send" messages in the traditional sense
+    // from the C++ side. It receives messages from the C++ core and delivers them
+    // back to the Go client.
+    std::cout << "[NetworkParticipant " << get_nickname() << "] send_message called (should not happen for outgoing messages from C++ core)" << std::endl;
+}
+
+void NetworkParticipant::receive_message(const Message& msg) {
+    // This is where the message is delivered back to the Go client
+    const auto& content = msg.get_content();
+    std::string message_str;
+
+    if (std::holds_alternative<std::string>(content)) {
+        message_str = std::get<std::string>(content);
+    } else if (std::holds_alternative<Message::ImageCtn>(content)) {
+        message_str = "[Image: " + std::get<Message::ImageCtn>(content).path + "]";
+    } else if (std::holds_alternative<Message::GifCtn>(content)) {
+        message_str = "[Gif: " + std::get<Message::GifCtn>(content).path + "]";
+    } else if (std::holds_alternative<Message::VideoCtn>(content)) {
+        message_str = "[Video: " + std::get<Message::VideoCtn>(content).path + "]";
+    }
+
+    // Invoke the callback to send the message back to the Go server
+    if (delivery_callback) {
+        delivery_callback(participant_id, message_str);
+    } else {
+        std::cerr << "[NetworkParticipant " << get_nickname() << "] Error: No delivery callback set!" << std::endl;
+    }
+}

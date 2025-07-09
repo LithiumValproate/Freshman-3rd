@@ -24,8 +24,6 @@ set(SOURCES
     main.cpp
     mainwindow.cpp
     webbridge.cpp
-        im/user.cpp
-        im/room.cpp
 )
 
 # 设置头文件
@@ -46,6 +44,28 @@ set(RESOURCES
     resources.qrc
 )
 
+# Create the IM shared library
+add_library(im_core SHARED
+    im/user.cpp
+    im/room.cpp
+    im/im_go_bridge/im_bridge.cpp
+    im/message.h
+    im/user.h
+    im/room.h
+)
+
+# Set include directories for im_core
+target_include_directories(im_core PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/struct
+    ${CMAKE_CURRENT_SOURCE_DIR}/im/im_go_bridge
+)
+
+# Set output directory for im_core
+set_target_properties(im_core PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
+)
+
 # 创建可执行文件
 add_executable(QtWebSchoolSys
     ${SOURCES}
@@ -59,6 +79,7 @@ target_link_libraries(QtWebSchoolSys PRIVATE
     Qt6::Widgets
     Qt6::WebEngineWidgets
     Qt6::WebChannel
+    im_core # <--- ADD THIS
 )
 
 # === Sentry 集成 ===

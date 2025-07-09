@@ -7,6 +7,7 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <functional> // For std::function
 
 // 基础参与者接口
 class IParticipant {
@@ -69,6 +70,23 @@ public:
     void send_message(const Message& msg) override;
 
     void receive_message(const Message& msg) override;
+};
+
+// New: Callback for network messages
+class NetworkParticipant : public IParticipant {
+private:
+    std::string nickname;
+    std::string participant_id; // Unique ID provided by Go client
+    std::function<void(const std::string&, const std::string&)> delivery_callback;
+
+public:
+    NetworkParticipant(std::string_view nick, std::string_view p_id, std::function<void(const std::string&, const std::string&)> callback)
+        : nickname(nick), participant_id(p_id), delivery_callback(callback) {}
+
+    void send_message(const Message& msg) override; // Not used for outgoing messages from C++ core
+    void receive_message(const Message& msg) override;
+    const std::string& get_nickname() const override { return nickname; }
+    const std::string& get_participant_id() const { return participant_id; }
 };
 
 class BotParticipant : public Participant<Bot> {

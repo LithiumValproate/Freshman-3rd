@@ -3,30 +3,36 @@ package main
 import (
 	pkg "github.com/lithiumvalproate/freshman-3rd/Go/src"
 	"log"
-	"net"
+	"net/http" // New import
+	"github.com/gorilla/websocket" // New import
 )
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		// Allow all origins for development. In production, restrict this.
+		return true
+	},
+}
+
 func main() {
-	// 创建服务器
 	server := pkg.NewServer()
 
-	// 监听端口
-	listener, err := net.Listen("tcp", ":8081")
-	if err != nil {
-		log.Fatalf("无法启动服务器: %v", err)
-	}
-	defer listener.Close()
-	log.Println("Go 聊天服务器正在监听: localhost:8081")
-
-	// 循环接受新的客户端连接
-	for {
-		conn, err := listener.Accept()
+	// WebSocket handler
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
-			log.Printf("接受连接失败: %v", err)
-			continue
+			log.Printf("WebSocket upgrade failed: %v", err)
+			return
 		}
+		// Pass the WebSocket connection to the server's handler
+		go server.HandleConnection(conn) // This will be adapted in src/chat.go
+	})
 
-		// 为每个连接启动一个新的 goroutine 来处理
-		go server.HandleConnection(conn)
+	log.Println("Go WebSocket server starting on :8081")
+	err := http.ListenAndServe(":8081", nil)
+	if err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }
