@@ -82,14 +82,6 @@ target_link_libraries(QtWebSchoolSys PRIVATE
     im_core # <--- ADD THIS
 )
 
-# === Sentry 集成 ===
-# 添加 sentry-native 子目录
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/sentry-native)
-# 引入 Sentry 头文件目录
-target_include_directories(QtWebSchoolSys PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/sentry-native/include)
-# 链接 sentry 库
-target_link_libraries(QtWebSchoolSys PRIVATE sentry::sentry)
-
 # 设置包含目录
 target_include_directories(QtWebSchoolSys PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}

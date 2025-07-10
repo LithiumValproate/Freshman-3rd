@@ -38,15 +38,6 @@
             <!-- 详细信息渲染 -->
             <div class="info-section">
               <h3>基本信息</h3>
-              <!--  Sex sex;
-                    int age;
-                    Date birthdate;
-                    int enrollYear{};
-                    std::string major;
-                    int class_;
-                    Contact contactInfo;
-                    Address address;
-                    std::vector<FamilyMember> familyMembers; -->
               <div class="basic-info-grid">
                 <div class="info-item"><label>性别</label><span>{{ student.sex === 'Male' ? '男' : '女' }}</span></div>
                 <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
@@ -83,41 +74,37 @@
                 </div>
               </div>
             </div>
-            <!-- 课表信息 -->
+
+            <!-- 地址信息 -->
             <div class="info-section">
-              <h3>课表</h3>
-              <div v-if="student.courses && student.courses.length" class="courses-table">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>课程名称</th>
-                      <th>教师</th>
-                      <th>学分</th>
-                      <th>上课时间</th>
-                      <th>地点</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="course in student.courses" :key="course.courseID">
-                      <td>{{ course.courseName }}</td>
-                      <td>{{ course.instructor }}</td>
-                      <td>{{ course.credits }}</td>
-                      <td>
-                        <div v-for="slot in course.schedule" :key="slot.day + slot.startTime.hour + slot.startTime.minute">
-                          {{ dayOfWeekText(slot.day) }}
-                          {{ slot.startTime.hour }}:{{ slot.startTime.minute.toString().padStart(2, '0') }}
-                          - {{ slot.endTime.hour }}:{{ slot.endTime.minute.toString().padStart(2, '0') }}
-                          <span v-if="slot.repetition !== 'Weekly'">({{ repetitionText(slot.repetition) }})</span>
-                        </div>
-                      </td>
-                      <td>{{ course.location }}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <h3>地址信息</h3>
+              <div class="contact-info-grid">
+                <div class="info-item">
+                  <label>省份</label>
+                  <span>{{ student.address?.province || '无' }}</span>
+                </div>
+                <div class="info-item">
+                  <label>城市</label>
+                  <span>{{ student.address?.city || '无' }}</span>
+                </div>
               </div>
-              <div class="no-data" v-else>暂无课表数据</div>
             </div>
-            <!-- ...existing code... -->
+
+            <!-- 家庭成员 -->
+            <div class="info-section">
+              <h3>家庭成员</h3>
+              <div v-if="student.familyMembers && student.familyMembers.length" class="family-members">
+                <div class="family-member" v-for="(member, idx) in student.familyMembers" :key="idx">
+                  <div class="member-info">
+                    <span class="member-name">{{ member.name }}</span>
+                    <span class="member-relationship">{{ member.relationship }}</span>
+                    <span class="member-contact">电话: {{ member.contactInfo?.phone || '无' }}</span>
+                    <span class="member-contact">邮箱: {{ member.contactInfo?.email || '无' }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="no-data" v-else>暂无家庭成员信息</div>
+            </div>
           </div>
         </div>
       </div>
@@ -165,6 +152,10 @@
               <input type="text" v-model="editableStudent.major" required>
             </div>
             <div class="form-group">
+              <label for="class">班级</label>
+              <input type="text" v-model="editableStudent.class_" required placeholder="如：1班">
+            </div>
+            <div class="form-group">
               <label for="status">学生状态</label>
               <select v-model="editableStudent.status" required>
                 <option value="Active">在读</option>
@@ -204,7 +195,8 @@
           <div class="form-grid">
             <div class="form-group">
               <label for="phone">电话号码</label>
-              <input type="tel" v-model="editableStudent.contact.phone" pattern="[0-9]{11}" placeholder="请输入11位手机号">
+              <input type="tel" v-model="editableStudent.contact.phone" pattern="[0-9]{11}"
+                     placeholder="请输入11位手机号">
             </div>
             <div class="form-group">
               <label for="email">邮箱地址</label>
@@ -262,50 +254,6 @@
           <button type="button" @click="addFamilyMember" class="btn btn-secondary">添加家庭成员</button>
         </div>
 
-        <div class="form-section">
-          <h3>课程信息</h3>
-          <div v-for="(course, cidx) in editableStudent.courses" :key="course.courseID" class="course-field">
-            <div>
-              <label>课程名称</label>
-              <input type="text" v-model="course.courseName" placeholder="课程名称">
-            </div>
-            <div>
-              <label>教师</label>
-              <input type="text" v-model="course.instructor" placeholder="教师姓名">
-            </div>
-            <div>
-              <label>学分</label>
-              <input type="number" v-model="course.credits" min="0" style="width: 60px;">
-            </div>
-            <div>
-              <label>地点</label>
-              <input type="text" v-model="course.location" placeholder="上课地点">
-            </div>
-            <button type="button" class="remove-btn" @click="removeCourse(cidx)">删除课程</button>
-            <div style="grid-column: 1 / -1; margin-top: 8px;">
-              <label>时间安排</label>
-              <div v-for="(slot, sidx) in course.schedule" :key="sidx" class="schedule-field">
-                <select v-model="slot.day">
-                  <option v-for="(label, key) in dayOfWeekOptions" :key="key" :value="key">{{ label }}</option>
-                </select>
-                <input type="number" v-model="slot.startTime.hour" min="0" max="23" style="width:40px;">:
-                <input type="number" v-model="slot.startTime.minute" min="0" max="59" style="width:40px;">
-                -
-                <input type="number" v-model="slot.endTime.hour" min="0" max="23" style="width:40px;">:
-                <input type="number" v-model="slot.endTime.minute" min="0" max="59" style="width:40px;">
-                <select v-model="slot.repetition">
-                  <option value="Weekly">每周</option>
-                  <option value="BiWeeklyOdd">单周</option>
-                  <option value="BiWeeklyEven">双周</option>
-                </select>
-                <button type="button" class="remove-btn" @click="removeSchedule(cidx, sidx)">删除时间</button>
-              </div>
-              <button type="button" class="btn btn-outline" @click="addSchedule(cidx)">添加时间</button>
-            </div>
-          </div>
-          <button type="button" class="btn btn-secondary" @click="addCourse">添加课程</button>
-        </div>
-
         <div class="form-actions">
           <button type="submit" class="btn btn-primary">保存</button>
           <button type="button" @click="closeStudentModal" class="btn btn-secondary">取消</button>
@@ -316,8 +264,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import {ref, onMounted, computed} from 'vue';
+import {useRouter} from 'vue-router';
 
 // 学生数据和状态
 const students = ref([]);
@@ -475,7 +423,6 @@ const showStudentModal = (student = null) => {
     if (!editableStudent.value.contact) editableStudent.value.contact = {};
     if (!editableStudent.value.address) editableStudent.value.address = {};
     if (!editableStudent.value.familyMembers) editableStudent.value.familyMembers = [];
-    if (!editableStudent.value.courses) editableStudent.value.courses = [];
   } else {
     modalTitle.value = '添加学生信息';
     currentEditingId.value = null;
@@ -565,8 +512,8 @@ const removeCourse = (idx) => {
 const addSchedule = (cidx) => {
   editableStudent.value.courses[cidx].schedule.push({
     day: 'Monday',
-    startTime: { hour: 8, minute: 0 },
-    endTime: { hour: 9, minute: 40 },
+    startTime: {hour: 8, minute: 0},
+    endTime: {hour: 9, minute: 40},
     repetition: 'Weekly'
   });
 };

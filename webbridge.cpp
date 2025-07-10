@@ -2,6 +2,11 @@
 
 #include "webbridge.h"
 #include "struct/stu_with_score.h"
+#include "struct/other_users.h"
+#include "struct/course.h"
+#include "im/room.h"
+#include "im/message.h"
+#include "im/user.h"
 
 #include <QApplication>
 #include <QDebug>
