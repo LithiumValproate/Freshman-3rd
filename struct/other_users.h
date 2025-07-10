@@ -20,6 +20,24 @@ public:
     }
 
     ~OtherUsers() = default;
+
+    auto get_type() const -> UserType {
+        for (const auto& pair : idStr) {
+            if (!pair.second.empty()) {
+                return pair.first;
+            }
+        }
+        throw std::runtime_error("No valid user type found");
+    }
+
+    auto get_id() const -> std::string {
+        for (const auto& pair : idStr) {
+            if (!pair.second.empty()) {
+                return pair.second;
+            }
+        }
+        throw std::runtime_error("No valid user ID found");
+    }
 };
 
 class Admin : public OtherUsers {
