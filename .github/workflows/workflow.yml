@@ -56,12 +56,10 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
-          modules: 'qtwebengine qtwebchannel'# 列出你需要的额外模块
+          modules: 'qtwebengine qtwebchannel qtpositioning'# 列出你需要的额外模块
 
       - name: Configure CMake
-        run: >
-          cmake -S . -B build
-          -D "CMAKE_PREFIX_PATH=$env:QT_ROOT_DIR;$env:QT_ROOT_DIR/lib/cmake/Qt6;$env:QT_ROOT_DIR/lib/cmake/Qt6WebEngineCore;$env:QT_ROOT_DIR/lib/cmake/Qt6WebEngineWidgets"
+        run: cmake -S . -B build
 
       - name: Build Project
         run: cmake --build build
