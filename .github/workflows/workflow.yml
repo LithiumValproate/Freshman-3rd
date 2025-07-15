@@ -64,22 +64,30 @@ jobs:
       - name: Build Project
         run: cmake --build build
 
-      - name: Prepare Artifacts
-        shell: cmd
+      - name: Prepare Artifacts for Upload
+        # 【【【决定性的最终修正】】】
+        # 我们将所有路径都统一指向唯一正确的 build\bin\Release 目录
         run: |
-          REM 创建一个用于打包的文件夹
-          mkdir deploy
-          REM 拷贝可执行文件
-          copy build\bin\QtWebSchoolSys.exe deploy\
-          REM 拷贝你的 DLL
-          copy build\lib\im_core.dll deploy\
-          REM 拷贝 Vue 的 web 文件夹
-          xcopy build\bin\web deploy\web\ /E /I
-          REM 拷贝图标文件夹
-          xcopy build\icons deploy\icons\ /E /I
-          REM 使用正确的 windeployqt 路径并指定 Release 模式
-          echo "Running windeployqt..."
-          "%Qt6_DIR%\bin\windeployqt.exe" --release --no-translations --no-opengl-sw deploy\QtWebSchoolSys.exe
+          New-Item -ItemType Directory -Force deploy
+          
+          # 定义正确的源路径
+          $sourcePath = "build\bin\Release"
+          
+          Write-Host "Copying files from $sourcePath..."
+          
+          # 从正确的路径复制 .exe
+          Copy-Item -Path "$sourcePath\QtWebSchoolSys.exe" -Destination "deploy\"
+          
+          # 从正确的路径复制 web 文件夹
+          Copy-Item -Path "$sourcePath\web" -Destination "deploy\" -Recurse
+          
+          # 从项目根目录复制 icons 文件夹 (如果存在)
+          if (Test-Path -Path "icons") {
+            Copy-Item -Path "icons" -Destination "deploy\" -Recurse
+          }
+          
+          Write-Host "Running windeployqt on deploy\QtWebSchoolSys.exe..."
+          & "$env:QT_ROOT_DIR\bin\windeployqt.exe" --release --no-translations --no-opengl-sw "deploy\QtWebSchoolSys.exe"
 
       - name: Upload Artifact
         # 将打包好的 deploy 文件夹作为一个构建产物上传
