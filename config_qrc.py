@@ -6,7 +6,7 @@ def collect_files(root_dir):
     for dirpath, _, filenames in os.walk(root_dir):
         for filename in filenames:
             full_path = os.path.join(dirpath, filename)
-            # 路径相对于项目根目录
+            # Path relative to the project root directory
             rel_path = os.path.relpath(full_path, os.path.dirname(__file__))
             files.append(rel_path.replace("\\", "/"))
     return files
@@ -15,12 +15,12 @@ def collect_files(root_dir):
 def main():
     dist_dir = os.path.join(os.path.dirname(__file__), "web/vue-proj/dist")
     if not os.path.exists(dist_dir):
-        print(f"目录不存在: {dist_dir}")
+        print(f"Directory does not exist: {dist_dir}")
         return
 
     files = collect_files(dist_dir)
     if not files:
-        print("未检测到任何文件。")
+        print("No files detected.")
         return
 
     qrc_path = os.path.join(os.path.dirname(__file__), "resources.qrc")
@@ -30,7 +30,7 @@ def main():
             f.write(f'\t\t<file>{file}</file>\n')
         f.write('\t</qresource>\n</RCC>\n')
 
-    print(f"已写入 {len(files)} 个文件到 {qrc_path}")
+    print(f"Wrote {len(files)} files to {qrc_path}")
 
 
 if __name__ == "__main__":
