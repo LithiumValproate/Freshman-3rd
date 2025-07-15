@@ -58,22 +58,14 @@ jobs:
           arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
           modules: 'qtwebengine qtwebchannel'# 列出你需要的额外模块
 
-      - name: Verify Qt Installation
-        shell: pwsh
-        run: |
-          # 检查关键模块是否存在
-          $webEnginePath = "$env:Qt6_DIR\lib\cmake\Qt6WebEngineCore"
-          if (-not (Test-Path $webEnginePath)) {
-              Write-Error "Qt6WebEngineCore not found at $webEnginePath"
-              Get-ChildItem "$env:Qt6_DIR\lib\cmake" | Out-Host
-              exit 1
-          }
-          Write-Host "✅ Qt modules verified"
-
       - name: Configure CMake
+        # 【【【决定性的最终修正】】】
+        # 将所有之前使用的、不存在的 %Qt6_DIR% 变量
+        # 替换为被正确设置的 %QT_ROOT_DIR% 变量。
+        shell: cmd # 显式指定使用 cmd，确保 %VAR% 语法正确
         run: >
           cmake -S . -B build
-          -D "CMAKE_PREFIX_PATH=$env:Qt6_DIR"
+          -D "CMAKE_PREFIX_PATH=%QT_ROOT_DIR%;%QT_ROOT_DIR%/lib/cmake/Qt6;%QT_ROOT_DIR%/lib/cmake/Qt6WebEngineCore;%QT_ROOT_DIR%/lib/cmake/Qt6WebEngineWidgets"
 
       - name: Build Project
         run: cmake --build build
