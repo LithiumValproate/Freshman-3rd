@@ -90,7 +90,7 @@ jobs:
           }
           
           Write-Host "Running windeployqt on deploy\QtWebSchoolSys.exe..."
-          & "$env:QT_ROOT_DIR\bin\windeployqt.exe" --release --no-translations --no-opengl-sw "deploy\QtWebSchoolSys.exe"
+          & "$env:QT_ROOT_DIR\bin\windeployqt.exe" --release --no-translations "deploy\QtWebSchoolSys.exe"
 
       - name: Upload Artifact
         # 将打包好的 deploy 文件夹作为一个构建产物上传
