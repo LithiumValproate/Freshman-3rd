@@ -56,7 +56,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
-          modules: 'qtwebengine qtwebchannel' # 列出你需要的额外模块
+          modules: 'qtwebengine qtwebchannel qtwebenginecore' # 列出你需要的额外模块
 
       - name: Configure CMake
         run: cmake -S . -B build
