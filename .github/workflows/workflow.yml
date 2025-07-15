@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-windows:
-    runs-on: windows-latest # 指定在 Windows 服务器上运行
+    runs-on: windows-2019 # 指定在 Windows 服务器上运行
 
     env:
       QT_VERSION: '6.5.3' # 这里设置环境变量，方便复用
