@@ -61,8 +61,7 @@ jobs:
       - name: Configure CMake
         run: >
           cmake -S . -B build
-          -D CMAKE_PREFIX_PATH="%Qt6_DIR%/lib/cmake/Qt6WebEngineCore"
-          --debug-find-pkg=Qt6WebEngineWidgets
+          -D "CMAKE_PREFIX_PATH=%Qt6_DIR%;%Qt6_DIR%/lib/cmake/Qt6;%Qt6_DIR%/lib/cmake/Qt6WebEngineCore;%Qt6_DIR%/lib/cmake/Qt6WebEngineWidgets"
 
       - name: Build Project
         run: cmake --build build
