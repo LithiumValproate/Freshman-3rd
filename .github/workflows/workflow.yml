@@ -59,7 +59,9 @@ jobs:
           modules: 'qtwebengine qtwebchannel'# 列出你需要的额外模块
 
       - name: Configure CMake
-        run: cmake -S . -B build
+        run: >
+          cmake -S . -B build
+          -D CMAKE_PREFIX_PATH="%Qt6_DIR%/lib/cmake/Qt6WebEngineCore"
 
       - name: Build Project
         run: cmake --build build
