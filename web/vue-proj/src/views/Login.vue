@@ -120,7 +120,7 @@ const waitForQtBridge = () => new Promise(resolve => {
 });
 const loadStudents = async () => {
   if (!qtBridge.value) return;
-  const res = await qtBridge.value.get_students();
+  const res = await qtBridge.value.get_students_from_qjson();
   students.value = Array.isArray(res) ? res : [];
 };
 
@@ -211,7 +211,7 @@ function handleLogin() {
     
     // 短暂延迟后跳转
     setTimeout(() => {
-      router.push(`/${role.value}`);
+      router.replace(`/${role.value}`);
       console.log("正在跳转到:", role.value);
     }, 800);
   }, 800);

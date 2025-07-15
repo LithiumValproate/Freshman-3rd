@@ -1,3 +1,5 @@
+#define USE_QTJSON 1
+
 #include "webbridge.h"
 #include "struct/stu_with_score.h"
 #include "struct/other_users.h"
@@ -185,6 +187,25 @@ void WebBridge::delete_student_from_qjson(long studentId)
     }
 }
 
+QJsonObject WebBridge::get_student_by_id_from_qjson(long studentId) const
+{
+    log_message(QString("get_student_by_id_from_qjson called for ID: %1").arg(studentId));
+    auto it = std::find_if(m_students.begin(), m_students.end(),
+                           [studentId](const Stu_withScore& s) { return s.get_id() == studentId; });
+
+    if (it != m_students.end()) {
+        try {
+            return stu_with_score_to_qjson(*it);
+        } catch (const std::exception& e) {
+            log_message(QString("转换学生到JSON失败 for ID %1: %2").arg(studentId).arg(e.what()));
+            return QJsonObject(); // Return empty object on error
+        }
+    } else {
+        log_message(QString("未找到ID为 %1 的学生。").arg(studentId));
+        return QJsonObject(); // Return empty object if not found
+    }
+}
+
 void WebBridge::load_students_from_db()
 {
     if (!m_database.isOpen()) {
@@ -209,8 +230,17 @@ void WebBridge::load_students_from_db()
         student.set_enroll_year(query.value("enroll_year").toInt());
         student.set_major(query.value("major").toString().toStdString());
         student.set_class(query.value("class_id").toInt());
-        // student.set_contact(contact_from_qjson(query.value("contact_info").toString()));
-        // student.set_address(address_from_qjson(query.value("address").toString()));
+        
+        QJsonDocument contactDoc = QJsonDocument::fromJson(query.value("contact_info").toString().toUtf8());
+        if (!contactDoc.isNull() && contactDoc.isObject()) {
+            student.set_contact(contact_from_qjson(contactDoc.object()));
+        }
+
+        QJsonDocument addressDoc = QJsonDocument::fromJson(query.value("address").toString().toUtf8());
+        if (!addressDoc.isNull() && addressDoc.isObject()) {
+            student.set_address(address_from_qjson(addressDoc.object()));
+        }
+
         student.set_status(status_from_qjson_string(query.value("status").toString()));
         m_students.push_back(student);
     }
@@ -232,8 +262,12 @@ void WebBridge::save_student_to_db(const Stu_withScore& student)
     query.bindValue(":enroll_year", student.get_enroll_year());
     query.bindValue(":major", QString::fromStdString(student.get_major()));
     query.bindValue(":class_id", student.get_class());
-    query.bindValue(":contact_info", QString::fromStdString(student.get_contact().phone));
-    query.bindValue(":address", QString::fromStdString(student.get_address().province));
+    
+    QJsonObject contactJson = contact_to_qjson(student.get_contact());
+    QJsonObject addressJson = address_to_qjson(student.get_address());
+    query.bindValue(":contact_info", QJsonDocument(contactJson).toJson(QJsonDocument::Compact));
+    query.bindValue(":address", QJsonDocument(addressJson).toJson(QJsonDocument::Compact));
+
     query.bindValue(":status", status_to_qjson_string(student.get_status()));
     query.bindValue(":password", "password"); // Placeholder for password
     if (!query.exec()) {
@@ -254,8 +288,12 @@ void WebBridge::update_student_in_db(const Stu_withScore& student)
     query.bindValue(":enroll_year", student.get_enroll_year());
     query.bindValue(":major", QString::fromStdString(student.get_major()));
     query.bindValue(":class_id", student.get_class());
-    query.bindValue(":contact_info", QString::fromStdString(student.get_contact().phone));
-    query.bindValue(":address", QString::fromStdString(student.get_address().province));
+
+    QJsonObject contactJson = contact_to_qjson(student.get_contact());
+    QJsonObject addressJson = address_to_qjson(student.get_address());
+    query.bindValue(":contact_info", QJsonDocument(contactJson).toJson(QJsonDocument::Compact));
+    query.bindValue(":address", QJsonDocument(addressJson).toJson(QJsonDocument::Compact));
+
     query.bindValue(":status", status_to_qjson_string(student.get_status()));
     if (!query.exec()) {
         log_message("更新学生数据失败: " + query.lastError().text());

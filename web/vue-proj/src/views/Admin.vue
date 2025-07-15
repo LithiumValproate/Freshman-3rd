@@ -528,13 +528,14 @@ const closeStudentModal = () => {
 
 const saveStudent = async () => {
   try {
+    const studentData = JSON.parse(JSON.stringify(editableStudent.value));
     if (currentEditingId.value) {
       if (qtBridge.value) {
-        await qtBridge.value.update_student(editableStudent.value);
+        await qtBridge.value.update_student(studentData);
       }
     } else {
       if (qtBridge.value) {
-        await qtBridge.value.add_student(editableStudent.value);
+        await qtBridge.value.add_student(studentData);
       }
     }
     if (qtBridge.value) {
@@ -558,7 +559,7 @@ const deleteStudent = async (studentId) => {
   if (confirm('确定要删除这个学生吗？')) {
     try {
       if (qtBridge.value) {
-        await qtBridge.value.delete_student(studentId);
+        await qtBridge.value.delete_student_from_qjson(studentId);
         qtBridge.value.show_notification('成功', '学生已删除');
       }
       await loadStudents();

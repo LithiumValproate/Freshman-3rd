@@ -12,7 +12,6 @@ struct Score {
 };
 
 class Stu_withScore : public Student {
-private:
     std::map<std::string, Score> courseScore;
 
 public:

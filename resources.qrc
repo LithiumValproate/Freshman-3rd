@@ -2,15 +2,15 @@
 	<qresource prefix="/">
 		<file>web/vue-proj/dist/index.html</file>
 		<file>web/vue-proj/dist/vite.svg</file>
-		<file>web/vue-proj/dist/assets/Student-9iNjyoRg.css</file>
-		<file>web/vue-proj/dist/assets/Student-CpW_9s8E.js</file>
-		<file>web/vue-proj/dist/assets/Teacher-BK2NXFG4.css</file>
+		<file>web/vue-proj/dist/assets/Student-DZpCc9pG.js</file>
+		<file>web/vue-proj/dist/assets/Login-Dwe5-o_4.css</file>
+		<file>web/vue-proj/dist/assets/Admin-DCXcKblm.js</file>
 		<file>web/vue-proj/dist/assets/index-Bt6g8DFh.css</file>
-		<file>web/vue-proj/dist/assets/index-wa5PGMFC.js</file>
-		<file>web/vue-proj/dist/assets/Login-Q0GChRjj.css</file>
-		<file>web/vue-proj/dist/assets/Teacher-DzTIu5DV.js</file>
-		<file>web/vue-proj/dist/assets/Admin-BTw3wRW3.js</file>
-		<file>web/vue-proj/dist/assets/Login--r9Bt09p.js</file>
-		<file>web/vue-proj/dist/assets/Admin-CROKhY6w.css</file>
+		<file>web/vue-proj/dist/assets/Teacher-Dd7eIMSL.css</file>
+		<file>web/vue-proj/dist/assets/Admin-fW0Vrj3T.css</file>
+		<file>web/vue-proj/dist/assets/Student-Cvyu-2K9.css</file>
+		<file>web/vue-proj/dist/assets/Login-CPMNH_6f.js</file>
+		<file>web/vue-proj/dist/assets/index-C1CwxqKA.js</file>
+		<file>web/vue-proj/dist/assets/Teacher-CayIBoaH.js</file>
 	</qresource>
 </RCC>

@@ -214,77 +214,135 @@
   </div>
 </template>
 
-<script setup>
+'''<script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const showBasicInfo = ref(true);
-const toggleBasicInfo = () => {
-  showBasicInfo.value = !showBasicInfo.value;
-};
-
 const student = reactive({
-  id: 20230101,
-  name: 'Alice',
-  sex: 'Female',
-  major: 'Computer Science',
-  class_: 1,
-  enrollYear: 2023,
-  birthdate: { year: 2004, month: 9, day: 1 },
+  id: 0,
+  name: '',
+  sex: '',
+  major: '',
+  class_: 0,
+  enrollYear: 0,
+  birthdate: { year: 0, month: 0, day: 0 },
   contactInfo: {
-    phone: '123-456-7890',
-    email: 'alice@university.edu',
+    phone: '',
+    email: '',
   },
   address: {
-    province: 'California',
-    city: 'Los Angeles',
+    province: '',
+    city: '',
   },
-  familyMembers: [
-    {
-      name: '张三',
-      relationship: '父亲',
-      contactInfo: { phone: '13800000000', email: 'zhangsan@example.com' }
-    },
-    {
-      name: '李四',
-      relationship: '母亲',
-      contactInfo: { phone: '13900000000', email: 'lisi@example.com' }
-    }
-  ],
-  courses: [
-    {
-      courseID: 1,
-      courseName: '数据结构',
-      instructor: '王老师',
-      location: 'A101',
-      credits: 3,
-      schedule: [
-        { day: 'Monday', startTime: { hour: 8, minute: 0 }, endTime: { hour: 9, minute: 40 }, repetition: 'Weekly' }
-      ]
-    },
-    {
-      courseID: 2,
-      courseName: '操作系统',
-      instructor: '李老师',
-      location: 'B202',
-      credits: 4,
-      schedule: [
-        { day: 'Wednesday', startTime: { hour: 10, minute: 0 }, endTime: { hour: 11, minute: 40 }, repetition: 'Weekly' }
-      ]
-    }
-  ],
-  courseScore: [
-    { course: '数据结构', score: 92, gpa: 4.0 },
-    { course: '操作系统', score: 88, gpa: 3.7 }
-  ]
+  familyMembers: [],
+  courses: [],
+  courseScore: []
 });
 
 const isModalVisible = ref(false);
 const editingSection = ref('');
 const editData = ref({});
 const scoreChart = ref(null);
+const qtBridge = ref(null);
+
+const waitForQtBridge = () => {
+  return new Promise((resolve) => {
+    if (typeof qt !== 'undefined' && qt.webChannelTransport) {
+      new QWebChannel(qt.webChannelTransport, (channel) => {
+        qtBridge.value = channel.objects.qtBridge;
+        console.log('Qt Bridge connected');
+        resolve();
+      });
+    } else {
+      console.warn('Qt Bridge not available, using mock data');
+      qtBridge.value = createMockBridge();
+      resolve();
+    }
+  });
+};
+
+const createMockBridge = () => {
+  let mockStudentData = {
+    id: 20230101,
+    name: 'Alice (Mock)',
+    sex: 'Female',
+    major: 'Computer Science',
+    class_: 1,
+    enrollYear: 2023,
+    birthdate: { year: 2004, month: 9, day: 1 },
+    contactInfo: {
+      phone: '123-456-7890',
+      email: 'alice@university.edu',
+    },
+    address: {
+      province: 'California',
+      city: 'Los Angeles',
+    },
+    familyMembers: [
+      {
+        name: '张三',
+        relationship: '父亲',
+        contactInfo: { phone: '13800000000', email: 'zhangsan@example.com' }
+      },
+    ],
+    courses: [
+      { courseID: 1, courseName: '数据结构', location: 'A101', schedule: [{ day: 'Monday', startTime: { hour: 8 }, endTime: { hour: 10 } }] },
+      { courseID: 2, courseName: '操作系统', location: 'B202', schedule: [{ day: 'Wednesday', startTime: { hour: 10 }, endTime: { hour: 12 } }] }
+    ],
+    courseScore: [
+      { course: '数据结构', score: 92, gpa: 4.0 },
+      { course: '操作系统', score: 88, gpa: 3.7 }
+    ]
+  };
+  return {
+    get_student_by_id: (id) => {
+      console.log(`MOCK: get_student_by_id(${id})`);
+      return mockStudentData;
+    },
+    update_student: (updatedStudent) => {
+      console.log('MOCK: update_student', updatedStudent);
+      mockStudentData = Object.assign(mockStudentData, updatedStudent);
+      return true;
+    },
+    log_message: (msg) => console.log(`MOCK LOG: ${msg}`),
+  };
+};
+
+
+const loadStudentData = async () => {
+  const userData = JSON.parse(localStorage.getItem('rememberedUser'));
+  if (userData && userData.role === 'student') {
+    try {
+      if (!qtBridge.value) {
+        await waitForQtBridge();
+      }
+      const studentId = parseInt(userData.username, 10);
+      const result = await qtBridge.value.get_student_by_id(studentId);
+      if (result) {
+        Object.assign(student, result);
+        // Ensure nested objects are reactive
+        if (!student.contactInfo) student.contactInfo = {};
+        if (!student.address) student.address = {};
+        if (!student.familyMembers) student.familyMembers = [];
+        if (!student.courses) student.courses = [];
+        if (!student.courseScore) student.courseScore = [];
+      }
+      nextTick(() => {
+        createScoreChart();
+      });
+    } catch (error) {
+      console.error('Error loading student data:', error);
+      if (qtBridge.value) {
+        qtBridge.value.log_message('Error loading student data: ' + error.message);
+      }
+    }
+  } else {
+    router.replace('/login');
+  }
+};
+
 
 const weekDays = [
   { key: 'Monday', label: '周一' },
@@ -334,19 +392,29 @@ const getSectionTitle = (section) => {
   return titles[section] || '';
 };
 
-const saveSectionData = () => {
+const saveSectionData = async () => {
+  const updatedStudent = JSON.parse(JSON.stringify(student));
   switch(editingSection.value) {
     case 'contact':
-      Object.assign(student.contactInfo, editData.value);
+       updatedStudent.contactInfo = { ...editData.value };
       break;
     case 'address':
-      Object.assign(student.address, editData.value);
+       updatedStudent.address = { ...editData.value };
       break;
     case 'family':
-      student.familyMembers = JSON.parse(JSON.stringify(editData.value));
+      updatedStudent.familyMembers = JSON.parse(JSON.stringify(editData.value));
       break;
   }
-  saveToJson();
+
+  try {
+    if (qtBridge.value) {
+      await qtBridge.value.update_student_in_qjson(updatedStudent);
+      Object.assign(student, updatedStudent); // Update local state after successful save
+    }
+  } catch (error) {
+    console.error('Error saving student data:', error);
+  }
+
   closeEditModal();
 };
 
@@ -357,6 +425,9 @@ const closeEditModal = () => {
 };
 
 const addFamilyMember = () => {
+  if (!Array.isArray(editData.value)) {
+     editData.value = [];
+  }
   editData.value.push({
     name: '',
     relationship: '',
@@ -375,7 +446,6 @@ const createScoreChart = () => {
   const labels = student.courseScore.map(item => item.course);
   const scores = student.courseScore.map(item => item.score);
 
-  // 清除之前的图表
   if (window.studentChart) {
     window.studentChart.destroy();
   }
@@ -433,11 +503,6 @@ const createScoreChart = () => {
   });
 };
 
-const saveToJson = () => {
-  const jsonData = JSON.stringify(student, null, 2);
-  localStorage.setItem('studentData', jsonData);
-};
-
 const exportToJson = () => {
   const jsonData = JSON.stringify(student, null, 2);
   const blob = new Blob([jsonData], { type: 'application/json' });
@@ -452,7 +517,7 @@ const exportToJson = () => {
 };
 
 const calculateAge = (birthdate) => {
-  if (!birthdate) return 0;
+  if (!birthdate || !birthdate.year) return 0;
   const today = new Date();
   const birth = new Date(birthdate.year, birthdate.month - 1, birthdate.day);
   let age = today.getFullYear() - birth.getFullYear();
@@ -464,24 +529,14 @@ const calculateAge = (birthdate) => {
 };
 
 const logout = () => {
-  // 清除本地存储的用户数据
   localStorage.removeItem('rememberedUser');
-  localStorage.removeItem('studentData');
-
-  // 跳转到登录页面
-  router.push('/').then(() => {
-    // 确保页面刷新，清除所有状态
-    window.location.reload();
-  }).catch(err => {
-    console.error('退出登录跳转失败:', err);
-    // 如果路由跳转失败，直接刷新页面到根路径
-    window.location.href = '/';
-  });
+  router.replace('/login');
 };
 
-onMounted(() => {
+onMounted(async () => {
+  await waitForQtBridge();
+  await loadStudentData();
   nextTick(() => {
-    // 动态加载 Chart.js
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
     script.onload = () => {
@@ -490,7 +545,7 @@ onMounted(() => {
     document.head.appendChild(script);
   });
 });
-</script>
+</script>''
 
 <style scoped>
 .container {
