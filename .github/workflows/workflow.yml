@@ -17,7 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4 # 检出你的代码
 
-
       # --- 前端构建步骤 ---
       - name: Set up pnpm
         uses: pnpm/action-setup@v3
@@ -33,7 +32,7 @@ jobs:
 
       - name: Install Vue dependencies
         working-directory: ./web/vue-proj # 指定工作目录
-        run: pnpm install --frozen-lockfile # 安装依赖
+        run: pnpm install # 安装依赖
 
       - name: Build Vue Project
         working-directory: ./web/vue-proj # 指定工作目录
