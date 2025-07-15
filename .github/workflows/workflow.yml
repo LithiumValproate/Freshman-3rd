@@ -1,0 +1,59 @@
+# .github/workflows/build.yml
+
+name: Build Qt Application
+
+on:
+  push:
+    branches: [ "master" ] # 当主分支有更新时触发
+  pull_request:
+    branches: [ "master" ] # 当有 PR 到主分支时触发
+
+jobs:
+  build-windows:
+    runs-on: windows-latest # 指定在 Windows 服务器上运行
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3 # 检出你的代码
+
+      - name: Install Qt
+        # 使用一个非常方便的第三方 Action 来安装 Qt
+        # 'aqtinstall' 是一个开源的 Qt 安装工具
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.5.0' # 指定你需要的 Qt 版本
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_mingw' # 指定 MinGW 工具链
+          modules: 'qtwebengine qtwebchannel' # 列出你需要的额外模块
+
+      - name: Configure CMake
+        run: |
+          cmake -S . -B build -G "MinGW Makefiles"
+
+      - name: Build Project
+        run: |
+          cmake --build build
+
+      - name: Prepare Artifacts
+        run: |
+          # 创建一个用于打包的文件夹
+          mkdir deploy
+          # 拷贝可执行文件
+          copy build\bin\QtWebSchoolSys.exe deploy\
+          # 拷贝你的 DLL
+          copy build\lib\im_core.dll deploy\
+          # 拷贝 Vue 的 web 文件夹
+          xcopy build\bin\web deploy\web\ /E /I
+          # 拷贝图标文件夹
+          xcopy build\icons deploy\icons\ /E /I
+          # 使用 windeployqt 工具自动拷贝所有需要的 Qt DLLs
+          # 这是非常关键的一步！
+          C:\Qt\${{ env.QT_VERSION }}\mingw_64\bin\windeployqt.exe deploy\QtWebSchoolSys.exe
+
+      - name: Upload Artifact
+        # 将打包好的 deploy 文件夹作为一个构建产物上传
+        uses: actions/upload-artifact@v3
+        with:
+          name: QtWebSchoolSys-Windows
+          path: deploy/
