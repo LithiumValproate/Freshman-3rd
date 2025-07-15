@@ -64,16 +64,19 @@ jobs:
       - name: Build Project
         run: cmake --build build
 
+      - name: Debug - List Build Directory Contents
+        run: Get-ChildItem -Path build -Recurse
+
       - name: Prepare Artifacts for Upload
-        # 【【【决定性的最终修正】】】
-        # 我们将所有路径都统一指向唯一正确的 build\bin\Release 目录
+        # 【【【决定性的最终修正 - Part 2: 相信证据】】】
+        # 我们现在根据证据，从正确的、不带 'Release' 的路径复制文件
         run: |
           New-Item -ItemType Directory -Force deploy
           
-          # 定义正确的源路径
-          $sourcePath = "build\bin\Release"
+          # 定义正确的源路径，这次它没有 'Release'
+          $sourcePath = "build\bin"
           
-          Write-Host "Copying files from $sourcePath..."
+          Write-Host "Copying files from the proven location: $sourcePath"
           
           # 从正确的路径复制 .exe
           Copy-Item -Path "$sourcePath\QtWebSchoolSys.exe" -Destination "deploy\"
