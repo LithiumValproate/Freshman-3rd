@@ -14,12 +14,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3 # 检出你的代码
+        uses: actions/checkout@v4 # 检出你的代码
 
       - name: Install Qt
         # 使用一个非常方便的第三方 Action 来安装 Qt
         # 'aqtinstall' 是一个开源的 Qt 安装工具
-        uses: jurplel/install-qt-action@v3
+        uses: jurplel/install-qt-action@v4
         with:
           version: '6.5.0' # 指定你需要的 Qt 版本
           host: 'windows'
