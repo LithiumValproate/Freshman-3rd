@@ -50,22 +50,6 @@ set(RESOURCES
         resources.qrc
 )
 
-# 创建 im_core 共享库
-add_library(im_core SHARED
-        im/user.cpp
-        im/room.cpp
-        im/im_go_bridge/im_bridge.cpp
-)
-
-# 为 im_core 设置头文件包含目录
-target_include_directories(im_core PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/struct
-        ${CMAKE_CURRENT_SOURCE_DIR}/im/im_go_bridge
-)
-
-# 【【【修正】】】 不再需要为单个目标设置输出目录，已由全局设置取代
-# set_target_properties(im_core ...)
 
 # 创建可执行文件
 add_executable(QtWebSchoolSys
