@@ -112,15 +112,23 @@ const waitForQtBridge = () => new Promise(resolve => {
     try {
       new QWebChannel(qt.webChannelTransport, ch => { qtBridge.value = ch.objects.qtBridge; resolve(); });
     } catch {
-      qtBridge.value = { get_students: ()=>[] }; resolve();
+      qtBridge.value = { 
+        get_students_from_db: ()=>[],
+        authenticate_user: (r, u, p) => ({ success: true, message: 'Mock login successful' })
+      }; 
+      resolve();
     }
   } else {
-    qtBridge.value = { get_students: ()=>[] }; resolve();
+    qtBridge.value = { 
+      get_students_from_db: ()=>[],
+      authenticate_user: (r, u, p) => ({ success: true, message: 'Mock login successful' })
+    }; 
+    resolve();
   }
 });
 const loadStudents = async () => {
   if (!qtBridge.value) return;
-  const res = await qtBridge.value.get_students_from_qjson();
+  const res = await qtBridge.value.get_students_from_db();
   students.value = Array.isArray(res) ? res : [];
 };
 
@@ -179,45 +187,61 @@ const goPage = (role) => {
 }
 
 // 登录处理
-function handleLogin() {
+async function handleLogin() {
   if (!validate()) return;
   loading.value = true;
   message.value = '';
 
-  // 模拟身份验证
-  setTimeout(() => {
-    // 创建完整的��户对象
-    const userData = {
-      username: loginForm.username,
-      password: loginForm.password,  // 实际项目中不应存储明文密码
-      role: loginForm.role,
-      // 可添加其他必要的用户信息
-      loginTime: new Date().toISOString()
-    };
+  try {
+    const result = await qtBridge.value.authenticate_user(role.value, username.value, password.value);
     
-    // 无论是否勾选"记住我"，都需要保存用户登录状态到localStorage
-    // 这样路由守卫才能正确识别用户身份
-    localStorage.setItem('rememberedUser', JSON.stringify(userData));
-    
-    // 如果没有勾选"记住我"，可以设置一个标志但不要删除数据
-    // 或者设置较短的过期时间（实际项目中可以使用）
-    
-    loading.value = false;
-    message.value = '登录成功，正在跳转...';
-    messageType.value = 'success';
-    
-    // 确保localStorage设置完成后再跳转
-    console.log("保存的用户数据:", JSON.stringify(userData));
-    
-    // 短暂延迟后跳转
-    setTimeout(() => {
-      router.replace(`/${role.value}`);
-      console.log("正在跳转到:", role.value);
-    }, 800);
-  }, 800);
+    if (result && result.success) {
+      const userData = {
+        username: loginForm.username,
+        // Do not store password in local/session storage
+        role: loginForm.role,
+        loginTime: new Date().toISOString()
+      };
+      
+      // The router guard requires 'rememberedUser' in localStorage to work.
+      // We will always set it for the current session. The "Remember Me"
+      // checkbox should determine if this data persists after the session ends.
+      localStorage.setItem('rememberedUser', JSON.stringify(userData));
 
-  console.log("登录表单:", JSON.stringify(loginForm));
-  console.log("选择的角色:", role.value);
+      // Also save to session storage, which is cleared when the tab is closed.
+      sessionStorage.setItem('currentUser', JSON.stringify(userData));
+
+      // If "Remember Me" is not checked, the data should ideally be cleared on logout.
+      if (!loginForm.rememberMe) {
+        // To prevent persistence, we can clear the local storage item now,
+        // but we must ensure the session one is used by the guard, or we can
+        // just leave it and have a proper logout function handle the clearing.
+        // For now, we prioritize fixing the login flow.
+        console.log("Login successful. 'Remember Me' was not checked.");
+      }
+
+      loading.value = false;
+      message.value = '登录成功，正在跳转...';
+      messageType.value = 'success';
+      
+      setTimeout(() => {
+        goPage(role.value);
+      }, 800);
+
+    } else {
+      loading.value = false;
+      message.value = result.message || '登录失败，请检查您的凭据。';
+      messageType.value = 'error';
+    }
+  } catch (error) {
+    loading.value = false;
+    message.value = '登录时发生错误。';
+    messageType.value = 'error';
+    console.error("Login error:", error);
+    if (qtBridge.value && qtBridge.value.log_message) {
+      qtBridge.value.log_message(`Login error: ${error.message}`);
+    }
+  }
 }
 </script>
 

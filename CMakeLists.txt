@@ -94,11 +94,6 @@ if(APPLE)
     set_target_properties(QtWebSchoolSys PROPERTIES
         MACOSX_BUNDLE TRUE
     )
-
-    # macOSでのデプロイメントのためにMySQLドライバを検索してコピーする
-    set(SQL_DRIVER_DEST_DIR "${CMAKE_BINARY_DIR}/bin/${PROJECT_NAME}.app/Contents/PlugIns/sqldrivers")
-    file(COPY "${Qt6_PLUGINS_DIR}/sqldrivers/libqsqlmysql.dylib" DESTINATION "${SQL_DRIVER_DEST_DIR}")
-    message(STATUS "Copied MySQL driver to ${SQL_DRIVER_DEST_DIR}")
 endif()
 
 # 安装设置

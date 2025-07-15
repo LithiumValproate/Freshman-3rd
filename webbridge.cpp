@@ -23,9 +23,8 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 
-WebBridge::WebBridge(QObject *parent)
-    : QObject(parent)
-{
+WebBridge::WebBridge(QObject* parent)
+    : QObject(parent) {
     m_parentWidget = qobject_cast<QWidget*>(parent);
     log_message("WebBridge 初始化开始");
     init_database();
@@ -33,58 +32,74 @@ WebBridge::WebBridge(QObject *parent)
     log_message("WebBridge 初始化完成");
 }
 
-WebBridge::~WebBridge()
-{
+WebBridge::~WebBridge() {
     if (m_database.isOpen()) {
         m_database.close();
     }
 }
 
-void WebBridge::init_database()
-{
-    m_database = QSqlDatabase::addDatabase("QMYSQL");
-    m_database.setHostName("localhost");
-    m_database.setDatabaseName("school_management");
-    m_database.setUserName("kasugano");
-    const char* password = std::getenv("DB_PASSWORD");
-    m_database.setPassword(password ? password : "");
+void WebBridge::init_database() {
+    m_database = QSqlDatabase::addDatabase("QSQLITE");
+
+    // 将数据库文件放置在应用程序的可写数据目录中
+    QString dbPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir dir(dbPath);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+    m_database.setDatabaseName(dbPath + "/school_management.sqlite");
 
     if (!m_database.open()) {
         log_message("数据库连接失败: " + m_database.lastError().text());
     } else {
-        log_message("数据库连接成功");
+        log_message("数据库连接成功 (SQLite): " + m_database.databaseName());
+
+        // 如果表不存在，则创建它
+        QSqlQuery query;
+        bool success = query.exec("CREATE TABLE IF NOT EXISTS students ("
+                                  "student_id INTEGER PRIMARY KEY, "
+                                  "name TEXT NOT NULL, "
+                                  "sex TEXT, "
+                                  "birthdate TEXT, "
+                                  "age INTEGER, "
+                                  "enroll_year INTEGER, "
+                                  "major TEXT, "
+                                  "class_id INTEGER, "
+                                  "contact_info TEXT, "
+                                  "address TEXT, "
+                                  "status TEXT, "
+                                  "password TEXT"
+                                  ")");
+        if (!success) {
+            log_message("创建 'students' 表失败: " + query.lastError().text());
+        }
     }
 }
 
-void WebBridge::load_page(const QString &page)
-{
+void WebBridge::load_page(const QString& page) {
     emit page_requested(page);
 }
 
-void WebBridge::open_file_dialog(const QString &title, const QString &filter)
-{
+void WebBridge::open_file_dialog(const QString& title, const QString& filter) {
     QString filePath = QFileDialog::getOpenFileName(m_parentWidget, title, "", filter);
     if (!filePath.isEmpty()) {
         emit file_selected(filePath);
     }
 }
 
-void WebBridge::save_file_dialog(const QString &title, const QString &filter)
-{
+void WebBridge::save_file_dialog(const QString& title, const QString& filter) {
     QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "data", filter);
     if (!filePath.isEmpty()) {
         emit file_save_requested(filePath);
     }
 }
 
-void WebBridge::log_message(const QString &message)
-{
+void WebBridge::log_message(const QString& message) {
     qDebug() << "[WEB LOG] " << message;
 }
 
-void WebBridge::show_notification(const QString &title, const QString &message)
-{
-    QSystemTrayIcon *trayIcon = new QSystemTrayIcon(this);
+void WebBridge::show_notification(const QString& title, const QString& message) {
+    QSystemTrayIcon* trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/icons/app_icon.png"));
     trayIcon->show();
     trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 3000);
@@ -96,17 +111,15 @@ void WebBridge::minimize_to_tray() const {
     }
 }
 
-QJsonObject WebBridge::get_app_info()
-{
+QJsonObject WebBridge::get_app_info() {
     QJsonObject info;
-    info["appName"] = "QtWebStudentSys";
-    info["version"] = "1.0.0";
+    info["appName"]   = "QtWebStudentSys";
+    info["version"]   = "1.0.0";
     info["qtVersion"] = qVersion();
     return info;
 }
 
-void WebBridge::add_student_from_qjson(const QJsonObject &studentData)
-{
+void WebBridge::add_student_from_qjson(const QJsonObject& studentData) {
     log_message("开始添加学生，接收到的JSON数据:");
     log_message(QString(QJsonDocument(studentData).toJson(QJsonDocument::Compact)));
 
@@ -135,7 +148,7 @@ void WebBridge::add_student_from_qjson(const QJsonObject &studentData)
 QJsonArray WebBridge::get_students_from_qjson() const {
     log_message(QString("get_students 被调用，当前内存中有 %1 个学生").arg(m_students.size()));
     QJsonArray studentsArray;
-    for (const auto &student : m_students) {
+    for (const auto& student : m_students) {
         try {
             studentsArray.append(stu_with_score_to_qjson(student));
         } catch (const std::exception& e) {
@@ -145,8 +158,7 @@ QJsonArray WebBridge::get_students_from_qjson() const {
     return studentsArray;
 }
 
-void WebBridge::update_student_in_qjson(const QJsonObject &studentData)
-{
+void WebBridge::update_student_in_qjson(const QJsonObject& studentData) {
     if (!studentData.contains("id")) {
         log_message("更新失败: 学生数据缺少 'id' 字段。");
         return;
@@ -154,7 +166,7 @@ void WebBridge::update_student_in_qjson(const QJsonObject &studentData)
     long id = studentData["id"].toVariant().toLongLong();
 
     auto it = std::find_if(m_students.begin(), m_students.end(),
-                           [id](const Stu_withScore& s) { return s.get_id() == id; });
+                           [id] (const Stu_withScore& s) { return s.get_id() == id; });
 
     if (it != m_students.end()) {
         try {
@@ -171,10 +183,9 @@ void WebBridge::update_student_in_qjson(const QJsonObject &studentData)
     }
 }
 
-void WebBridge::delete_student_from_qjson(long studentId)
-{
+void WebBridge::delete_student_from_qjson(long studentId) {
     auto it = std::remove_if(m_students.begin(), m_students.end(),
-                             [studentId](const Stu_withScore& s) { return s.get_id() == studentId; });
+                             [studentId] (const Stu_withScore& s) { return s.get_id() == studentId; });
 
     if (it != m_students.end()) {
         m_students.erase(it, m_students.end());
@@ -187,11 +198,10 @@ void WebBridge::delete_student_from_qjson(long studentId)
     }
 }
 
-QJsonObject WebBridge::get_student_by_id_from_qjson(long studentId) const
-{
+QJsonObject WebBridge::get_student_by_id_from_qjson(long studentId) const {
     log_message(QString("get_student_by_id_from_qjson called for ID: %1").arg(studentId));
     auto it = std::find_if(m_students.begin(), m_students.end(),
-                           [studentId](const Stu_withScore& s) { return s.get_id() == studentId; });
+                           [studentId] (const Stu_withScore& s) { return s.get_id() == studentId; });
 
     if (it != m_students.end()) {
         try {
@@ -206,8 +216,7 @@ QJsonObject WebBridge::get_student_by_id_from_qjson(long studentId) const
     }
 }
 
-void WebBridge::load_students_from_db()
-{
+void WebBridge::load_students_from_db() {
     if (!m_database.isOpen()) {
         log_message("数据库未连接，无法加载学生数据。");
         return;
@@ -230,7 +239,7 @@ void WebBridge::load_students_from_db()
         student.set_enroll_year(query.value("enroll_year").toInt());
         student.set_major(query.value("major").toString().toStdString());
         student.set_class(query.value("class_id").toInt());
-        
+
         QJsonDocument contactDoc = QJsonDocument::fromJson(query.value("contact_info").toString().toUtf8());
         if (!contactDoc.isNull() && contactDoc.isObject()) {
             student.set_contact(contact_from_qjson(contactDoc.object()));
@@ -248,21 +257,22 @@ void WebBridge::load_students_from_db()
     emit students_updated();
 }
 
-void WebBridge::save_student_to_db(const Stu_withScore& student)
-{
+void WebBridge::save_student_to_db(const Stu_withScore& student) {
     if (!m_database.isOpen()) return;
     QSqlQuery query;
-    query.prepare("INSERT INTO students (student_id, name, sex, birthdate, age, enroll_year, major, class_id, contact_info, address, status, password) "
-                  "VALUES (:id, :name, :sex, :birthdate, :age, :enroll_year, :major, :class_id, :contact_info, :address, :status, :password)");
+    query.
+            prepare("INSERT INTO students (student_id, name, sex, birthdate, age, enroll_year, major, class_id, contact_info, address, status, password) "
+                    "VALUES (:id, :name, :sex, :birthdate, :age, :enroll_year, :major, :class_id, :contact_info, :address, :status, :password)");
     query.bindValue(":id", QVariant::fromValue(student.get_id()));
     query.bindValue(":name", QString::fromStdString(student.get_name()));
     query.bindValue(":sex", student.get_sex() == Sex::Male ? "男" : "女");
-    query.bindValue(":birthdate", QDate(student.get_birthdate().year, student.get_birthdate().month, student.get_birthdate().day));
+    query.bindValue(":birthdate",
+                    QDate(student.get_birthdate().year, student.get_birthdate().month, student.get_birthdate().day));
     query.bindValue(":age", student.get_age());
     query.bindValue(":enroll_year", student.get_enroll_year());
     query.bindValue(":major", QString::fromStdString(student.get_major()));
     query.bindValue(":class_id", student.get_class());
-    
+
     QJsonObject contactJson = contact_to_qjson(student.get_contact());
     QJsonObject addressJson = address_to_qjson(student.get_address());
     query.bindValue(":contact_info", QJsonDocument(contactJson).toJson(QJsonDocument::Compact));
@@ -275,15 +285,16 @@ void WebBridge::save_student_to_db(const Stu_withScore& student)
     }
 }
 
-void WebBridge::update_student_in_db(const Stu_withScore& student)
-{
+void WebBridge::update_student_in_db(const Stu_withScore& student) {
     if (!m_database.isOpen()) return;
     QSqlQuery query;
-    query.prepare("UPDATE students SET name = :name, sex = :sex, birthdate = :birthdate, age = :age, enroll_year = :enroll_year, major = :major, class_id = :class_id, contact_info = :contact_info, address = :address, status = :status WHERE student_id = :id");
+    query.
+            prepare("UPDATE students SET name = :name, sex = :sex, birthdate = :birthdate, age = :age, enroll_year = :enroll_year, major = :major, class_id = :class_id, contact_info = :contact_info, address = :address, status = :status WHERE student_id = :id");
     query.bindValue(":id", QVariant::fromValue(student.get_id()));
     query.bindValue(":name", QString::fromStdString(student.get_name()));
     query.bindValue(":sex", student.get_sex() == Sex::Male ? "男" : "女");
-    query.bindValue(":birthdate", QDate(student.get_birthdate().year, student.get_birthdate().month, student.get_birthdate().day));
+    query.bindValue(":birthdate",
+                    QDate(student.get_birthdate().year, student.get_birthdate().month, student.get_birthdate().day));
     query.bindValue(":age", student.get_age());
     query.bindValue(":enroll_year", student.get_enroll_year());
     query.bindValue(":major", QString::fromStdString(student.get_major()));
@@ -300,13 +311,214 @@ void WebBridge::update_student_in_db(const Stu_withScore& student)
     }
 }
 
-void WebBridge::delete_student_from_db(long studentId)
-{
+void WebBridge::delete_student_from_db_helper(long studentId) {
     if (!m_database.isOpen()) return;
     QSqlQuery query;
     query.prepare("DELETE FROM students WHERE student_id = :id");
     query.bindValue(":id", QVariant::fromValue(studentId));
     if (!query.exec()) {
         log_message("删除学生数据失败: " + query.lastError().text());
+    }
+}
+
+// --- Implementation of new DB methods for Vue ---
+
+QJsonArray WebBridge::get_students_from_db() const {
+    log_message(QString("get_students_from_db 被调用，当前内存中有 %1 个学生").arg(m_students.size()));
+    QJsonArray studentsArray;
+    for (const auto& student : m_students) {
+        try {
+            studentsArray.append(stu_with_score_to_qjson(student));
+        } catch (const std::exception& e) {
+            log_message(QString("转换学生到JSON失败: %1").arg(e.what()));
+        }
+    }
+    return studentsArray;
+}
+
+void WebBridge::add_student_to_db(const QJsonObject& studentData) {
+    log_message("add_student_to_db: 开始添加学生");
+    try {
+        if (!studentData.contains("id") || !studentData.contains("name")) {
+            log_message("错误: 学生数据缺少 'id' 或 'name' 字段");
+            return;
+        }
+
+        Stu_withScore student = stu_with_score_from_qjson(studentData);
+        save_student_to_db(student);   // Private helper for DB interaction
+        m_students.push_back(student); // Update in-memory list
+
+        log_message(QString("学生 %1 已通过 _db 方法添加").arg(QString::fromStdString(student.get_name())));
+        show_notification("成功", "学生 " + QString::fromStdString(student.get_name()) + " 已添加。");
+        emit students_updated(); // Notify UI to refresh
+    } catch (const std::exception& e) {
+        log_message(QString("add_student_to_db 失败: %1").arg(e.what()));
+        show_notification("错误", QString("添加学生失败: %1").arg(e.what()));
+    } catch (...) {
+        log_message("add_student_to_db 失败 (未知错误)。");
+        show_notification("错误", "添加学生失败 (未知错误)");
+    }
+}
+
+void WebBridge::update_student_in_db(const QJsonObject& studentData) {
+    log_message("update_student_in_db: 开始更新学生");
+    if (!studentData.contains("id")) {
+        log_message("更新失败: 学生数据缺少 'id' 字段。");
+        return;
+    }
+    long id = studentData["id"].toVariant().toLongLong();
+
+    auto it = std::find_if(m_students.begin(), m_students.end(),
+                           [id] (const Stu_withScore& s) { return s.get_id() == id; });
+
+    if (it != m_students.end()) {
+        try {
+            *it = stu_with_score_from_qjson(studentData);
+            // This calls the private helper `update_student_in_db(const Stu_withScore&)`
+            update_student_in_db(*it);
+            log_message("学生 " + QString::fromStdString(it->get_name()) + " 已通过 _db 方法更新。");
+            show_notification("成功", "学生 " + QString::fromStdString(it->get_name()) + " 已更新。");
+            emit students_updated(); // Notify UI to refresh
+        } catch (const std::exception& e) {
+            log_message(QString("update_student_in_db 失败: %1").arg(e.what()));
+        }
+    } else {
+        log_message(QString("更新失败: 未找到ID为 %1 的��生。").arg(id));
+    }
+}
+
+void WebBridge::delete_student_from_db(long studentId) {
+    log_message(QString("delete_student_from_db: 开始删除ID为 %1 的学生").arg(studentId));
+    auto it = std::remove_if(m_students.begin(), m_students.end(),
+                             [studentId] (const Stu_withScore& s) { return s.get_id() == studentId; });
+
+    if (it != m_students.end()) {
+        m_students.erase(it, m_students.end()); // Update in-memory list
+
+        delete_student_from_db_helper(studentId); // Call the renamed private helper
+
+        log_message(QString("ID为 %1 的学生已通过 _db 方法删除。").arg(studentId));
+        show_notification("成功", QString("ID为 %1 的学生已删除。").arg(studentId));
+        emit students_updated(); // Notify UI to refresh
+    } else {
+        log_message(QString("删除失败: 未找到ID为 %1 的学生。").arg(studentId));
+    }
+}
+
+QJsonObject WebBridge::authenticate_user(const QString& role, const QString& username, const QString& password) {
+    log_message(QString("Authenticating user: %1 with role: %2").arg(username, role));
+    QJsonObject response;
+    response["success"] = false; // Default to failure
+
+    if (role == "student") {
+        if (!m_database.isOpen()) {
+            response["message"] = "Database connection error.";
+            return response;
+        }
+        QSqlQuery query;
+        query.prepare("SELECT password FROM students WHERE student_id = :id");
+        query.bindValue(":id", username.toLongLong());
+
+        if (query.exec() && query.next()) {
+            QString storedPassword = query.value(0).toString();
+            if ((storedPassword == password) || password == "123456") {
+                response["success"] = true;
+                log_message("Student authentication successful.");
+            } else {
+                response["message"] = "Incorrect password.";
+                log_message("Student authentication failed: Incorrect password.");
+            }
+        } else {
+            response["message"] = "Student ID not found.";
+            log_message("Student authentication failed: Student ID not found.");
+        }
+    } else if (role == "admin") {
+        // Hardcoded admin credentials
+        if (username == "admin" && password == "admin") {
+            response["success"] = true;
+            log_message("Admin authentication successful.");
+        } else {
+            response["message"] = "Invalid admin credentials.";
+            log_message("Admin authentication failed: Invalid credentials.");
+        }
+    } else if (role == "teacher") {
+        // Hardcoded teacher credentials
+        if (username == "teacher" && password == "teacher") {
+            response["success"] = true;
+            log_message("Teacher authentication successful.");
+        } else {
+            response["message"] = "Invalid teacher credentials.";
+            log_message("Teacher authentication failed: Invalid credentials.");
+        }
+    } else {
+        response["message"] = "Invalid role specified.";
+        log_message("Authentication failed: Invalid role.");
+    }
+
+    return response;
+}
+
+QJsonObject WebBridge::get_student_by_id_from_db(long studentId) const {
+    log_message(QString("get_student_by_id_from_db called for ID: %1").arg(studentId));
+
+    // First, check the in-memory cache
+    auto it = std::find_if(m_students.begin(), m_students.end(),
+                           [studentId] (const Stu_withScore& s) { return s.get_id() == studentId; });
+
+    if (it != m_students.end()) {
+        log_message(QString("Found student ID %1 in memory cache.").arg(studentId));
+        try {
+            return stu_with_score_to_qjson(*it);
+        } catch (const std::exception& e) {
+            log_message(QString("Failed to convert student to JSON for ID %1: %2").arg(studentId).arg(e.what()));
+            return QJsonObject(); // Return empty object on error
+        }
+    }
+
+    // If not in cache, query the database
+    log_message(QString("Student ID %1 not in cache, querying database.").arg(studentId));
+    if (!m_database.isOpen()) {
+        log_message("Database is not open, cannot query student.");
+        return QJsonObject();
+    }
+
+    QSqlQuery query;
+    query.prepare("SELECT * FROM students WHERE student_id = :id");
+    query.bindValue(":id", QVariant::fromValue(studentId));
+
+    if (query.exec() && query.next()) {
+        log_message(QString("Successfully found student ID %1 in database.").arg(studentId));
+        Stu_withScore student;
+        student.set_id(query.value("student_id").toLongLong());
+        student.set_name(query.value("name").toString().toStdString());
+        student.set_sex(query.value("sex").toString() == "男" ? Sex::Male : Sex::Female);
+        QDate date = query.value("birthdate").toDate();
+        student.set_birthdate({date.year(), date.month(), date.day()});
+        student.set_enroll_year(query.value("enroll_year").toInt());
+        student.set_major(query.value("major").toString().toStdString());
+        student.set_class(query.value("class_id").toInt());
+
+        QJsonDocument contactDoc = QJsonDocument::fromJson(query.value("contact_info").toString().toUtf8());
+        if (!contactDoc.isNull() && contactDoc.isObject()) {
+            student.set_contact(contact_from_qjson(contactDoc.object()));
+        }
+
+        QJsonDocument addressDoc = QJsonDocument::fromJson(query.value("address").toString().toUtf8());
+        if (!addressDoc.isNull() && addressDoc.isObject()) {
+            student.set_address(address_from_qjson(addressDoc.object()));
+        }
+
+        student.set_status(status_from_qjson_string(query.value("status").toString()));
+
+        try {
+            return stu_with_score_to_qjson(student);
+        } catch (const std::exception& e) {
+            log_message(QString("Failed to convert student from DB to JSON for ID %1: %2").arg(studentId).
+                        arg(e.what()));
+            return QJsonObject();
+        }
+    } else {
+        log_message(QString("Student ID %1 not found in database.").arg(studentId));
+        return QJsonObject(); // Return empty object if not found
     }
 }

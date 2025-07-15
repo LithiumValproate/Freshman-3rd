@@ -382,7 +382,8 @@ const createMockBridge = () => {
 const loadStudents = async () => {
   try {
     if (!qtBridge.value) return;
-    const result = await qtBridge.value.get_students();
+    // 修改：使用新的 _db 方法
+    const result = await qtBridge.value.get_students_from_db();
     if (Array.isArray(result)) {
       students.value = result;
     } else {
@@ -531,11 +532,11 @@ const saveStudent = async () => {
     const studentData = JSON.parse(JSON.stringify(editableStudent.value));
     if (currentEditingId.value) {
       if (qtBridge.value) {
-        await qtBridge.value.update_student(studentData);
+        await qtBridge.value.update_student_in_db(studentData);
       }
     } else {
       if (qtBridge.value) {
-        await qtBridge.value.add_student(studentData);
+        await qtBridge.value.add_student_to_db(studentData);
       }
     }
     if (qtBridge.value) {
@@ -559,8 +560,8 @@ const deleteStudent = async (studentId) => {
   if (confirm('确定要删除这个学生吗？')) {
     try {
       if (qtBridge.value) {
-        await qtBridge.value.delete_student_from_qjson(studentId);
-        qtBridge.value.show_notification('成功', '学生已删除');
+        await qtBridge.value.delete_student_from_db(studentId);
+        qtBridge.value.show_notification('成���', '学生已删除');
       }
       await loadStudents();
     } catch (error) {
