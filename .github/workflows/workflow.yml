@@ -74,12 +74,12 @@ jobs:
           New-Item -ItemType Directory -Force deploy
           
           # 定义正确的源路径，这次它没有 'Release'
-          $sourcePath = "build\bin"
+          $sourcePath = "build\bin\Release"
           
           Write-Host "Copying files from the proven location: $sourcePath"
           
           # 从正确的路径复制 .exe
-          Copy-Item -Path "$sourcePath\Debug\QtWebSchoolSys.exe" -Destination "deploy\"
+          Copy-Item -Path "$sourcePath\QtWebSchoolSys.exe" -Destination "deploy\"
           
           # 从正确的路径复制 web 文件夹
           Copy-Item -Path "$sourcePath\web" -Destination "deploy\" -Recurse
