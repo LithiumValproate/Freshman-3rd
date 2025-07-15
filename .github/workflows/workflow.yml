@@ -2,84 +2,75 @@ name: Build Qt Application
 
 on:
   push:
-    branches: [ "master" ] # 当主分支有更新时触发
+    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ] # 当有 PR 到主分支时触发
+    branches: [ "master" ]
 
 jobs:
   build-windows:
-    runs-on: windows-latest # 指定在 Windows 服务器上运行
+    runs-on: windows-latest
 
     env:
-      QT_VERSION: '6.5.3' # 这里设置环境变量，方便复用
+      QT_VERSION: '6.5.3'
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4 # 检出你的代码
+        uses: actions/checkout@v4
 
-      # --- 前端构建步骤 ---
-      - name: Set up pnpm
+      # --- 前端和 Python 步骤 (不变) ---
+      - name: Set up pnpm and Node.js
         uses: pnpm/action-setup@v3
         with:
-          version: 8 # 指定 pnpm 版本
-
-      - name: Set up Node.js
+          version: 8
+      - name: Set up Node.js for pnpm
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # 指定 Node.js 版本
-          cache: 'pnpm' # 为 pnpm 启用缓存，加快后续构建速度
+          node-version: '20'
+          cache: 'pnpm'
           cache-dependency-path: 'web/vue-proj/pnpm-lock.yaml'
-
-      - name: Install Vue dependencies
-        working-directory: ./web/vue-proj # 指定工作目录
-        run: pnpm install # 安装依赖
-
-      - name: Build Vue Project
-        working-directory: ./web/vue-proj # 指定工作目录
-        run: pnpm build # 执行构建命令
-
-      # --- Python 脚本运行步骤 ---
+      - name: Install and Build Vue Project
+        working-directory: ./web/vue-proj
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # 指定 Python 版本
-
+          python-version: '3.11'
       - name: Run Python preprocessing script
         run: python config_qrc.py
 
+      # --- C++/Qt 构建步骤 ---
       - name: Install Qt
-        # 使用一个非常方便的第三方 Action 来安装 Qt
-        # 'aqtinstall' 是一个开源的 Qt 安装工具
         uses: jurplel/install-qt-action@v4
         with:
-          version: ${{ env.QT_VERSION }} # 使用环境变量
+          version: ${{ env.QT_VERSION }}
           host: 'windows'
           target: 'desktop'
-          arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
-          modules: 'qtwebengine qtwebchannel qtpositioning'# 列出你需要的额外模块
+          arch: 'win64_msvc2019_64'
+          modules: 'qtwebengine qtwebchannel qtpositioning'
 
       - name: Configure CMake
         run: cmake -S . -B build
 
-      - name: Build Project
-        run: cmake --build build
-
-      - name: Debug - List Build Directory Contents
-        run: Get-ChildItem -Path build -Recurse
+      - name: Build Project in Release Mode
+        # 【【【决定性的最终修正】】】
+        # 强制使用 Release 配置进行编译
+        run: cmake --build build --config Release
 
       - name: Prepare Artifacts for Upload
-        # 【【【决定性的最终修正 - Part 2: 相信证据】】】
-        # 我们现在根据证据，从正确的、不带 'Release' 的路径复制文件
+        # 【【【决定性的最终修正】】】
+        # 将所有路径都统一指向唯一正确的 build\bin\Release 目录
         run: |
           New-Item -ItemType Directory -Force deploy
           
-          # 定义正确的源路径，这次它没有 'Release'
-          $sourcePath = "build\bin"
+          # 定义正确的源路径
+          $sourcePath = "build\bin\Release"
           
-          Write-Host "Copying files from the proven location: $sourcePath"
+          Write-Host "Copying files from the correct Release location: $sourcePath"
           
-          # 从正确的路径复制 .exe
-          Copy-Item -Path "$sourcePath\Debug\QtWebSchoolSys.exe" -Destination "deploy\"
+          # 从正确的路径复制 Release 版的 .exe
+          Copy-Item -Path "$sourcePath\QtWebSchoolSys.exe" -Destination "deploy\"
           
           # 从正确的路径复制 web 文件夹
           Copy-Item -Path "$sourcePath\web" -Destination "deploy\" -Recurse
@@ -89,12 +80,12 @@ jobs:
             Copy-Item -Path "icons" -Destination "deploy\" -Recurse
           }
           
-          Write-Host "Running windeployqt on deploy\QtWebSchoolSys.exe..."
+          Write-Host "Running windeployqt on the Release executable..."
+          # windeployqt 的 --release 参数现在和 Release 版的 exe 完全匹配
           & "$env:QT_ROOT_DIR\bin\windeployqt.exe" --release --no-translations --no-opengl-sw "deploy\QtWebSchoolSys.exe"
 
       - name: Upload Artifact
-        # 将打包好的 deploy 文件夹作为一个构建产物上传
         uses: actions/upload-artifact@v4
         with:
-          name: QtWebSchoolSys-Windows
+          name: QtWebSchoolSys-Windows-Build
           path: deploy/
