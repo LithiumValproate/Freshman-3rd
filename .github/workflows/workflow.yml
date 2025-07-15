@@ -2,81 +2,91 @@ name: Build Qt Application
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: [ "master" ] # 当主分支有更新时触发
   pull_request:
-    branches: [ "master", "main" ]
+    branches: [ "master" ] # 当有 PR 到主分支时触发
 
 jobs:
   build-windows:
-    # 最终的现实：我们必须在最新的 Windows Runner 上运行
-    runs-on: windows-latest
+    runs-on: windows-latest # 指定在 Windows 服务器上运行
 
     env:
-      # 坚持使用这个稳定的 LTS 版本
-      QT_VERSION: '6.5.3'
+      QT_VERSION: '6.5.3' # 这里设置环境变量，方便复用
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4 # 检出你的代码
 
-      # --- 前端和 Python 步骤 (不变) ---
-      - name: Set up pnpm and Node.js
+      # --- 前端构建步骤 ---
+      - name: Set up pnpm
         uses: pnpm/action-setup@v3
         with:
-          version: 8
-      - name: Set up Node.js for pnpm
+          version: 8 # 指定 pnpm 版本
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
+          node-version: '20' # 指定 Node.js 版本
+          cache: 'pnpm' # 为 pnpm 启用缓存，加快后续构建速度
           cache-dependency-path: 'web/vue-proj/pnpm-lock.yaml'
-      - name: Install and Build Vue Project
-        working-directory: ./web/vue-proj
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm build
+
+      - name: Install Vue dependencies
+        working-directory: ./web/vue-proj # 指定工作目录
+        run: pnpm install # 安装依赖
+
+      - name: Build Vue Project
+        working-directory: ./web/vue-proj # 指定工作目录
+        run: pnpm build # 执行构建命令
+
+      # --- Python 脚本运行步骤 ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.11' # 指定 Python 版本
+
       - name: Run Python preprocessing script
         run: python config_qrc.py
 
-      # --- C++/Qt 构建步骤 ---
       - name: Install Qt
+        # 使用一个非常方便的第三方 Action 来安装 Qt
+        # 'aqtinstall' 是一个开源的 Qt 安装工具
         uses: jurplel/install-qt-action@v4
         with:
-          version: ${{ env.QT_VERSION }}
+          version: ${{ env.QT_VERSION }} # 使用环境变量
           host: 'windows'
           target: 'desktop'
-          # 使用与 VS 2022 ABI 兼容的 msvc2019 库
-          arch: 'win64_msvc2019_64'
-          modules: 'qtwebengine qtwebchannel'
+          arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
+          modules: 'qtwebengine qtwebchannel'# 列出你需要的额外模块
 
       - name: Configure CMake
-        # 【【【决定性修正 - 回归】】】
-        # 在 windows-latest(VS2022) 环境下，我们必须手动提示 CMake 如何找到
-        # WebEngineCore，以修复 WebEngineWidgets 的内部依赖查找问题。
         run: >
           cmake -S . -B build
           -D CMAKE_PREFIX_PATH="%Qt6_DIR%/lib/cmake/Qt6WebEngineCore"
+          --debug-find-pkg=Qt6WebEngineWidgets
 
-      - name: Build Project with CMake
-        run: cmake --build build --config Release
+      - name: Build Project
+        run: cmake --build build
 
-      - name: Prepare Artifacts for Upload
+      - name: Prepare Artifacts
         shell: cmd
         run: |
+          REM 创建一个用于打包的文件夹
           mkdir deploy
-          copy build\Release\QtWebSchoolSys.exe deploy\
-          copy build\Release\im_core.dll deploy\
+          REM 拷贝可执行文件
+          copy build\bin\QtWebSchoolSys.exe deploy\
+          REM 拷贝你的 DLL
+          copy build\lib\im_core.dll deploy\
+          REM 拷贝 Vue 的 web 文件夹
           xcopy build\bin\web deploy\web\ /E /I
+          REM 拷贝图标文件夹
           xcopy build\icons deploy\icons\ /E /I
+          REM 使用正确的 windeployqt 路径并指定 Release 模式
           echo "Running windeployqt..."
           "%Qt6_DIR%\bin\windeployqt.exe" --release --no-translations --no-opengl-sw deploy\QtWebSchoolSys.exe
 
       - name: Upload Artifact
+        # 将打包好的 deploy 文件夹作为一个构建产物上传
         uses: actions/upload-artifact@v4
         with:
-          name: QtWebSchoolSys-Windows-Build
+          name: QtWebSchoolSys-Windows
           path: deploy/
