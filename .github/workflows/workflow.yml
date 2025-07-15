@@ -53,7 +53,7 @@ jobs:
 
       - name: Upload Artifact
         # 将打包好的 deploy 文件夹作为一个构建产物上传
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: QtWebSchoolSys-Windows
           path: deploy/
