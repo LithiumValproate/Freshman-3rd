@@ -77,9 +77,9 @@ jobs:
           xcopy build\bin\web deploy\web\ /E /I
           REM 拷贝图标文件夹
           xcopy build\icons deploy\icons\ /E /I
-          REM 使用 windeployqt 工具自动拷贝所有需要的 Qt DLLs
-          "%Qt6_DIR%\bin\windeployqt.exe" deploy\QtWebSchoolSys.exe || ^
-          C:\Qt\${{ env.QT_VERSION }}\mingw_64\bin\windeployqt.exe deploy\QtWebSchoolSys.exe
+          REM 使用正确的 windeployqt 路径并指定 Release 模式
+          echo "Running windeployqt..."
+          "%Qt6_DIR%\bin\windeployqt.exe" --release --no-translations --no-opengl-sw deploy\QtWebSchoolSys.exe
 
       - name: Upload Artifact
         # 将打包好的 deploy 文件夹作为一个构建产物上传
