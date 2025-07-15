@@ -17,6 +17,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4 # 检出你的代码
 
+
+      # --- 前端构建步骤 ---
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 8 # 指定 pnpm 版本
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 指定 Node.js 版本
+          cache: 'pnpm' # 为 pnpm 启用缓存，加快后续构建速度
+          cache-dependency-path: 'web/vue-proj/pnpm-lock.yaml'
+
+      - name: Install Vue dependencies
+        working-directory: ./web/vue-proj # 指定工作目录
+        run: pnpm install --frozen-lockfile # 安装依赖
+
+      - name: Build Vue Project
+        working-directory: ./web/vue-proj # 指定工作目录
+        run: pnpm build # 执行构建命令
+
+      # --- Python 脚本运行步骤 ---
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # 指定 Python 版本
+
+      - name: Run Python preprocessing script
+        run: python config_qrc.py
+
       - name: Install Qt
         # 使用一个非常方便的第三方 Action 来安装 Qt
         # 'aqtinstall' 是一个开源的 Qt 安装工具
