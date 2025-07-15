@@ -55,11 +55,11 @@ jobs:
           version: ${{ env.QT_VERSION }} # 使用环境变量
           host: 'windows'
           target: 'desktop'
-          arch: 'win64_mingw' # 指定 MinGW 工具链
+          arch: 'win64_msvc2019_64' # 指定 MinGW 工具链
           modules: 'qtwebengine qtwebchannel' # 列出你需要的额外模块
 
       - name: Configure CMake
-        run: cmake -S . -B build -G "MinGW Makefiles"
+        run: cmake -S . -B build
 
       - name: Build Project
         run: cmake --build build
