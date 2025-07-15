@@ -67,8 +67,9 @@ void WebBridge::init_database() {
                                   "class_id INTEGER, "
                                   "contact_info TEXT, "
                                   "address TEXT, "
+                                  "family_members TEXT,"
                                   "status TEXT, "
-                                  "password TEXT"
+                                  "password TEXT "
                                   ")");
         if (!success) {
             log_message("创建 'students' 表失败: " + query.lastError().text());
@@ -99,7 +100,7 @@ void WebBridge::log_message(const QString& message) {
 }
 
 void WebBridge::show_notification(const QString& title, const QString& message) {
-    QSystemTrayIcon* trayIcon = new QSystemTrayIcon(this);
+    auto* trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/icons/app_icon.png"));
     trayIcon->show();
     trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 3000);
@@ -160,7 +161,7 @@ QJsonArray WebBridge::get_students_from_qjson() const {
 
 void WebBridge::update_student_in_qjson(const QJsonObject& studentData) {
     if (!studentData.contains("id")) {
-        log_message("更新失败: 学生数据缺少 'id' 字段。");
+        log_message(QString("更新失败: 学生数据缺少 'id' 字段。"));
         return;
     }
     long id = studentData["id"].toVariant().toLongLong();
@@ -250,6 +251,18 @@ void WebBridge::load_students_from_db() {
             student.set_address(address_from_qjson(addressDoc.object()));
         }
 
+        QJsonDocument familyDoc = QJsonDocument::fromJson(query.value("family_members").toString().toUtf8());
+        if (!familyDoc.isNull() && familyDoc.isArray()) {
+            QJsonArray familyArray = familyDoc.array();
+            std::vector<FamilyMember> familyMembers;
+            for (const auto& fm : familyArray) {
+                if (fm.isObject()) {
+                    familyMembers.push_back(family_member_from_qjson(fm.toObject()));
+                }
+            }
+            student.set_family_members(familyMembers);
+        }
+
         student.set_status(status_from_qjson_string(query.value("status").toString()));
         m_students.push_back(student);
     }
@@ -261,8 +274,8 @@ void WebBridge::save_student_to_db(const Stu_withScore& student) {
     if (!m_database.isOpen()) return;
     QSqlQuery query;
     query.
-            prepare("INSERT INTO students (student_id, name, sex, birthdate, age, enroll_year, major, class_id, contact_info, address, status, password) "
-                    "VALUES (:id, :name, :sex, :birthdate, :age, :enroll_year, :major, :class_id, :contact_info, :address, :status, :password)");
+            prepare("INSERT INTO students (student_id, name, sex, birthdate, age, enroll_year, major, class_id, contact_info, address, family_members, status, password) "
+                    "VALUES (:id, :name, :sex, :birthdate, :age, :enroll_year, :major, :class_id, :contact_info, :address, :family_members, :status, :password)");
     query.bindValue(":id", QVariant::fromValue(student.get_id()));
     query.bindValue(":name", QString::fromStdString(student.get_name()));
     query.bindValue(":sex", student.get_sex() == Sex::Male ? "男" : "女");
@@ -277,6 +290,12 @@ void WebBridge::save_student_to_db(const Stu_withScore& student) {
     QJsonObject addressJson = address_to_qjson(student.get_address());
     query.bindValue(":contact_info", QJsonDocument(contactJson).toJson(QJsonDocument::Compact));
     query.bindValue(":address", QJsonDocument(addressJson).toJson(QJsonDocument::Compact));
+
+    QJsonArray familyMembersJsonArray;
+    for (const auto& fm : student.get_family_members()) {
+        familyMembersJsonArray.append(family_member_to_qjson(fm));
+    }
+    query.bindValue(":family_members", QJsonDocument(familyMembersJsonArray).toJson(QJsonDocument::Compact));
 
     query.bindValue(":status", status_to_qjson_string(student.get_status()));
     query.bindValue(":password", "password"); // Placeholder for password
@@ -289,7 +308,7 @@ void WebBridge::update_student_in_db(const Stu_withScore& student) {
     if (!m_database.isOpen()) return;
     QSqlQuery query;
     query.
-            prepare("UPDATE students SET name = :name, sex = :sex, birthdate = :birthdate, age = :age, enroll_year = :enroll_year, major = :major, class_id = :class_id, contact_info = :contact_info, address = :address, status = :status WHERE student_id = :id");
+            prepare("UPDATE students SET name = :name, sex = :sex, birthdate = :birthdate, age = :age, enroll_year = :enroll_year, major = :major, class_id = :class_id, contact_info = :contact_info, address = :address, status = :status, family_members = :family_members WHERE student_id = :id");
     query.bindValue(":id", QVariant::fromValue(student.get_id()));
     query.bindValue(":name", QString::fromStdString(student.get_name()));
     query.bindValue(":sex", student.get_sex() == Sex::Male ? "男" : "女");
@@ -304,6 +323,13 @@ void WebBridge::update_student_in_db(const Stu_withScore& student) {
     QJsonObject addressJson = address_to_qjson(student.get_address());
     query.bindValue(":contact_info", QJsonDocument(contactJson).toJson(QJsonDocument::Compact));
     query.bindValue(":address", QJsonDocument(addressJson).toJson(QJsonDocument::Compact));
+
+    QJsonArray familyMembersJsonArray;
+    for (const auto& fm : student.get_family_members()) {
+        familyMembersJsonArray.append(family_member_to_qjson(fm));
+    }
+    query.bindValue(":family_members", QJsonDocument(familyMembersJsonArray).toJson(QJsonDocument::Compact));
+
 
     query.bindValue(":status", status_to_qjson_string(student.get_status()));
     if (!query.exec()) {
@@ -506,6 +532,18 @@ QJsonObject WebBridge::get_student_by_id_from_db(long studentId) const {
         QJsonDocument addressDoc = QJsonDocument::fromJson(query.value("address").toString().toUtf8());
         if (!addressDoc.isNull() && addressDoc.isObject()) {
             student.set_address(address_from_qjson(addressDoc.object()));
+        }
+
+        QJsonDocument familyDoc = QJsonDocument::fromJson(query.value("family_members").toString().toUtf8());
+        if (!familyDoc.isNull() && familyDoc.isArray()) {
+            QJsonArray familyArray = familyDoc.array();
+            std::vector<FamilyMember> familyMembers;
+            for (const auto& fm : familyArray) {
+                if (fm.isObject()) {
+                    familyMembers.push_back(family_member_from_qjson(fm.toObject()));
+                }
+            }
+            student.set_family_members(familyMembers);
         }
 
         student.set_status(status_from_qjson_string(query.value("status").toString()));

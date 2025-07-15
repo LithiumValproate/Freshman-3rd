@@ -8,6 +8,8 @@
 #include <vector>
 #include <QtSql/QSqlDatabase>
 
+class QSystemTrayIcon;
+
 class WebBridge : public QObject {
     Q_OBJECT
 

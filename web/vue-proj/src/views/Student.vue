@@ -319,7 +319,7 @@ const loadStudentData = async () => {
         await waitForQtBridge();
       }
       const studentId = parseInt(userData.username, 10);
-      const result = await qtBridge.value.get_student_by_id(studentId);
+      const result = await qtBridge.value.get_student_by_id_from_db(studentId);
       if (result) {
         Object.assign(student, result);
         // Ensure nested objects are reactive
@@ -408,7 +408,7 @@ const saveSectionData = async () => {
 
   try {
     if (qtBridge.value) {
-      await qtBridge.value.update_student_in_qjson(updatedStudent);
+      await qtBridge.value.update_student_in_db(updatedStudent);
       Object.assign(student, updatedStudent); // Update local state after successful save
     }
   } catch (error) {

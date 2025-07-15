@@ -43,7 +43,7 @@
                 <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
                 <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
-                <div class="info-item"><label>班级</label><span>{{ student.class_ }}</span></div>
+                <div class="info-item"><label>班级</label><span>{{ student.class_id }}</span></div>
               </div>
               <div class="contact-info-grid">
                 <div class="info-item contact-item">
@@ -153,7 +153,7 @@
             </div>
             <div class="form-group">
               <label for="class">班级</label>
-              <input type="text" v-model="editableStudent.class_" required placeholder="如：1班">
+              <input type="text" v-model="editableStudent.class_id" required placeholder="如：1班">
             </div>
             <div class="form-group">
               <label for="status">学生状态</label>
@@ -320,7 +320,7 @@ const createMockBridge = () => {
       birthdate: {year: 2002, month: 5, day: 10},
       enrollYear: 2020,
       major: '计算机科学',
-      class_: '10',
+      class_id: '10',
       contact: {phone: '1234567890', email: '123@qq.com'},
       address: {province: '北���市', city: '海淀区'},
       familyMembers: []
@@ -434,7 +434,7 @@ const showStudentModal = (student = null) => {
       status: 'Active',
       enrollYear: new Date().getFullYear(),
       major: '',
-      class_: '',
+      class_id: '',
       birthdate: {
         year: '',
         month: '',

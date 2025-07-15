@@ -295,7 +295,7 @@ inline auto student_to_qjson(const Student& stu) -> QJsonObject {
     obj["birthdate"]  = date_to_qjson(stu.get_birthdate());
     obj["enrollYear"] = stu.get_enroll_year();
     obj["major"]      = QString::fromStdString(stu.get_major());
-    obj["class"]      = stu.get_class();
+    obj["class_id"]   = stu.get_class();
     obj["contact"]    = contact_to_qjson(stu.get_contact());
     obj["address"]    = address_to_qjson(stu.get_address());
     obj["status"]     = status_to_qjson_string(stu.get_status());
@@ -315,7 +315,7 @@ inline auto student_from_qjson(const QJsonObject& obj) -> Student {
     stu.set_birthdate(date_from_qjson(obj["birthdate"].toObject()));
     stu.set_enroll_year(obj["enrollYear"].toInt());
     stu.set_major(obj["major"].toString().toStdString());
-    stu.set_class(obj["class"].toInt());
+    stu.set_class(obj["class_id"].toString().toInt());
     stu.set_contact(contact_from_qjson(obj["contact"].toObject()));
     stu.set_address(address_from_qjson(obj["address"].toObject()));
     stu.set_status(status_from_qjson_string(obj["status"].toString()));
