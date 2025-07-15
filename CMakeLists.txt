@@ -79,7 +79,7 @@ target_link_libraries(QtWebSchoolSys PRIVATE
     Qt6::Widgets
     Qt6::WebEngineWidgets
     Qt6::WebChannel
-    im_core # <--- ADD THIS
+    im_core
 )
 
 # 设置包含目录
@@ -101,8 +101,15 @@ install(TARGETS QtWebSchoolSys
 )
 
 # 拷贝web资源文件到构建目录
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+# 首先确保Vue项目已经构建
+message(STATUS "Looking for Vue build output in ${CMAKE_CURRENT_SOURCE_DIR}/web/vue-proj/dist")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/web/vue-proj/dist")
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/web/vue-proj/dist/
+         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/bin/web)
+    message(STATUS "Copied Vue build output to ${CMAKE_CURRENT_BINARY_DIR}/bin/web")
+else()
+    message(WARNING "Vue build output not found. Please run 'pnpm build' in 'web/vue-proj' first.")
+endif()
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/icons
      DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -127,4 +134,5 @@ endif()
 # 设置版本信息
 target_compile_definitions(QtWebSchoolSys PRIVATE
     APP_VERSION="${PROJECT_VERSION}"
+    USE_QTJSON
 )

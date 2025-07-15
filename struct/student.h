@@ -61,7 +61,7 @@ protected:
     std::string name;
     Sex sex;
     Date birthdate;
-    int age;
+    int age{};
     int enrollYear{};
     std::string major;
     int class_;

@@ -1,44 +1,4 @@
 QtWebSchoolSys_autogen/timestamp: \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeCXXInformation.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeCommonLanguageInclude.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeFindDependencyMacro.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeGenericSystem.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeInitializeConfigs.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeLanguageInformation.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeSystemSpecificInformation.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CMakeSystemSpecificInitialize.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CheckCXXCompilerFlag.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CheckCXXSourceCompiles.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CheckIncludeFileCXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/CheckLibraryExists.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Compiler/AppleClang-CXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Compiler/Clang.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Compiler/GNU.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindCups.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindOpenGL.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindPackageHandleStandardArgs.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindPackageMessage.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindThreads.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/FindVulkan.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/GNUInstallDirs.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Internal/CMakeCXXLinkerInformation.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Internal/CMakeCommonLinkerInformation.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Internal/CheckCompilerFlag.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Internal/CheckFlagCommonConfig.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Internal/CheckSourceCompiles.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Linker/AppleClang-CXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Linker/AppleClang.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/MacroAddFileDependencies.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Apple-AppleClang-CXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Apple-Clang-CXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Apple-Clang.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Darwin-Initialize.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Darwin.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Linker/Apple-AppleClang-CXX.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/Linker/Apple-AppleClang.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.31/Modules/Platform/UnixPaths.cmake \
 	/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/Availability.h \
 	/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/AvailabilityInternal.h \
 	/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/AvailabilityInternalLegacy.h \
@@ -995,14 +955,12 @@ QtWebSchoolSys_autogen/timestamp: \
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/__stdarg_va_copy.h \
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/__stdarg_va_list.h \
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/17/include/stdarg.h \
-	/Users/kasugano/Documents/Freshman-3rd/CMakeFiles/3.31.6/CMakeCXXCompiler.cmake \
-	/Users/kasugano/Documents/Freshman-3rd/CMakeFiles/3.31.6/CMakeSystem.cmake \
+	/Users/kasugano/Documents/Freshman-3rd/CMakeFiles/4.0.3/CMakeCXXCompiler.cmake \
+	/Users/kasugano/Documents/Freshman-3rd/CMakeFiles/4.0.3/CMakeSystem.cmake \
 	/Users/kasugano/Documents/Freshman-3rd/CMakeLists.txt \
 	/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/moc_predefs.h \
 	/Users/kasugano/Documents/Freshman-3rd/im/message.h \
-	/Users/kasugano/Documents/Freshman-3rd/im/room.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/im/room.h \
-	/Users/kasugano/Documents/Freshman-3rd/im/user.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/im/user.h \
 	/Users/kasugano/Documents/Freshman-3rd/main.cpp \
 	/Users/kasugano/Documents/Freshman-3rd/mainwindow.cpp \
@@ -2259,4 +2217,44 @@ QtWebSchoolSys_autogen/timestamp: \
 	/opt/homebrew/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets-release.cmake \
 	/opt/homebrew/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsTargets.cmake \
 	/opt/homebrew/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsVersionlessTargets.cmake \
-	/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake
+	/opt/homebrew/share/cmake/Modules/CMakeCXXInformation.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeCommonLanguageInclude.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeFindDependencyMacro.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeGenericSystem.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeInitializeConfigs.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeLanguageInformation.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeSystemSpecificInformation.cmake \
+	/opt/homebrew/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake \
+	/opt/homebrew/share/cmake/Modules/CheckCXXCompilerFlag.cmake \
+	/opt/homebrew/share/cmake/Modules/CheckCXXSourceCompiles.cmake \
+	/opt/homebrew/share/cmake/Modules/CheckIncludeFileCXX.cmake \
+	/opt/homebrew/share/cmake/Modules/CheckLibraryExists.cmake \
+	/opt/homebrew/share/cmake/Modules/Compiler/AppleClang-CXX.cmake \
+	/opt/homebrew/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake \
+	/opt/homebrew/share/cmake/Modules/Compiler/Clang.cmake \
+	/opt/homebrew/share/cmake/Modules/Compiler/GNU.cmake \
+	/opt/homebrew/share/cmake/Modules/FindCups.cmake \
+	/opt/homebrew/share/cmake/Modules/FindOpenGL.cmake \
+	/opt/homebrew/share/cmake/Modules/FindPackageHandleStandardArgs.cmake \
+	/opt/homebrew/share/cmake/Modules/FindPackageMessage.cmake \
+	/opt/homebrew/share/cmake/Modules/FindThreads.cmake \
+	/opt/homebrew/share/cmake/Modules/FindVulkan.cmake \
+	/opt/homebrew/share/cmake/Modules/GNUInstallDirs.cmake \
+	/opt/homebrew/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake \
+	/opt/homebrew/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake \
+	/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake \
+	/opt/homebrew/share/cmake/Modules/Internal/CheckFlagCommonConfig.cmake \
+	/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake \
+	/opt/homebrew/share/cmake/Modules/Linker/AppleClang-CXX.cmake \
+	/opt/homebrew/share/cmake/Modules/Linker/AppleClang.cmake \
+	/opt/homebrew/share/cmake/Modules/MacroAddFileDependencies.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Apple-AppleClang-CXX.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Apple-Clang-CXX.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Apple-Clang.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Darwin-Initialize.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Darwin.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Linker/Apple-AppleClang-CXX.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/Linker/Apple-AppleClang.cmake \
+	/opt/homebrew/share/cmake/Modules/Platform/UnixPaths.cmake \
+	/opt/homebrew/bin/cmake
