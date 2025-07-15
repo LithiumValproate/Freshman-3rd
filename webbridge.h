@@ -30,10 +30,10 @@ public slots:
     void show_notification(const QString& title, const QString& message);
     void minimize_to_tray() const;
     QJsonObject get_app_info();
-    QJsonArray get_students() const;
-    void add_student(const QJsonObject& studentData);
-    void update_student(const QJsonObject& studentData);
-    void delete_student(long studentId);
+    QJsonArray get_students_from_qjson() const;
+    void add_student_from_qjson(const QJsonObject& studentData);
+    void update_student_in_qjson(const QJsonObject& studentData);
+    void delete_student_from_qjson(long studentId);
 
 private:
     void init_database();

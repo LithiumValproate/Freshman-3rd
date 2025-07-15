@@ -69,7 +69,7 @@ void WebBridge::open_file_dialog(const QString &title, const QString &filter)
 
 void WebBridge::save_file_dialog(const QString &title, const QString &filter)
 {
-    QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "", filter);
+    QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "data", filter);
     if (!filePath.isEmpty()) {
         emit file_save_requested(filePath);
     }
@@ -103,7 +103,7 @@ QJsonObject WebBridge::get_app_info()
     return info;
 }
 
-void WebBridge::add_student(const QJsonObject &studentData)
+void WebBridge::add_student_from_qjson(const QJsonObject &studentData)
 {
     log_message("开始添加学生，接收到的JSON数据:");
     log_message(QString(QJsonDocument(studentData).toJson(QJsonDocument::Compact)));
@@ -130,7 +130,7 @@ void WebBridge::add_student(const QJsonObject &studentData)
     }
 }
 
-QJsonArray WebBridge::get_students() const {
+QJsonArray WebBridge::get_students_from_qjson() const {
     log_message(QString("get_students 被调用，当前内存中有 %1 个学生").arg(m_students.size()));
     QJsonArray studentsArray;
     for (const auto &student : m_students) {
@@ -143,7 +143,7 @@ QJsonArray WebBridge::get_students() const {
     return studentsArray;
 }
 
-void WebBridge::update_student(const QJsonObject &studentData)
+void WebBridge::update_student_in_qjson(const QJsonObject &studentData)
 {
     if (!studentData.contains("id")) {
         log_message("更新失败: 学生数据缺少 'id' 字段。");
@@ -169,7 +169,7 @@ void WebBridge::update_student(const QJsonObject &studentData)
     }
 }
 
-void WebBridge::delete_student(long studentId)
+void WebBridge::delete_student_from_qjson(long studentId)
 {
     auto it = std::remove_if(m_students.begin(), m_students.end(),
                              [studentId](const Stu_withScore& s) { return s.get_id() == studentId; });
