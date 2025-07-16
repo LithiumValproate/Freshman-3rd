@@ -5,6 +5,8 @@
 ![Languages](https://img.shields.io/badge/Languages-C++%20%7C%20Vue%20%7C%20Go%20%7C%20Python-blue)
 ![Frameworks](https://img.shields.io/badge/Frameworks-Qt%20%7C%20Vue.js%20%7C%20Vite-green)
 
+</div>
+
 ## 🔧 Technology Stack
 
 ### Frontend
@@ -92,11 +94,9 @@ UnivUni_Platform/
 └── 📄 resources.qrc         # Qt resource file (bundles web assets)
 ```
 
----
+___
 
 <div align="center">
-
-**⭐ If you find this project useful, please consider giving it a star! ⭐**
 
 © 2025 [LithiumValproate](https://github.com/LithiumValproate)
 
