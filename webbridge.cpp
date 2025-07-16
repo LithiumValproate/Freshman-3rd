@@ -88,10 +88,22 @@ void WebBridge::open_file_dialog(const QString& title, const QString& filter) {
     }
 }
 
-void WebBridge::save_file_dialog(const QString& title, const QString& filter) {
-    QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "data", filter);
+void WebBridge::save_file_dialog(const QString& jsonData, const QString& title, const QString& filter) {
+    QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "students.json", filter);
     if (!filePath.isEmpty()) {
-        emit file_save_requested(filePath);
+        QFile file(filePath);
+        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(&file);
+            out << jsonData;
+            file.close();
+            log_message("数据成功导出到: " + filePath);
+            QMessageBox::information(m_parentWidget, "成功", "数据已成功导出！");
+        } else {
+            log_message("文件写入失败: " + file.errorString());
+            QMessageBox::warning(m_parentWidget, "错误", "无法保存文件: " + file.errorString());
+        }
+    } else {
+        log_message("用户取消了文件保存操作。");
     }
 }
 

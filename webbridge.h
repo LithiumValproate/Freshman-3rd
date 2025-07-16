@@ -27,7 +27,7 @@ signals:
 public slots:
     void load_page(const QString& page);
     void open_file_dialog(const QString& title, const QString& filter);
-    void save_file_dialog(const QString& title, const QString& filter);
+    void save_file_dialog(const QString& jsonData, const QString& title, const QString& filter);
     static void log_message(const QString& message);
     void show_notification(const QString& title, const QString& message);
     void minimize_to_tray() const;

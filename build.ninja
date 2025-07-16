@@ -36,79 +36,19 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = /Users/kasugano/Documents/Freshman-3rd/
 # =============================================================================
-# Object build statements for SHARED_LIBRARY target im_core
-
-
-#############################################
-# Order-only phony target for im_core
-
-build cmake_object_order_depends_target_im_core: phony || im_core_autogen im_core_autogen/mocs_compilation.cpp im_core_autogen/timestamp im_core_autogen_timestamp_deps
-
-build CMakeFiles/im_core.dir/im_core_autogen/mocs_compilation.cpp.o: CXX_COMPILER__im_core_unscanned_ /Users/kasugano/Documents/Freshman-3rd/im_core_autogen/mocs_compilation.cpp || cmake_object_order_depends_target_im_core
-  DEFINES = -Dim_core_EXPORTS
-  DEP_FILE = CMakeFiles/im_core.dir/im_core_autogen/mocs_compilation.cpp.o.d
-  FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fPIC -fcolor-diagnostics
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/im_core_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge
-  OBJECT_DIR = CMakeFiles/im_core.dir
-  OBJECT_FILE_DIR = CMakeFiles/im_core.dir/im_core_autogen
-
-build CMakeFiles/im_core.dir/im/user.cpp.o: CXX_COMPILER__im_core_unscanned_ /Users/kasugano/Documents/Freshman-3rd/im/user.cpp || cmake_object_order_depends_target_im_core
-  DEFINES = -Dim_core_EXPORTS
-  DEP_FILE = CMakeFiles/im_core.dir/im/user.cpp.o.d
-  FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fPIC -fcolor-diagnostics
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/im_core_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge
-  OBJECT_DIR = CMakeFiles/im_core.dir
-  OBJECT_FILE_DIR = CMakeFiles/im_core.dir/im
-
-build CMakeFiles/im_core.dir/im/room.cpp.o: CXX_COMPILER__im_core_unscanned_ /Users/kasugano/Documents/Freshman-3rd/im/room.cpp || cmake_object_order_depends_target_im_core
-  DEFINES = -Dim_core_EXPORTS
-  DEP_FILE = CMakeFiles/im_core.dir/im/room.cpp.o.d
-  FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fPIC -fcolor-diagnostics
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/im_core_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge
-  OBJECT_DIR = CMakeFiles/im_core.dir
-  OBJECT_FILE_DIR = CMakeFiles/im_core.dir/im
-
-build CMakeFiles/im_core.dir/im/im_go_bridge/im_bridge.cpp.o: CXX_COMPILER__im_core_unscanned_ /Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge/im_bridge.cpp || cmake_object_order_depends_target_im_core
-  DEFINES = -Dim_core_EXPORTS
-  DEP_FILE = CMakeFiles/im_core.dir/im/im_go_bridge/im_bridge.cpp.o.d
-  FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fPIC -fcolor-diagnostics
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/im_core_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge
-  OBJECT_DIR = CMakeFiles/im_core.dir
-  OBJECT_FILE_DIR = CMakeFiles/im_core.dir/im/im_go_bridge
-
-
-# =============================================================================
-# Link build statements for SHARED_LIBRARY target im_core
-
-
-#############################################
-# Link the shared library lib/libim_core.dylib
-
-build lib/libim_core.dylib: CXX_SHARED_LIBRARY_LINKER__im_core_ CMakeFiles/im_core.dir/im_core_autogen/mocs_compilation.cpp.o CMakeFiles/im_core.dir/im/user.cpp.o CMakeFiles/im_core.dir/im/room.cpp.o CMakeFiles/im_core.dir/im/im_go_bridge/im_bridge.cpp.o || im_core_autogen im_core_autogen_timestamp_deps
-  ARCH_FLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
-  INSTALLNAME_DIR = @rpath/
-  OBJECT_DIR = CMakeFiles/im_core.dir
-  POST_BUILD = :
-  PRE_LINK = :
-  SONAME = libim_core.dylib
-  SONAME_FLAG = -install_name
-  TARGET_FILE = lib/libim_core.dylib
-  TARGET_PDB = im_core.dylib.dbg
-
-# =============================================================================
 # Object build statements for EXECUTABLE target QtWebSchoolSys
 
 
 #############################################
 # Order-only phony target for QtWebSchoolSys
 
-build cmake_object_order_depends_target_QtWebSchoolSys: phony || QtWebSchoolSys_autogen QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp QtWebSchoolSys_autogen/mocs_compilation.cpp QtWebSchoolSys_autogen/timestamp QtWebSchoolSys_autogen_timestamp_deps cmake_object_order_depends_target_im_core
+build cmake_object_order_depends_target_QtWebSchoolSys: phony || QtWebSchoolSys_autogen QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp QtWebSchoolSys_autogen/mocs_compilation.cpp QtWebSchoolSys_autogen/timestamp QtWebSchoolSys_autogen_timestamp_deps
 
 build CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/mocs_compilation.cpp.o: CXX_COMPILER__QtWebSchoolSys_unscanned_ /Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/mocs_compilation.cpp || cmake_object_order_depends_target_QtWebSchoolSys
   DEFINES = -DAPP_VERSION=\"1.0.0\" -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_POSITIONING_LIB -DQT_PRINTSUPPORT_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SQL_LIB -DQT_WEBCHANNEL_LIB -DQT_WEBENGINECORE_LIB -DQT_WEBENGINEWIDGETS_LIB -DQT_WIDGETS_LIB -DUSE_QTJSON
   DEP_FILE = CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/mocs_compilation.cpp.o.d
   FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fcolor-diagnostics -Wall -Wextra -Wpedantic
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
+  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   OBJECT_FILE_DIR = CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen
 
@@ -116,7 +56,7 @@ build CMakeFiles/QtWebSchoolSys.dir/main.cpp.o: CXX_COMPILER__QtWebSchoolSys_uns
   DEFINES = -DAPP_VERSION=\"1.0.0\" -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_POSITIONING_LIB -DQT_PRINTSUPPORT_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SQL_LIB -DQT_WEBCHANNEL_LIB -DQT_WEBENGINECORE_LIB -DQT_WEBENGINEWIDGETS_LIB -DQT_WIDGETS_LIB -DUSE_QTJSON
   DEP_FILE = CMakeFiles/QtWebSchoolSys.dir/main.cpp.o.d
   FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fcolor-diagnostics -Wall -Wextra -Wpedantic
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
+  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   OBJECT_FILE_DIR = CMakeFiles/QtWebSchoolSys.dir
 
@@ -124,7 +64,7 @@ build CMakeFiles/QtWebSchoolSys.dir/mainwindow.cpp.o: CXX_COMPILER__QtWebSchoolS
   DEFINES = -DAPP_VERSION=\"1.0.0\" -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_POSITIONING_LIB -DQT_PRINTSUPPORT_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SQL_LIB -DQT_WEBCHANNEL_LIB -DQT_WEBENGINECORE_LIB -DQT_WEBENGINEWIDGETS_LIB -DQT_WIDGETS_LIB -DUSE_QTJSON
   DEP_FILE = CMakeFiles/QtWebSchoolSys.dir/mainwindow.cpp.o.d
   FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fcolor-diagnostics -Wall -Wextra -Wpedantic
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
+  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   OBJECT_FILE_DIR = CMakeFiles/QtWebSchoolSys.dir
 
@@ -132,7 +72,7 @@ build CMakeFiles/QtWebSchoolSys.dir/webbridge.cpp.o: CXX_COMPILER__QtWebSchoolSy
   DEFINES = -DAPP_VERSION=\"1.0.0\" -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_POSITIONING_LIB -DQT_PRINTSUPPORT_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SQL_LIB -DQT_WEBCHANNEL_LIB -DQT_WEBENGINECORE_LIB -DQT_WEBENGINEWIDGETS_LIB -DQT_WIDGETS_LIB -DUSE_QTJSON
   DEP_FILE = CMakeFiles/QtWebSchoolSys.dir/webbridge.cpp.o.d
   FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fcolor-diagnostics -Wall -Wextra -Wpedantic
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
+  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   OBJECT_FILE_DIR = CMakeFiles/QtWebSchoolSys.dir
 
@@ -140,7 +80,7 @@ build CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resour
   DEFINES = -DAPP_VERSION=\"1.0.0\" -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_POSITIONING_LIB -DQT_PRINTSUPPORT_LIB -DQT_QMLINTEGRATION_LIB -DQT_QMLMETA_LIB -DQT_QMLMODELS_LIB -DQT_QMLWORKERSCRIPT_LIB -DQT_QML_LIB -DQT_QUICK_LIB -DQT_SQL_LIB -DQT_WEBCHANNEL_LIB -DQT_WEBENGINECORE_LIB -DQT_WEBENGINEWIDGETS_LIB -DQT_WIDGETS_LIB -DUSE_QTJSON
   DEP_FILE = CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp.o.d
   FLAGS = -std=gnu++20 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -fcolor-diagnostics -Wall -Wextra -Wpedantic
-  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -I/Users/kasugano/Documents/Freshman-3rd/struct -I/Users/kasugano/Documents/Freshman-3rd/im/im_go_bridge -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
+  INCLUDES = -I/Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/include -I/Users/kasugano/Documents/Freshman-3rd -isystem /opt/homebrew/lib/QtCore.framework/Headers -iframework /opt/homebrew/lib -isystem /opt/homebrew/share/qt/mkspecs/macx-clang -isystem /opt/homebrew/include -isystem /opt/homebrew/lib/QtWidgets.framework/Headers -isystem /opt/homebrew/lib/QtGui.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineWidgets.framework/Headers -isystem /opt/homebrew/lib/QtWebEngineCore.framework/Headers -isystem /opt/homebrew/lib/QtNetwork.framework/Headers -isystem /opt/homebrew/lib/QtQuick.framework/Headers -isystem /opt/homebrew/lib/QtQml.framework/Headers -isystem /opt/homebrew/include/QtQmlIntegration -isystem /opt/homebrew/lib/QtQmlMeta.framework/Headers -isystem /opt/homebrew/lib/QtQmlModels.framework/Headers -isystem /opt/homebrew/lib/QtQmlWorkerScript.framework/Headers -isystem /opt/homebrew/lib/QtOpenGL.framework/Headers -isystem /opt/homebrew/lib/QtWebChannel.framework/Headers -isystem /opt/homebrew/lib/QtPositioning.framework/Headers -isystem /opt/homebrew/lib/QtPrintSupport.framework/Headers -isystem /opt/homebrew/lib/QtSql.framework/Headers
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   OBJECT_FILE_DIR = CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW
 
@@ -152,9 +92,9 @@ build CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resour
 #############################################
 # Link the executable bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys
 
-build bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys: CXX_EXECUTABLE_LINKER__QtWebSchoolSys_ CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/mocs_compilation.cpp.o CMakeFiles/QtWebSchoolSys.dir/main.cpp.o CMakeFiles/QtWebSchoolSys.dir/mainwindow.cpp.o CMakeFiles/QtWebSchoolSys.dir/webbridge.cpp.o CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp.o | /opt/homebrew/lib/QtWebEngineWidgets.framework/Versions/A/QtWebEngineWidgets /opt/homebrew/lib/QtSql.framework/Versions/A/QtSql lib/libim_core.dylib /opt/homebrew/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore /opt/homebrew/lib/QtWebChannel.framework/Versions/A/QtWebChannel /opt/homebrew/lib/QtPositioning.framework/Versions/A/QtPositioning /opt/homebrew/lib/QtPrintSupport.framework/Versions/A/QtPrintSupport /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libcups.tbd /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets /opt/homebrew/lib/QtQuick.framework/Versions/A/QtQuick /opt/homebrew/lib/QtQmlMeta.framework/Versions/A/QtQmlMeta /opt/homebrew/lib/QtQmlWorkerScript.framework/Versions/A/QtQmlWorkerScript /opt/homebrew/lib/QtQmlModels.framework/Versions/A/QtQmlModels /opt/homebrew/lib/QtQml.framework/Versions/A/QtQml /opt/homebrew/lib/QtNetwork.framework/Versions/A/QtNetwork /opt/homebrew/lib/QtOpenGL.framework/Versions/A/QtOpenGL /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore || QtWebSchoolSys_autogen QtWebSchoolSys_autogen_timestamp_deps lib/libim_core.dylib
+build bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys: CXX_EXECUTABLE_LINKER__QtWebSchoolSys_ CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/mocs_compilation.cpp.o CMakeFiles/QtWebSchoolSys.dir/main.cpp.o CMakeFiles/QtWebSchoolSys.dir/mainwindow.cpp.o CMakeFiles/QtWebSchoolSys.dir/webbridge.cpp.o CMakeFiles/QtWebSchoolSys.dir/QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp.o | /opt/homebrew/lib/QtWebEngineWidgets.framework/Versions/A/QtWebEngineWidgets /opt/homebrew/lib/QtSql.framework/Versions/A/QtSql /opt/homebrew/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore /opt/homebrew/lib/QtWebChannel.framework/Versions/A/QtWebChannel /opt/homebrew/lib/QtPositioning.framework/Versions/A/QtPositioning /opt/homebrew/lib/QtPrintSupport.framework/Versions/A/QtPrintSupport /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libcups.tbd /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets /opt/homebrew/lib/QtQuick.framework/Versions/A/QtQuick /opt/homebrew/lib/QtQmlMeta.framework/Versions/A/QtQmlMeta /opt/homebrew/lib/QtQmlWorkerScript.framework/Versions/A/QtQmlWorkerScript /opt/homebrew/lib/QtQmlModels.framework/Versions/A/QtQmlModels /opt/homebrew/lib/QtQml.framework/Versions/A/QtQml /opt/homebrew/lib/QtNetwork.framework/Versions/A/QtNetwork /opt/homebrew/lib/QtOpenGL.framework/Versions/A/QtOpenGL /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore || QtWebSchoolSys_autogen QtWebSchoolSys_autogen_timestamp_deps
   FLAGS = -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
-  LINK_LIBRARIES = -Wl,-rpath,/opt/homebrew/lib -Wl,-rpath,/Users/kasugano/Documents/Freshman-3rd/lib  /opt/homebrew/lib/QtWebEngineWidgets.framework/Versions/A/QtWebEngineWidgets  /opt/homebrew/lib/QtSql.framework/Versions/A/QtSql  lib/libim_core.dylib  /opt/homebrew/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore  /opt/homebrew/lib/QtWebChannel.framework/Versions/A/QtWebChannel  /opt/homebrew/lib/QtPositioning.framework/Versions/A/QtPositioning  /opt/homebrew/lib/QtPrintSupport.framework/Versions/A/QtPrintSupport  -framework ApplicationServices  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libcups.tbd  /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets  /opt/homebrew/lib/QtQuick.framework/Versions/A/QtQuick  /opt/homebrew/lib/QtQmlMeta.framework/Versions/A/QtQmlMeta  /opt/homebrew/lib/QtQmlWorkerScript.framework/Versions/A/QtQmlWorkerScript  /opt/homebrew/lib/QtQmlModels.framework/Versions/A/QtQmlModels  /opt/homebrew/lib/QtQml.framework/Versions/A/QtQml  /opt/homebrew/lib/QtNetwork.framework/Versions/A/QtNetwork  /opt/homebrew/lib/QtOpenGL.framework/Versions/A/QtOpenGL  /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui  -framework AGL  -framework AppKit  -framework OpenGL  -framework ImageIO  -framework Metal  /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore  -framework IOKit  -framework DiskArbitration  -framework UniformTypeIdentifiers
+  LINK_LIBRARIES = -Wl,-rpath,/opt/homebrew/lib  /opt/homebrew/lib/QtWebEngineWidgets.framework/Versions/A/QtWebEngineWidgets  /opt/homebrew/lib/QtSql.framework/Versions/A/QtSql  /opt/homebrew/lib/QtWebEngineCore.framework/Versions/A/QtWebEngineCore  /opt/homebrew/lib/QtWebChannel.framework/Versions/A/QtWebChannel  /opt/homebrew/lib/QtPositioning.framework/Versions/A/QtPositioning  /opt/homebrew/lib/QtPrintSupport.framework/Versions/A/QtPrintSupport  -framework ApplicationServices  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/usr/lib/libcups.tbd  /opt/homebrew/lib/QtWidgets.framework/Versions/A/QtWidgets  /opt/homebrew/lib/QtQuick.framework/Versions/A/QtQuick  /opt/homebrew/lib/QtQmlMeta.framework/Versions/A/QtQmlMeta  /opt/homebrew/lib/QtQmlWorkerScript.framework/Versions/A/QtQmlWorkerScript  /opt/homebrew/lib/QtQmlModels.framework/Versions/A/QtQmlModels  /opt/homebrew/lib/QtQml.framework/Versions/A/QtQml  /opt/homebrew/lib/QtNetwork.framework/Versions/A/QtNetwork  /opt/homebrew/lib/QtOpenGL.framework/Versions/A/QtOpenGL  /opt/homebrew/lib/QtGui.framework/Versions/A/QtGui  -framework AGL  -framework AppKit  -framework OpenGL  -framework ImageIO  -framework Metal  /opt/homebrew/lib/QtCore.framework/Versions/A/QtCore  -framework IOKit  -framework DiskArbitration  -framework UniformTypeIdentifiers
   LINK_PATH = -F/opt/homebrew/lib
   OBJECT_DIR = CMakeFiles/QtWebSchoolSys.dir
   POST_BUILD = :
@@ -230,21 +170,9 @@ build install/strip: phony CMakeFiles/install/strip.util
 
 
 #############################################
-# Utility command for im_core_autogen_timestamp_deps
-
-build im_core_autogen_timestamp_deps: phony
-
-
-#############################################
-# Utility command for im_core_autogen
-
-build im_core_autogen: phony CMakeFiles/im_core_autogen im_core_autogen/timestamp im_core_autogen/mocs_compilation.cpp im_core_autogen_timestamp_deps
-
-
-#############################################
 # Utility command for QtWebSchoolSys_autogen_timestamp_deps
 
-build QtWebSchoolSys_autogen_timestamp_deps: phony lib/libim_core.dylib
+build QtWebSchoolSys_autogen_timestamp_deps: phony
 
 
 #############################################
@@ -254,20 +182,9 @@ build QtWebSchoolSys_autogen: phony CMakeFiles/QtWebSchoolSys_autogen QtWebSchoo
 
 
 #############################################
-# Custom command for im_core_autogen/timestamp
-
-build im_core_autogen/timestamp im_core_autogen/mocs_compilation.cpp | ${cmake_ninja_workdir}im_core_autogen/timestamp ${cmake_ninja_workdir}im_core_autogen/mocs_compilation.cpp: CUSTOM_COMMAND /opt/homebrew/share/qt/libexec/moc /opt/homebrew/share/qt/libexec/uic || im_core_autogen_timestamp_deps
-  COMMAND = cd /Users/kasugano/Documents/Freshman-3rd && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E cmake_autogen /Users/kasugano/Documents/Freshman-3rd/CMakeFiles/im_core_autogen.dir/AutogenInfo.json "" && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E touch /Users/kasugano/Documents/Freshman-3rd/im_core_autogen/timestamp && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E cmake_transform_depfile Ninja gccdepfile /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd/im_core_autogen/deps /Users/kasugano/Documents/Freshman-3rd/CMakeFiles/d/90af6e712d421ab3d42418587b085272941453f62c9af949059515fde907f2f7.d
-  DESC = Automatic MOC and UIC for target im_core
-  depfile = CMakeFiles/d/90af6e712d421ab3d42418587b085272941453f62c9af949059515fde907f2f7.d
-  deps = gcc
-  restat = 1
-
-
-#############################################
 # Custom command for QtWebSchoolSys_autogen/timestamp
 
-build QtWebSchoolSys_autogen/timestamp QtWebSchoolSys_autogen/mocs_compilation.cpp | ${cmake_ninja_workdir}QtWebSchoolSys_autogen/timestamp ${cmake_ninja_workdir}QtWebSchoolSys_autogen/mocs_compilation.cpp: CUSTOM_COMMAND /opt/homebrew/share/qt/libexec/moc /opt/homebrew/share/qt/libexec/uic || QtWebSchoolSys_autogen_timestamp_deps im_core_autogen im_core_autogen_timestamp_deps lib/libim_core.dylib
+build QtWebSchoolSys_autogen/timestamp QtWebSchoolSys_autogen/mocs_compilation.cpp | ${cmake_ninja_workdir}QtWebSchoolSys_autogen/timestamp ${cmake_ninja_workdir}QtWebSchoolSys_autogen/mocs_compilation.cpp: CUSTOM_COMMAND /opt/homebrew/share/qt/libexec/moc /opt/homebrew/share/qt/libexec/uic || QtWebSchoolSys_autogen_timestamp_deps
   COMMAND = cd /Users/kasugano/Documents/Freshman-3rd && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E cmake_autogen /Users/kasugano/Documents/Freshman-3rd/CMakeFiles/QtWebSchoolSys_autogen.dir/AutogenInfo.json "" && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E touch /Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/timestamp && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E cmake_transform_depfile Ninja gccdepfile /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd /Users/kasugano/Documents/Freshman-3rd/QtWebSchoolSys_autogen/deps /Users/kasugano/Documents/Freshman-3rd/CMakeFiles/d/955a8f7b9153c8202bc9af864ac26b5ddc2005367a73dbeb252f2d5380a16a43.d
   DESC = Automatic MOC and UIC for target QtWebSchoolSys
   depfile = CMakeFiles/d/955a8f7b9153c8202bc9af864ac26b5ddc2005367a73dbeb252f2d5380a16a43.d
@@ -278,31 +195,21 @@ build QtWebSchoolSys_autogen/timestamp QtWebSchoolSys_autogen/mocs_compilation.c
 #############################################
 # Custom command for QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp
 
-build QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp | ${cmake_ninja_workdir}QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp: CUSTOM_COMMAND resources.qrc CMakeFiles/QtWebSchoolSys_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json web/vue-proj/dist/vite.svg web/vue-proj/dist/index.html web/vue-proj/dist/assets/Student-CIcxhT3z.js web/vue-proj/dist/assets/Login-DixptyIb.css web/vue-proj/dist/assets/Admin-DBtMzYj0.css web/vue-proj/dist/assets/Teacher-Dd7eIMSL.css web/vue-proj/dist/assets/Admin-CgNLAvro.js web/vue-proj/dist/assets/index-Bt6g8DFh.css web/vue-proj/dist/assets/Login-jWPg0T2l.js web/vue-proj/dist/assets/Student-Bne3E6c5.css web/vue-proj/dist/assets/Teacher-Dtu-rlzW.js web/vue-proj/dist/assets/index-CmRpvHZB.js /opt/homebrew/share/qt/libexec/rcc /opt/homebrew/share/qt/libexec/rcc || QtWebSchoolSys_autogen QtWebSchoolSys_autogen_timestamp_deps im_core_autogen im_core_autogen_timestamp_deps lib/libim_core.dylib
+build QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp | ${cmake_ninja_workdir}QtWebSchoolSys_autogen/EWIEGA46WW/qrc_resources.cpp: CUSTOM_COMMAND resources.qrc CMakeFiles/QtWebSchoolSys_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json web/vue-proj/dist/vite.svg web/vue-proj/dist/index.html web/vue-proj/dist/assets/Teacher-Dg4KQQrp.js web/vue-proj/dist/assets/Student-YNPJ0SnH.css web/vue-proj/dist/assets/Student-C_ueVQqN.js web/vue-proj/dist/assets/Login-DixptyIb.css web/vue-proj/dist/assets/Admin-BbkLJiCv.js web/vue-proj/dist/assets/Admin-DBtMzYj0.css web/vue-proj/dist/assets/Teacher-Dd7eIMSL.css web/vue-proj/dist/assets/index-Bt6g8DFh.css web/vue-proj/dist/assets/Login-CiCdjH-2.js web/vue-proj/dist/assets/index-BGtOeJEa.js /opt/homebrew/share/qt/libexec/rcc /opt/homebrew/share/qt/libexec/rcc || QtWebSchoolSys_autogen QtWebSchoolSys_autogen_timestamp_deps
   COMMAND = cd /Users/kasugano/Documents/Freshman-3rd && /Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake -E cmake_autorcc /Users/kasugano/Documents/Freshman-3rd/CMakeFiles/QtWebSchoolSys_autogen.dir/AutoRcc_resources_EWIEGA46WW_Info.json
   DESC = Automatic RCC for resources.qrc
   restat = 1
 
 
 #############################################
-# Phony custom command for CMakeFiles/im_core_autogen
-
-build CMakeFiles/im_core_autogen | ${cmake_ninja_workdir}CMakeFiles/im_core_autogen: phony im_core_autogen/timestamp || im_core_autogen_timestamp_deps
-
-
-#############################################
 # Phony custom command for CMakeFiles/QtWebSchoolSys_autogen
 
-build CMakeFiles/QtWebSchoolSys_autogen | ${cmake_ninja_workdir}CMakeFiles/QtWebSchoolSys_autogen: phony QtWebSchoolSys_autogen/timestamp || QtWebSchoolSys_autogen_timestamp_deps im_core_autogen im_core_autogen_timestamp_deps lib/libim_core.dylib
+build CMakeFiles/QtWebSchoolSys_autogen | ${cmake_ninja_workdir}CMakeFiles/QtWebSchoolSys_autogen: phony QtWebSchoolSys_autogen/timestamp || QtWebSchoolSys_autogen_timestamp_deps
 
 # =============================================================================
 # Target aliases.
 
 build QtWebSchoolSys: phony bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys
-
-build im_core: phony lib/libim_core.dylib
-
-build libim_core.dylib: phony lib/libim_core.dylib
 
 # =============================================================================
 # Folder targets.
@@ -312,7 +219,7 @@ build libim_core.dylib: phony lib/libim_core.dylib
 #############################################
 # Folder: /Users/kasugano/Documents/Freshman-3rd
 
-build all: phony lib/libim_core.dylib bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys
+build all: phony bin/QtWebSchoolSys.app/Contents/MacOS/QtWebSchoolSys
 
 # =============================================================================
 # Built-in targets

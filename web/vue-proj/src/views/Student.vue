@@ -70,7 +70,7 @@
                 <div class="info-item"><label>年龄</label><span>{{ calculateAge(student.birthdate) }}岁</span></div>
                 <div class="info-item"><label>入学年份</label><span>{{ student.enrollYear }}</span></div>
                 <div class="info-item"><label>专业</label><span>{{ student.major }}</span></div>
-                <div class="info-item"><label>班级</label><span>{{ student.class_ }}</span></div>
+                <div class="info-item"><label>班级</label><span>{{ student.class_id }}</span></div>
               </div>
             </div>
 
@@ -214,7 +214,7 @@
   </div>
 </template>
 
-'''<script setup>
+<script setup>
 import { ref, reactive, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -545,7 +545,7 @@ onMounted(async () => {
     document.head.appendChild(script);
   });
 });
-</script>''
+</script>
 
 <style scoped>
 .container {
