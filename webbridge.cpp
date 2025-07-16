@@ -451,6 +451,7 @@ void WebBridge::add_student_to_db(const QJsonObject& studentData) {
 
         Stu_withScore student = stu_with_score_from_qjson(studentData);
         save_student_to_db(student);   // Private helper for DB interaction
+
         m_students.push_back(student); // Update in-memory list
 
         log_message(QString("学生 %1 已通过 _db 方法添加").arg(QString::fromStdString(student.get_name())));

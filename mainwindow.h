@@ -17,7 +17,6 @@ public:
 
     ~MainWindow() override;
 
-
 private slots:
     void on_load_started();
 

@@ -7,7 +7,6 @@
         <button @click="showStudentModal()" class="btn btn-primary">添加学生</button>
         <button @click="importData" class="btn btn-secondary">导入数据</button>
         <button @click="exportData" class="btn btn-secondary">导出数据</button>
-        <!-- 新增退出登录按钮 -->
         <button @click="logout" class="btn btn-secondary" style="margin-left: 10px;">退出登录</button>
       </div>
     </header>
@@ -35,7 +34,7 @@
           </div>
           <!-- 详细信息 -->
           <div class="student-details" v-if="expandedCardId === student.id">
-            <!-- 详细信息渲染 -->
+            <!-- 基本信息 -->
             <div class="info-section">
               <h3>基本信息</h3>
               <div class="basic-info-grid">
@@ -50,26 +49,14 @@
                   <label>电话</label>
                   <span style="display: flex; align-items: center;">
                     {{ student.contact?.phone || '无' }}
-                    <button
-                        v-if="student.contact?.phone"
-                        class="btn-icon"
-                        style="margin-left: auto; margin-right: 1em;"
-                        @click="copyToClipboard(student.contact.phone, '电话')"
-                        title="复制电话"
-                    >📋</button>
+                    <button v-if="student.contact?.phone" class="btn-icon" style="margin-left: auto; margin-right: 1em;" @click="copyToClipboard(student.contact.phone, '电话')" title="复制电话">📋</button>
                   </span>
                 </div>
                 <div class="info-item">
                   <label>邮箱</label>
                   <span style="display: flex; align-items: center;">
                     {{ student.contact?.email || '无' }}
-                    <button
-                        v-if="student.contact?.email"
-                        class="btn-icon"
-                        style="margin-left: auto; margin-right: 1em;"
-                        @click="copyToClipboard(student.contact.email, '邮箱')"
-                        title="复制邮箱"
-                    >📋</button>
+                    <button v-if="student.contact?.email" class="btn-icon" style="margin-left: auto; margin-right: 1em;" @click="copyToClipboard(student.contact.email, '邮箱')" title="复制邮箱">📋</button>
                   </span>
                 </div>
               </div>
@@ -79,14 +66,8 @@
             <div class="info-section">
               <h3>地址信息</h3>
               <div class="contact-info-grid">
-                <div class="info-item">
-                  <label>省份</label>
-                  <span>{{ student.address?.province || '无' }}</span>
-                </div>
-                <div class="info-item">
-                  <label>城市</label>
-                  <span>{{ student.address?.city || '无' }}</span>
-                </div>
+                <div class="info-item"><label>省份</label><span>{{ student.address?.province || '无' }}</span></div>
+                <div class="info-item"><label>城市</label><span>{{ student.address?.city || '无' }}</span></div>
               </div>
             </div>
 
@@ -105,12 +86,32 @@
               </div>
               <div class="no-data" v-else>暂无家庭成员信息</div>
             </div>
+
+            <!-- [新增] 课程表信息 -->
+            <div class="info-section">
+              <h3>课程表</h3>
+              <div v-if="student.courses && student.courses.length" class="courses-list">
+                <div v-for="(course, c_idx) in student.courses" :key="c_idx" class="course-item">
+                  <h4>{{ course.courseName || '未命名课程' }}</h4>
+                  <p><strong>教师:</strong> {{ course.instructor || '待定' }} | <strong>地点:</strong> {{ course.location || '待定' }} | <strong>学分:</strong> {{ course.credits || 0 }}</p>
+                  <ul class="schedule-list">
+                    <li v-for="(schedule, s_idx) in course.schedule" :key="s_idx">
+                      {{ repetitionText(schedule.repetition) }} {{ dayOfWeekText(schedule.day) }}
+                      {{ schedule.startTime.hour }}:{{ String(schedule.startTime.minute).padStart(2, '0') }} -
+                      {{ schedule.endTime.hour }}:{{ String(schedule.endTime.minute).padStart(2, '0') }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="no-data" v-else>暂无课程信息</div>
+            </div>
+
           </div>
         </div>
       </div>
       <div v-else class="no-students">
         <h3>暂无学生数据</h3>
-        <p>点击"添加学��"按钮开始添加学生信息</p>
+        <p>点击"添加学生"按钮开始添加学生信息</p>
       </div>
     </main>
   </div>
@@ -120,138 +121,84 @@
     <div class="modal-content">
       <div class="modal-header">
         <h2 id="modalTitle">{{ modalTitle }}</h2>
-        <span @click="closeStudentModal" class="close">&times;</span>
+        <span @click="closeStudentModal" class="close">×</span>
       </div>
       <form class="student-form" @submit.prevent="saveStudent">
-        <!-- 表单内容... -->
+        <!-- 基本信息 -->
         <div class="form-section">
           <h3>基本信息</h3>
           <div class="form-grid">
-            <div class="form-group">
-              <label for="studentId">学号</label>
-              <input type="number" v-model="editableStudent.id" required>
-            </div>
-            <div class="form-group">
-              <label for="studentName">姓名</label>
-              <input type="text" v-model="editableStudent.name" required>
-            </div>
-            <div class="form-group">
-              <label for="studentSex">性别</label>
-              <select v-model="editableStudent.sex" required>
-                <option value="">请选择</option>
-                <option value="Male">男</option>
-                <option value="Female">女</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="enrollYear">入学年份</label>
-              <input type="number" v-model="editableStudent.enrollYear" min="1900" max="2030" required>
-            </div>
-            <div class="form-group">
-              <label for="major">专业</label>
-              <input type="text" v-model="editableStudent.major" required>
-            </div>
-            <div class="form-group">
-              <label for="class">班级</label>
-              <input type="text" v-model="editableStudent.class_id" required placeholder="如：1班">
-            </div>
-            <div class="form-group">
-              <label for="status">学生状态</label>
-              <select v-model="editableStudent.status" required>
-                <option value="Active">在读</option>
-                <option value="Leave">休学</option>
-                <option value="Graduated">毕业</option>
-              </select>
-            </div>
+            <div class="form-group"><label>学号</label><input type="number" v-model="editableStudent.id" required></div>
+            <div class="form-group"><label>姓名</label><input type="text" v-model="editableStudent.name" required></div>
+            <div class="form-group"><label>性别</label><select v-model="editableStudent.sex" required><option value="Male">男</option><option value="Female">女</option></select></div>
+            <div class="form-group"><label>入学年份</label><input type="number" v-model="editableStudent.enrollYear" min="1900" max="2099" required></div>
+            <div class="form-group"><label>专业</label><input type="text" v-model="editableStudent.major" required></div>
+            <div class="form-group"><label>班级</label><input type="text" v-model="editableStudent.class_id" required></div>
+            <div class="form-group"><label>学生状态</label><select v-model="editableStudent.status" required><option value="Active">在读</option><option value="Leave">休学</option><option value="Graduated">毕业</option></select></div>
           </div>
         </div>
 
+        <!-- 出生日期 -->
         <div class="form-section">
           <h3>出生日期</h3>
           <div class="form-grid">
-            <div class="form-group">
-              <label for="birthYear">出生年份</label>
-              <input type="number" v-model="editableStudent.birthdate.year" min="1900" max="2010" required>
-            </div>
-            <div class="form-group">
-              <label for="birthMonth">出生月份</label>
-              <select v-model="editableStudent.birthdate.month" required>
-                <option value="">请选择</option>
-                <option v-for="month in 12" :key="month" :value="month">{{ month }}月</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="birthDay">出生日期</label>
-              <select v-model="editableStudent.birthdate.day" required>
-                <option value="">请选择</option>
-                <option v-for="day in 31" :key="day" :value="day">{{ day }}日</option>
-              </select>
-            </div>
+            <div class="form-group"><label>出生年份</label><input type="number" v-model="editableStudent.birthdate.year" min="1900" max="2030" required></div>
+            <div class="form-group"><label>出生月份</label><select v-model="editableStudent.birthdate.month" required><option v-for="m in 12" :key="m" :value="m">{{ m }}月</option></select></div>
+            <div class="form-group"><label>出生日期</label><select v-model="editableStudent.birthdate.day" required><option v-for="d in 31" :key="d" :value="d">{{ d }}日</option></select></div>
           </div>
         </div>
 
+        <!-- 联系方式 -->
         <div class="form-section">
           <h3>联系方式</h3>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="phone">电话号码</label>
-              <input type="tel" v-model="editableStudent.contact.phone" pattern="[0-9]{11}"
-                     placeholder="请输入11位手机号">
-            </div>
-            <div class="form-group">
-              <label for="email">邮箱地址</label>
-              <input type="email" v-model="editableStudent.contact.email" placeholder="example@email.com">
-            </div>
-          </div>
+          <div class="form-grid"><div class="form-group"><label>电话号码</label><input type="tel" v-model="editableStudent.contact.phone"></div><div class="form-group"><label>邮箱地址</label><input type="email" v-model="editableStudent.contact.email"></div></div>
         </div>
 
+        <!-- 地址信息 -->
         <div class="form-section">
           <h3>地址信息</h3>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="province">省份</label>
-              <input type="text" v-model="editableStudent.address.province" placeholder="如：北京市">
-            </div>
-            <div class="form-group">
-              <label for="city">城市</label>
-              <input type="text" v-model="editableStudent.address.city" placeholder="如：海淀区">
-            </div>
-          </div>
+          <div class="form-grid"><div class="form-group"><label>省份</label><input type="text" v-model="editableStudent.address.province"></div><div class="form-group"><label>城市</label><input type="text" v-model="editableStudent.address.city"></div></div>
         </div>
 
+        <!-- 家庭成员 -->
         <div class="form-section">
           <h3>家庭成员</h3>
           <div v-for="(member, index) in editableStudent.familyMembers" :key="index" class="family-member-item">
             <div class="form-grid">
-              <div class="form-group">
-                <label>姓名</label>
-                <input type="text" v-model="member.name" placeholder="家庭成员姓名">
-              </div>
-              <div class="form-group">
-                <label>关系</label>
-                <select v-model="member.relationship">
-                  <option value="">请选择</option>
-                  <option value="父亲">父亲</option>
-                  <option value="母亲">母亲</option>
-                  <option value="兄弟">兄弟</option>
-                  <option value="姐妹">姐妹</option>
-                  <option value="其他">其他</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>联系电话</label>
-                <input type="tel" v-model="member.contactInfo.phone" placeholder="联系电话">
-              </div>
-              <div class="form-group">
-                <label>邮箱</label>
-                <input type="email" v-model="member.contactInfo.email" placeholder="邮箱地址">
-              </div>
-              <div class="form-group">
-                <button type="button" @click="removeFamilyMember(index)" class="btn btn-danger">删除</button>
-              </div>
+              <div class="form-group"><label>姓名</label><input type="text" v-model="member.name"></div>
+              <div class="form-group"><label>关系</label><select v-model="member.relationship"><option value="父亲">父亲</option><option value="母亲">母亲</option><option value="其他">其他</option></select></div>
+              <div class="form-group"><label>联系电话</label><input type="tel" v-model="member.contactInfo.phone"></div>
+              <div class="form-group"><label>邮箱</label><input type="email" v-model="member.contactInfo.email"></div>
+              <div class="form-group"><button type="button" @click="removeFamilyMember(index)" class="btn btn-danger">删除</button></div>
             </div>
           </div>
           <button type="button" @click="addFamilyMember" class="btn btn-secondary">添加家庭成员</button>
+        </div>
+
+        <!-- [新增] 课程信息编辑 -->
+        <div class="form-section">
+          <h3>课程信息</h3>
+          <div v-for="(course, c_idx) in editableStudent.courses" :key="c_idx" class="course-editor-item">
+            <h4>课程 {{ c_idx + 1 }} <button type="button" @click="removeCourse(c_idx)" class="btn btn-danger btn-sm" style="margin-left: 1rem;">删除此课程</button></h4>
+            <div class="form-grid">
+              <div class="form-group"><label>课程名称</label><input type="text" v-model="course.courseName" required></div>
+              <div class="form-group"><label>教师</label><input type="text" v-model="course.instructor"></div>
+              <div class="form-group"><label>地点</label><input type="text" v-model="course.location"></div>
+              <div class="form-group"><label>学分</label><input type="number" v-model="course.credits" min="0" step="0.5"></div>
+            </div>
+            <h5>时间安排</h5>
+            <div v-for="(schedule, s_idx) in course.schedule" :key="s_idx" class="schedule-editor-item">
+              <div class="form-grid-schedule">
+                <div class="form-group"><label>星期</label><select v-model="schedule.day"><option v-for="(val, key) in dayOfWeekOptions" :key="key" :value="key">{{ val }}</option></select></div>
+                <div class="form-group"><label>开始时间</label><div><input type="number" v-model="schedule.startTime.hour" min="0" max="23">: <input type="number" v-model="schedule.startTime.minute" min="0" max="59"></div></div>
+                <div class="form-group"><label>结束时间</label><div><input type="number" v-model="schedule.endTime.hour" min="0" max="23">: <input type="number" v-model="schedule.endTime.minute" min="0" max="59"></div></div>
+                <div class="form-group"><label>重复</label><select v-model="schedule.repetition"><option value="Weekly">每周</option><option value="BiWeeklyOdd">单周</option><option value="BiWeeklyEven">双周</option></select></div>
+                <div class="form-group"><button type="button" @click="removeSchedule(c_idx, s_idx)" class="btn btn-danger btn-sm">删除</button></div>
+              </div>
+            </div>
+            <button type="button" @click="addSchedule(c_idx)" class="btn btn-secondary btn-sm">添加时间安排</button>
+          </div>
+          <button type="button" @click="addCourse" class="btn btn-secondary">添加课程</button>
         </div>
 
         <div class="form-actions">
@@ -267,39 +214,25 @@
 import {ref, onMounted, computed} from 'vue';
 import {useRouter} from 'vue-router';
 
-// 学生数据和状态
 const students = ref([]);
 const currentEditingId = ref(null);
 const searchTerm = ref('');
 const expandedCardId = ref(null);
 
-// 编辑���状态
 const isModalVisible = ref(false);
 const modalTitle = ref('添加学生信息');
 const editableStudent = ref({});
 
-// 新增：Qt Bridge 引用及初始化
 const qtBridge = ref(null);
 const waitForQtBridge = () => {
   return new Promise((resolve) => {
+    // 假设 qt.webChannelTransport 已经可用
     if (typeof qt !== 'undefined' && qt.webChannelTransport) {
       new QWebChannel(qt.webChannelTransport, channel => {
         qtBridge.value = channel.objects.qtBridge;
         console.log('Qt Bridge connected');
         resolve();
       });
-    } else if (typeof QWebChannel !== 'undefined') {
-      try {
-        new QWebChannel(qt.webChannelTransport, channel => {
-          qtBridge.value = channel.objects.qtBridge;
-          console.log('Qt Bridge connected (fallback)');
-          resolve();
-        });
-      } catch (error) {
-        console.warn('Qt Bridge not available, using mock data:', error);
-        qtBridge.value = createMockBridge();
-        resolve();
-      }
     } else {
       console.warn('Qt Bridge not available, using mock data');
       qtBridge.value = createMockBridge();
@@ -308,110 +241,49 @@ const waitForQtBridge = () => {
   });
 };
 
-// 模拟的 Qt Bridge，用于在浏览器中测试
 const createMockBridge = () => {
-  // 模拟数据存储
-  let mockStudents = [
-    {
-      id: 1,
-      name: '张三',
-      status: 'Active',
-      sex: 'Male',
-      birthdate: {year: 2002, month: 5, day: 10},
-      enrollYear: 2020,
-      major: '计算机科学',
-      class_id: '10',
-      contact: {phone: '1234567890', email: '123@qq.com'},
-      address: {province: '北���市', city: '海淀区'},
-      familyMembers: []
-    },
-    {
-      id: 2,
-      name: '李四',
-      status: 'Leave',
-      sex: 'Female',
-      birthdate: {year: 2001, month: 8, day: 22},
-      enrollYear: 2019,
-      major: '物理学',
-      class_: '12',
-      contact: {phone: '1234567890', email: '123@qq.com'},
-      address: {province: '上海市', city: '浦东新区'},
-      familyMembers: []
-    },
-  ];
-
+  let mockStudents = [{ id: 1, name: '张三', status: 'Active', sex: 'Male', birthdate: {year: 2002, month: 5, day: 10}, enrollYear: 2020, major: '计算机科学', class_id: '10', contact: {phone: '1234567890', email: '123@qq.com'}, address: {province: '北京市', city: '海淀区'}, familyMembers: [], courses: [{courseName: "高等数学", instructor: "王教授", location: "教3-101", credits: 4, schedule: [{day: "Monday", startTime:{hour:8, minute:0}, endTime:{hour:9, minute:40}, repetition:"Weekly"}]}] }];
   return {
-    get_students: () => {
-      console.log('MOCK: get_students called');
-      return mockStudents;
-    },
-    add_student: (student) => {
-      console.log('MOCK: add_student', student);
-      // 深拷贝学生数据以避免响应式代理对象问题
-      const cleanStudent = JSON.parse(JSON.stringify(student));
-      mockStudents.push(cleanStudent);
-      return true;
-    },
-    update_student: (student) => {
-      console.log('MOCK: update_student', student);
-      const cleanStudent = JSON.parse(JSON.stringify(student));
-      const index = mockStudents.findIndex(s => s.id === cleanStudent.id);
-      if (index !== -1) {
-        mockStudents[index] = cleanStudent;
-        return true;
-      }
-      return false;
-    },
-    delete_student: (id) => {
-      console.log('MOCK: delete_student', id);
-      const index = mockStudents.findIndex(s => s.id === id);
-      if (index !== -1) {
-        mockStudents.splice(index, 1);
-        return true;
-      }
-      return false;
-    },
-    log_message: (msg) => console.log(`MOCK LOG: ${msg}`),
+    get_students_from_db: () => { console.log('MOCK: get_students_from_db'); return mockStudents; },
+    add_student_to_db: (student) => { console.log('MOCK: add_student_to_db', student); const s = JSON.parse(JSON.stringify(student)); mockStudents.push(s); },
+    update_student_in_db: (student) => { console.log('MOCK: update_student_in_db', student); const s = JSON.parse(JSON.stringify(student)); const index = mockStudents.findIndex(st => st.id === s.id); if (index !== -1) mockStudents[index] = s; },
+    delete_student_from_db: (id) => { console.log('MOCK: delete_student_from_db', id); const index = mockStudents.findIndex(s => s.id === id); if (index !== -1) mockStudents.splice(index, 1); },
+    request_import_dialog: (title, filter) => console.log(`MOCK: request_import_dialog: ${title}, ${filter}`),
+    request_export_dialog: (title, filter) => console.log(`MOCK: request_export_dialog: ${title}, ${filter}`),
     show_notification: (title, msg) => alert(`${title}: ${msg}`),
-    open_file_dialog: () => console.log('MOCK: open_file_dialog'),
-    save_file_dialog: () => console.log('MOCK: save_file_dialog'),
+    log_message: (msg) => console.log(`MOCK LOG: ${msg}`),
+    students_updated: { connect: (callback) => { console.log("MOCK: students_updated connected"); /* 模拟连接 */ } }
   };
 };
 
-// 加载学生数据
 const loadStudents = async () => {
+  if (!qtBridge.value) return;
   try {
-    if (!qtBridge.value) return;
-    // 修改：使用新的 _db 方法
     const result = await qtBridge.value.get_students_from_db();
-    if (Array.isArray(result)) {
-      students.value = result;
-    } else {
-      students.value = [];
-    }
-    if (qtBridge.value) {
-      qtBridge.value.log_message(`Students loaded: ${students.value.length} items`);
-    }
+    students.value = Array.isArray(result) ? result : [];
   } catch (error) {
     console.error('Error loading students:', error);
     students.value = [];
-    if (qtBridge.value) {
-      qtBridge.value.log_message('Error loading students: ' + error.message);
-    }
   }
 };
 
-// 过滤学生
 const filteredStudents = computed(() => {
-  if (!searchTerm.value) {
-    return students.value;
-  }
-  const lowerCaseSearch = searchTerm.value.toLowerCase();
-  return students.value.filter(student =>
-      (student.name && student.name.toLowerCase().includes(lowerCaseSearch)) ||
-      (student.id && student.id.toString().includes(lowerCaseSearch)) ||
-      (student.major && student.major.toLowerCase().includes(lowerCaseSearch))
+  if (!searchTerm.value) return students.value;
+  const lower = searchTerm.value.toLowerCase();
+  return students.value.filter(s =>
+      (s.name && s.name.toLowerCase().includes(lower)) ||
+      (s.id && s.id.toString().includes(lower))
   );
+});
+
+const getEmptyStudent = () => ({
+  id: Date.now(), name: '', sex: 'Male', status: 'Active', enrollYear: new Date().getFullYear(), major: '', class_id: '',
+  birthdate: { year: 2000, month: 1, day: 1 },
+  contact: { phone: '', email: '' },
+  address: { province: '', city: '' },
+  familyMembers: [],
+  courses: [],
+  scores: {}
 });
 
 const showStudentModal = (student = null) => {
@@ -419,224 +291,482 @@ const showStudentModal = (student = null) => {
     modalTitle.value = '编辑学生信息';
     currentEditingId.value = student.id;
     editableStudent.value = JSON.parse(JSON.stringify(student));
-    // 确保所有嵌套对象都存在
-    if (!editableStudent.value.birthdate) editableStudent.value.birthdate = {};
-    if (!editableStudent.value.contact) editableStudent.value.contact = {};
-    if (!editableStudent.value.address) editableStudent.value.address = {};
-    if (!editableStudent.value.familyMembers) editableStudent.value.familyMembers = [];
+    // 确保所有嵌套对象都存在，防止模板渲染错误
+    editableStudent.value.birthdate = editableStudent.value.birthdate || { year: '', month: '', day: '' };
+    editableStudent.value.contact = editableStudent.value.contact || { phone: '', email: '' };
+    editableStudent.value.address = editableStudent.value.address || { province: '', city: '' };
+    editableStudent.value.familyMembers = editableStudent.value.familyMembers || [];
+    editableStudent.value.courses = editableStudent.value.courses || [];
   } else {
     modalTitle.value = '添加学生信息';
     currentEditingId.value = null;
-    editableStudent.value = {
-      id: Date.now(),
-      name: '',
-      sex: '',
-      status: 'Active',
-      enrollYear: new Date().getFullYear(),
-      major: '',
-      class_id: '',
-      birthdate: {
-        year: '',
-        month: '',
-        day: ''
-      },
-      contact: {
-        phone: '',
-        email: ''
-      },
-      address: {
-        province: '',
-        city: ''
-      },
-      familyMembers: [],
-      courses: [],
-      scores: {}
-    };
+    editableStudent.value = getEmptyStudent();
   }
   isModalVisible.value = true;
 };
 
-// 添加家庭成员
-const addFamilyMember = () => {
-  if (!editableStudent.value.familyMembers) {
-    editableStudent.value.familyMembers = [];
-  }
-  editableStudent.value.familyMembers.push({
-    name: '',
-    relationship: '',
-    contactInfo: {
-      phone: '',
-      email: ''
-    }
-  });
-};
-
-// 删除家庭成员
-const removeFamilyMember = (index) => {
-  editableStudent.value.familyMembers.splice(index, 1);
-};
-
-// 星期选择项
-const dayOfWeekOptions = {
-  Monday: '周一',
-  Tuesday: '周二',
-  Wednesday: '周三',
-  Thursday: '周四',
-  Friday: '周五',
-  Saturday: '周六',
-  Sunday: '周日'
-};
-const dayOfWeekText = (key) => dayOfWeekOptions[key] || key;
-const repetitionText = (rep) => ({
-  Weekly: '每周',
-  BiWeeklyOdd: '单周',
-  BiWeeklyEven: '双周'
-}[rep] || rep);
-
-// 添加课程
-const addCourse = () => {
-  if (!editableStudent.value.courses) editableStudent.value.courses = [];
-  editableStudent.value.courses.push({
-    courseID: Date.now() + Math.floor(Math.random() * 10000),
-    courseName: '',
-    instructor: '',
-    location: '',
-    credits: 0,
-    schedule: []
-  });
-};
-// 删除课程
-const removeCourse = (idx) => {
-  editableStudent.value.courses.splice(idx, 1);
-};
-// 添加时间安排
-const addSchedule = (cidx) => {
-  editableStudent.value.courses[cidx].schedule.push({
-    day: 'Monday',
-    startTime: {hour: 8, minute: 0},
-    endTime: {hour: 9, minute: 40},
-    repetition: 'Weekly'
-  });
-};
-// 删除时间安排
-const removeSchedule = (cidx, sidx) => {
-  editableStudent.value.courses[cidx].schedule.splice(sidx, 1);
-};
-
-const closeStudentModal = () => {
-  isModalVisible.value = false;
-};
+const closeStudentModal = () => { isModalVisible.value = false; };
 
 const saveStudent = async () => {
+  if (!qtBridge.value) return;
   try {
     const studentData = JSON.parse(JSON.stringify(editableStudent.value));
     if (currentEditingId.value) {
-      if (qtBridge.value) {
-        await qtBridge.value.update_student_in_db(studentData);
-      }
+      await qtBridge.value.update_student_in_db(studentData);
     } else {
-      if (qtBridge.value) {
-        await qtBridge.value.add_student_to_db(studentData);
-      }
+      await qtBridge.value.add_student_to_db(studentData);
     }
-    if (qtBridge.value) {
-      qtBridge.value.show_notification('成功', '学生信息已保存');
-    }
+    qtBridge.value.show_notification('成功', '学生信息已保存');
     closeStudentModal();
-    await loadStudents();
+    // 等待后端数据更新信号，或者主动刷新
+    // await loadStudents();
   } catch (error) {
     console.error('Error saving student:', error);
-    if (qtBridge.value) {
-      qtBridge.value.log_message('Error saving student: ' + error.message);
-    }
+    qtBridge.value.show_notification('错误', '保存失败: ' + error.message);
   }
 };
 
-const editStudent = (student) => {
-  showStudentModal(student);
-};
+const editStudent = (student) => { showStudentModal(student); };
 
 const deleteStudent = async (studentId) => {
-  if (confirm('确定要删除这个学生吗？')) {
+  if (confirm('确定要删除这个学生吗？') && qtBridge.value) {
     try {
-      if (qtBridge.value) {
-        await qtBridge.value.delete_student_from_db(studentId);
-        qtBridge.value.show_notification('成���', '学生已删除');
-      }
-      await loadStudents();
+      await qtBridge.value.delete_student_from_db(studentId);
+      qtBridge.value.show_notification('成功', '学生已删除');
+      // await loadStudents();
     } catch (error) {
       console.error('Error deleting student:', error);
-      if (qtBridge.value) {
-        qtBridge.value.log_message('Error deleting student: ' + error.message);
-      }
+      qtBridge.value.show_notification('错误', '删除失败: ' + error.message);
     }
   }
 };
 
-const toggleCard = (id) => {
-  expandedCardId.value = expandedCardId.value === id ? null : id;
-};
+const toggleCard = (id) => { expandedCardId.value = expandedCardId.value === id ? null : id; };
 
-const getStatusClass = (status) => ({
-  'status-active': status === 'Active',
-  'status-leave': status === 'Leave',
-  'status-graduated': status === 'Graduated'
-});
+const getStatusClass = (status) => ({'status-active': status === 'Active', 'status-leave': status === 'Leave', 'status-graduated': status === 'Graduated'});
 const getStatusText = (status) => ({'Active': '在读', 'Leave': '休学', 'Graduated': '毕业'}[status] || '在读');
-const calculateAge = (birthdate) => {
-  if (!birthdate || !birthdate.year) return 0;
-  const today = new Date();
-  const birth = new Date(birthdate.year, (birthdate.month || 1) - 1, birthdate.day || 1);
-  let age = today.getFullYear() - birth.getFullYear();
-  const m = today.getMonth() - birth.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
-    age--;
-  }
-  return age;
+const calculateAge = (b) => {
+  if (!b || !b.year) return 0;
+  const age = new Date().getFullYear() - b.year;
+  return age > 0 ? age : 0;
 };
+const dayOfWeekOptions = { Monday: '周一', Tuesday: '周二', Wednesday: '周三', Thursday: '周四', Friday: '周五', Saturday: '周六', Sunday: '周日' };
+const dayOfWeekText = (key) => dayOfWeekOptions[key] || key;
+const repetitionText = (rep) => ({ Weekly: '每周', BiWeeklyOdd: '单周', BiWeeklyEven: '双周' }[rep] || rep);
 
-const importData = () => {
-  if (qtBridge.value) {
-    qtBridge.value.request_import_dialog('导入学生数据', 'JSON Files (*.json)');
-  }
-};
+const addFamilyMember = () => { editableStudent.value.familyMembers.push({ name: '', relationship: '', contactInfo: { phone: '', email: '' } }); };
+const removeFamilyMember = (index) => { editableStudent.value.familyMembers.splice(index, 1); };
 
-const exportData = () => {
-  if (qtBridge.value) {
-    qtBridge.value.request_export_dialog('导出学生数据', 'JSON Files (*.json)');
-  }
-};
+const addCourse = () => { editableStudent.value.courses.push({ courseName: '', instructor: '', location: '', credits: 0, schedule: [] }); };
+const removeCourse = (c_idx) => { editableStudent.value.courses.splice(c_idx, 1); };
+const addSchedule = (c_idx) => { editableStudent.value.courses[c_idx].schedule.push({ day: 'Monday', startTime: { hour: 8, minute: 0 }, endTime: { hour: 9, minute: 40 }, repetition: 'Weekly' }); };
+const removeSchedule = (c_idx, s_idx) => { editableStudent.value.courses[c_idx].schedule.splice(s_idx, 1); };
+
+const importData = () => { if (qtBridge.value) qtBridge.value.request_import_dialog('导入学生数据', 'JSON Files (*.json)'); };
+const exportData = () => { if (qtBridge.value) qtBridge.value.request_export_dialog('导出学生数据', 'JSON Files (*.json)'); };
 
 const router = useRouter();
-
-const logout = () => {
-  localStorage.removeItem('rememberedUser');
-  router.replace('/login');
-};
-
-const copyToClipboard = (text, label = '') => {
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(() => {
-    if (qtBridge.value) {
-      qtBridge.value.show_notification('已复制', `${label}已复制到剪贴板`);
-    }
-  });
-};
+const logout = () => { localStorage.removeItem('rememberedUser'); router.replace('/login'); };
+const copyToClipboard = (text, label) => { if (text) navigator.clipboard.writeText(text).then(() => qtBridge.value?.show_notification('已复制', `${label}已复制`)); };
 
 onMounted(async () => {
   await waitForQtBridge();
   await loadStudents();
-
-  // 监听 Qt 后端的 studentsUpdated 信号，收到后刷新数据
   if (qtBridge.value && qtBridge.value.students_updated) {
-    qtBridge.value.students_updated.connect(async () => {
-      await loadStudents();
-    });
+    qtBridge.value.students_updated.connect(loadStudents);
   }
 });
 </script>
 
+
 <style scoped>
+/* [新增] 课程和时间安排的样式 */
+.courses-list {
+  margin-top: 1rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+.course-item {
+  background-color: #fdfdfd;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.course-item h4 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+.course-item p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9em;
+  color: #555;
+}
+.schedule-list {
+  list-style-type: none;
+  padding-left: 1rem;
+  font-size: 0.85em;
+  color: #666;
+}
+
+.course-editor-item {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  background-color: #fafafa;
+}
+
+.schedule-editor-item {
+  border-top: 1px dashed #ddd;
+  padding-top: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.form-grid-schedule {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  align-items: end;
+}
+.form-grid-schedule .form-group input {
+  width: 40px;
+}
+
+/* 保持原有样式 */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f6;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header h2 {
+  color: #333;
+  margin: 0;
+}
+
+.header-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.search-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+.btn {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-danger:hover {
+  background-color: #c82333;
+}
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8em;
+}
+
+
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 2rem;
+}
+
+.students-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.student-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.student-card-header {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.student-basic-info {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.student-name {
+  margin: 0;
+  color: #212529;
+}
+
+.student-id {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+.status-badge {
+  padding: 0.25em 0.6em;
+  border-radius: 10px;
+  font-size: 0.8em;
+  color: white;
+  font-weight: bold;
+}
+
+.status-active { background-color: #28a745; }
+.status-leave { background-color: #ffc107; color: #212529;}
+.status-graduated { background-color: #6c757d; }
+
+.student-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #f0f0f0;
+}
+
+.expand-toggle {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.student-details {
+  border-top: 1px solid #eee;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+}
+
+.info-section {
+  margin-bottom: 1.5rem;
+}
+
+.info-section h3 {
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.basic-info-grid, .contact-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.info-item span {
+  background-color: #fff;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.family-members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.family-member {
+  background-color: #fff;
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+.member-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+.member-name { font-weight: bold; }
+.member-relationship {
+  background-color: #e9ecef;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
+.no-data, .no-students {
+  text-align: center;
+  color: #6c757d;
+  padding: 2rem;
+}
+
+.modal {
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 2rem;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 900px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.close {
+  color: #aaa;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover, .close:focus {
+  color: black;
+}
+
+.student-form .form-section {
+  margin-bottom: 2rem;
+}
+
+.student-form .form-section h3 {
+  color: #007bff;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-group input, .form-group select {
+  padding: 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.family-member-item {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 5px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
+}
+
 * {
   margin: 0;
   padding: 0;

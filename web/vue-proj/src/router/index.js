@@ -4,7 +4,7 @@ const routes = [
     {
         path: '/',
         name: 'Login',
-        component: () => import('../views/Login.vue'),  // 懒加载
+        component: () => import('../views/mockStudent.vue'),  // 懒加载
         meta: {
             requiresAuth: false
         }
