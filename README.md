@@ -4,28 +4,6 @@
 
 ![Languages](https://img.shields.io/badge/Languages-C++%20%7C%20Vue%20%7C%20Go%20%7C%20Python-blue)
 ![Frameworks](https://img.shields.io/badge/Frameworks-Qt%20%7C%20Vue.js%20%7C%20Vite-green)
-![License](https://img.shields.io/badge/License-MIT-yellow)
-![Stars](https://img.shields.io/github/stars/LithiumValproate/Freshman-3rd?style=social)
-
-*A modern, integrated platform for student management and real-time communication, built with Qt and Web technologies.*
-
-</div>
-
-## 📝 Project Overview
-
-**UnivUni_Platform** is an innovative, hybrid application that combines a powerful C++ Qt backend with a modern Vue.js frontend. It provides a comprehensive student management system and features a fully integrated, real-time Instant Messaging (IM) service built with Go and C++.
-
-The frontend is a responsive Vue 3 application, rendered within a native Qt desktop window using `QWebEngineView`. This architecture leverages the flexibility of web development for the UI and the power of C++/Go for high-performance backend logic, offering a seamless and feature-rich cross-platform experience.
-
-## ✨ Core Features
-
-- **🎨 Modern Web UI**: A beautiful and responsive interface built with **Vue 3** and **Vite**.
-- **🔗 Hybrid Architecture**: Seamlessly embeds the web frontend into a Qt desktop application for a native feel.
-- **⚡ Real-time Communication**: Features a C++/Go powered Instant Messaging module for live chat.
-- **🔄 Bidirectional Bridge**: Uses `QWebChannel` to enable efficient, real-time data exchange between the C++ backend and the Vue frontend.
-- **🛡️ Crash Reporting**: Integrated with **Sentry** for robust, real-time crash and error monitoring.
-- **🔧 Multi-Language Backend**: Utilizes C++ for core application logic, Go for networking services, and Python for data utility scripts.
-- **📱 Responsive Design**: The UI is fully responsive and adapts to various screen and window sizes.
 
 ## 🔧 Technology Stack
 
@@ -113,33 +91,6 @@ UnivUni_Platform/
 ├── 📄 CMakeLists.txt        # Primary CMake build configuration
 └── 📄 resources.qrc         # Qt resource file (bundles web assets)
 ```
-
-## 💡 Key Functionality
-
-- **Student Management**: Full CRUD (Create, Read, Update, Delete) operations for student records.
-- **Instant Messaging**: Real-time chat functionality between users (students, teachers, admins).
-- **Role-Based Access Control**: Different views and permissions for Students, Teachers, and Administrators.
-- **Data Persistence**: User and session data is managed via local storage.
-- **System Integration**: Leverages native desktop features like system notifications and dialogs.
-
-## 🤝 How to Contribute
-
-Contributions are welcome! If you'd like to help improve the project, please follow these steps:
-
-1.  **Fork** the repository.
-2.  Create a new branch for your feature (`git checkout -b feature/YourAmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add YourAmazingFeature'`).
-4.  Push to your branch (`git push origin feature/YourAmazingFeature`).
-5.  Open a **Pull Request**.
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-- **Author**: Liu Yang (LithiumValproate)
-- **Institution**: Xinjiang University
 
 ---
 
