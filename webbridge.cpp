@@ -19,13 +19,14 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QSystemTrayIcon>
+#include <QTimer>
+#include <QThread>
 #include <QWidget>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 
 WebBridge::WebBridge(QObject* parent)
-    : QObject(parent) {
-    m_parentWidget = qobject_cast<QWidget*>(parent);
+    : QObject(parent)  {
     log_message("WebBridge 初始化开始");
     init_database();
     load_students_from_db();
@@ -36,7 +37,14 @@ WebBridge::~WebBridge() {
     if (m_database.isOpen()) {
         m_database.close();
     }
+    if (m_database.isOpen()) {
+        m_database.close();
+    }
 }
+
+
+
+
 
 void WebBridge::init_database() {
     m_database = QSqlDatabase::addDatabase("QSQLITE");
@@ -81,30 +89,93 @@ void WebBridge::load_page(const QString& page) {
     emit page_requested(page);
 }
 
-void WebBridge::open_file_dialog(const QString& title, const QString& filter) {
-    QString filePath = QFileDialog::getOpenFileName(m_parentWidget, title, "", filter);
-    if (!filePath.isEmpty()) {
-        emit file_selected(filePath);
-    }
+void WebBridge::request_import_dialog(const QString &title, const QString &filter) {
+    log_message("[Bridge] JS requested an import dialog. Emitting signal to MainWindow.");
+    emit open_file_dialog_requested(title, filter);
 }
 
-void WebBridge::save_file_dialog(const QString& jsonData, const QString& title, const QString& filter) {
-    QString filePath = QFileDialog::getSaveFileName(m_parentWidget, title, "students.json", filter);
-    if (!filePath.isEmpty()) {
-        QFile file(filePath);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out << jsonData;
-            file.close();
-            log_message("数据成功导出到: " + filePath);
-            QMessageBox::information(m_parentWidget, "成功", "数据已成功导出！");
-        } else {
-            log_message("文件写入失败: " + file.errorString());
-            QMessageBox::warning(m_parentWidget, "错误", "无法保存文件: " + file.errorString());
-        }
-    } else {
-        log_message("用户取消了文件保存操作。");
+void WebBridge::request_export_dialog(const QString &title, const QString &filter) {
+    log_message("[Bridge] JS requested an export dialog. Emitting signal to MainWindow.");
+    emit save_file_dialog_requested(title, filter);
+}
+
+void WebBridge::process_selected_file(const QString &filePath) {
+    log_message(QString("[Bridge] MainWindow provided a file to open: %1").arg(filePath));
+    load_students_from_file(filePath);
+}
+
+void WebBridge::process_save_file_path(const QString &filePath) {
+    log_message(QString("[Bridge] MainWindow provided a file path to save: %1").arg(filePath));
+    save_students_to_file(filePath);
+}
+
+
+// 从JSON文件加载学生数据
+void WebBridge::load_students_from_file(const QString& filePath) {
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        log_message("无法打开文件: " + file.errorString());
+        show_notification("错误", "无法打开文件: " + file.errorString());
+        return;
     }
+
+    QByteArray data = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(data);
+    if (doc.isNull() || !doc.isArray()) {
+        log_message("JSON文件格式无效，根元素必须是数组。");
+        show_notification("错误", "JSON文件格式无效。");
+        return;
+    }
+
+    QJsonArray studentsArray = doc.array();
+    m_students.clear(); // 清空内存中的当前学生
+
+    // 清空数据库中的学生
+    if (m_database.isOpen()) {
+        QSqlQuery query(m_database);
+        if (!query.exec("DELETE FROM students")) {
+            log_message("清空 'students' 表失败: " + query.lastError().text());
+        } else {
+            log_message("成功清空 'students' 表。");
+        }
+    }
+
+    for (const QJsonValue& value : studentsArray) {
+        if (value.isObject()) {
+            try {
+                Stu_withScore student = stu_with_score_from_qjson(value.toObject());
+                m_students.push_back(student);
+                save_student_to_db(student); // 保存到数据库
+            } catch (const std::exception& e) {
+                log_message(QString("从JSON转换学生失败: %1").arg(e.what()));
+            }
+        }
+    }
+
+    log_message(QString("成功从JSON文件加载了 %1 个学生。").arg(m_students.size()));
+    show_notification("成功", QString("成功导入 %1 个学生。").arg(m_students.size()));
+    emit students_updated();
+}
+
+// 将学生数据保存到JSON文件
+void WebBridge::save_students_to_file(const QString& filePath) {
+    QJsonArray studentsArray = get_students_from_qjson();
+    QJsonDocument doc(studentsArray);
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        log_message("无法创建或打开文件进行写入: " + file.errorString());
+        show_notification("错误", "无法保存文件: " + file.errorString());
+        return;
+    }
+
+    file.write(doc.toJson(QJsonDocument::Indented));
+    file.close();
+
+    log_message(QString("成功将 %1 个学生保存到文件 %2。").arg(m_students.size()).arg(filePath));
+    show_notification("成功", QString("数据已成功��出到 %1。").arg(filePath));
 }
 
 void WebBridge::log_message(const QString& message) {
@@ -118,11 +189,7 @@ void WebBridge::show_notification(const QString& title, const QString& message) 
     trayIcon->showMessage(title, message, QSystemTrayIcon::Information, 3000);
 }
 
-void WebBridge::minimize_to_tray() const {
-    if (m_parentWidget) {
-        m_parentWidget->hide();
-    }
-}
+
 
 QJsonObject WebBridge::get_app_info() {
     QJsonObject info;
@@ -571,4 +638,19 @@ QJsonObject WebBridge::get_student_by_id_from_db(long studentId) const {
         log_message(QString("Student ID %1 not found in database.").arg(studentId));
         return QJsonObject(); // Return empty object if not found
     }
+}
+
+// 获取学生数据备份文件的路径
+QString WebBridge::get_backup_path() const
+{
+    QString backupDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (!QDir(backupDir).exists()) {
+        QDir().mkpath(backupDir);
+    }
+    return backupDir + "/student_data.json";
+}
+
+void WebBridge::minimize_to_tray() {
+    log_message("[Bridge] JS requested minimize to tray. Emitting signal.");
+    emit minimize_to_tray_requested(); // <-- 发射信号
 }

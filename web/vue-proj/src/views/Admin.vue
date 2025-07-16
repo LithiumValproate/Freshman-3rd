@@ -597,13 +597,13 @@ const calculateAge = (birthdate) => {
 
 const importData = () => {
   if (qtBridge.value) {
-    qtBridge.value.open_file_dialog('导���学生数据', 'JSON Files (*.json)');
+    qtBridge.value.request_import_dialog('导入学生数据', 'JSON Files (*.json)');
   }
 };
 
 const exportData = () => {
   if (qtBridge.value) {
-    qtBridge.value.save_file_dialog('导出学生数据', 'JSON Files (*.json)');
+    qtBridge.value.request_export_dialog('导出学生数据', 'JSON Files (*.json)');
   }
 };
 

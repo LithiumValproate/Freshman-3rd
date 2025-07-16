@@ -17,6 +17,7 @@ public:
 
     ~MainWindow() override;
 
+
 private slots:
     void on_load_started();
 
@@ -29,6 +30,10 @@ private slots:
     void refresh_page();
 
     void show_about();
+    void show_open_dialog(const QString& title, const QString& filter);
+    void show_save_dialog(const QString& title, const QString& filter);
+
+    void handle_minimize_to_tray();
 
 private:
     void setup_ui();

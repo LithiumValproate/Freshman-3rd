@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -21,12 +22,16 @@ MainWindow::MainWindow(QWidget* parent)
     setup_menu_bar();
     setup_status_bar();
     setup_web_view();
+    connect(m_webBridge, &WebBridge::open_file_dialog_requested, this, &MainWindow::show_open_dialog);
+    connect(m_webBridge, &WebBridge::save_file_dialog_requested, this, &MainWindow::show_save_dialog);
 
+    connect(m_webBridge, &WebBridge::minimize_to_tray_requested, this, &MainWindow::handle_minimize_to_tray);
     setWindowTitle("Qt Web学校综合系统");
     resize(1400, 900);
 }
 
 MainWindow::~MainWindow() = default;
+
 
 void MainWindow::setup_ui() {
     QWidget* centralWidget = new QWidget;
@@ -79,14 +84,16 @@ void MainWindow::setup_web_view() {
     connect(m_webView, &QWebEngineView::loadProgress, this, &MainWindow::on_load_progress);
     connect(m_webView, &QWebEngineView::loadFinished, this, &MainWindow::on_load_finished);
 
-    // 设置Web通信
     m_webChannel = new QWebChannel(this);
-    m_webBridge  = new WebBridge(this);
+
+    // 1. 创建 WebBridge，现在它的 parent 是 QWebChannel
+    m_webBridge = new WebBridge(m_webChannel);
+
+    // 3. 注册对象
     m_webChannel->registerObject("qtBridge", m_webBridge);
     m_webView->page()->setWebChannel(m_webChannel);
 
     connect(m_webBridge, &WebBridge::page_requested, this, &MainWindow::on_page_requested);
-
     // 加载HTML文件
     m_webView->load(QUrl("qrc:/web/vue-proj/dist/index.html"));
 }
@@ -111,8 +118,7 @@ void MainWindow::on_load_finished(bool success) {
     }
 }
 
-void MainWindow::on_page_requested(const QString &pageUrl)
-{
+void MainWindow::on_page_requested(const QString& pageUrl) {
     m_webView->load(QUrl(QString("qrc:/web/vue-proj/dist/index.html#%1").arg(pageUrl)));
 }
 
@@ -124,4 +130,37 @@ void MainWindow::show_about() {
     QMessageBox::about(this, "关于",
                        QString("Qt Web学校综合系统\n版本: %1\n\n基于Qt WebEngine的学校综合系统")
                        .arg(QApplication::applicationVersion()));
+}
+
+void MainWindow::show_open_dialog(const QString &title, const QString &filter)
+{
+    qDebug() << "[MainWindow] Received signal. Opening file dialog now.";
+    // 由 MainWindow 自己来打开对话框，'this' 是绝对安全的父窗口
+    QString filePath = QFileDialog::getOpenFileName(this, title, "", filter);
+
+    if (!filePath.isEmpty()) {
+        qDebug() << "[MainWindow] File selected:" << filePath << ". Calling WebBridge to process it.";
+        // 将结果返回给 WebBridge 处理
+        m_webBridge->process_selected_file(filePath);
+    }
+}
+
+void MainWindow::show_save_dialog(const QString &title, const QString &filter)
+{
+    qDebug() << "[MainWindow] Received signal. Opening save dialog now.";
+    QString filePath = QFileDialog::getSaveFileName(this, title, "", filter);
+
+    if (!filePath.isEmpty()) {
+        qDebug() << "[MainWindow] File path to save:" << filePath << ". Calling WebBridge to process it.";
+        m_webBridge->process_save_file_path(filePath);
+    }
+}
+
+void MainWindow::handle_minimize_to_tray()
+{
+    qDebug() << "[MainWindow] Received request to minimize. Hiding window.";
+    // 这里执行真正的UI操作
+    this->hide();
+    // 你可能还想在这里显示一个托盘图标的提示消息
+    // m_trayIcon->showMessage("提示", "程序已最小化到托盘");
 }
